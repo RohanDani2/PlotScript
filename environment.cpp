@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <complex>
 
 #include "environment.hpp"
 #include "semantic_error.hpp"
@@ -44,7 +45,7 @@ Expression add(const std::vector<Expression> & args){
 
 Expression mul(const std::vector<Expression> & args){
  
-  // check all aruments are numbers, while multiplying
+  // check all arguments are numbers, while multiplying
   double result = 1;
   for( auto & a :args){
     if(a.isHeadNumber()){
@@ -104,6 +105,7 @@ Expression div(const std::vector<Expression> & args){
   return Expression(result);
 };
 
+/*
 Expression exponent(const std::vector<Expression> & args) { //exponent
 	double result = 0;
 	if (nargs_equal(args, 2)) {
@@ -199,9 +201,10 @@ Expression tangent(const std::vector<Expression> & args) { //tan
 	}
 	return Expression(result);
 }
-
+*/
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
+const double i = sqrt(-1);
 
 Environment::Environment(){
 
@@ -284,6 +287,9 @@ void Environment::reset(){
   // Built-In value of e
   envmap.emplace("e", EnvResult(ExpressionType, Expression(EXP)));
 
+  // Built-In value of i
+  //envmap.emplace("I", EnvResult(ExpressionType, Expression(i)));
+
   // Procedure: add;
   envmap.emplace("+", EnvResult(ProcedureType, add)); 
 
@@ -296,6 +302,7 @@ void Environment::reset(){
   // Procedure: div;
   envmap.emplace("/", EnvResult(ProcedureType, div)); 
 
+  /*
   // Procedure: exponent;
   envmap.emplace("^", EnvResult(ProcedureType, exponent));
 
@@ -313,4 +320,5 @@ void Environment::reset(){
 
   // Procedure: tangent;
   envmap.emplace("tan", EnvResult(ProcedureType, tangent));
+  */
 }

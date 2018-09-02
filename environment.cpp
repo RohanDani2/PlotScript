@@ -203,7 +203,8 @@ Expression tangent(const std::vector<Expression> & args) { //tan
 
 const double PI = std::atan2(0, -1);
 const double EXP = std::exp(1);
-const double i = sqrt(-1);
+std::complex<double> i(0.0, 1.0);
+
 
 Environment::Environment(){
 
@@ -318,4 +319,5 @@ void Environment::reset(){
 
   // Procedure: tangent;
   envmap.emplace("tan", EnvResult(ProcedureType, tangent));
+
 }

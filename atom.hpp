@@ -5,6 +5,7 @@ Defines the Atom type and associated functions.
 #define ATOM_HPP
 
 #include "token.hpp"
+#include <complex>
 
 /*! \class Atom
 \brief A variant type that may be a Number or Symbol or the default type None.
@@ -19,6 +20,9 @@ public:
 
   /// Construct an Atom of type Number with value
   Atom(double value);
+
+  ///Construct an Atom of type Complex with value
+  Atom(std::complex<double> myComplex);
 
   /// Construct an Atom of type Symbol named value
   Atom(const std::string & value);
@@ -41,11 +45,17 @@ public:
   /// predicate to determine if an Atom is of type Number
   bool isNumber() const  noexcept;
 
+  /// predicate to determine if an Atom is of type Complex
+  bool isComplex() const noexcept;
+
   /// predicate to determine if an Atom is of type Symbol
   bool isSymbol() const noexcept;
 
   /// value of Atom as a number, return 0 if not a Number
   double asNumber() const noexcept;
+
+  /// value of Atom as a complex, return 0 if not a Complex
+  std::complex<double> asComplex() const noexcept;
 
   /// value of Atom as a number, returns empty-string if not a Symbol
   std::string asSymbol() const noexcept;
@@ -56,7 +66,7 @@ public:
 private:
 
   // internal enum of known types
-  enum Type {NoneKind, NumberKind, SymbolKind};
+  enum Type {NoneKind, NumberKind, SymbolKind, ComplexKind};
 
   // track the type
   Type m_type;
@@ -66,10 +76,14 @@ private:
   union {
     double numberValue;
     std::string stringValue;
+	std::complex<double> complexValue;
   };
 
   // helper to set type and value of Number
   void setNumber(double value);
+
+  // helper to set type and value of Complex
+  void setComplex(std::complex<double> myComplex);
 
   // helper to set type and value of Symbol
   void setSymbol(const std::string & value);

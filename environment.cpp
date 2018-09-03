@@ -3,113 +3,158 @@
 #include <cassert>
 #include <cmath>
 #include <complex>
+#include <iostream>
 
 #include "environment.hpp"
 #include "semantic_error.hpp"
 
-/*********************************************************************** 
+/***********************************************************************
 Helper Functions
 **********************************************************************/
 
 // predicate, the number of args is nargs
-bool nargs_equal(const std::vector<Expression> & args, unsigned nargs){
-  return args.size() == nargs;
+bool nargs_equal(const std::vector<Expression> & args, unsigned nargs) {
+	return args.size() == nargs;
 }
 
-/*********************************************************************** 
+/***********************************************************************
 Each of the functions below have the signature that corresponds to the
 typedef'd Procedure function pointer.
 **********************************************************************/
 
 // the default procedure always returns an expresison of type None
-Expression default_proc(const std::vector<Expression> & args){
-  args.size(); // make compiler happy we used this parameter
-  return Expression();
+Expression default_proc(const std::vector<Expression> & args) {
+	args.size(); // make compiler happy we used this parameter
+	return Expression();
 };
 
-Expression add(const std::vector<Expression> & args){
+Expression add(const std::vector<Expression> & args) {
 
-  // check all arguments are numbers, while adding
-  double result = 0;
-  for( auto & a :args){
-    if(a.isHeadNumber()){
-      result += a.head().asNumber();      
-    }
-    else{
-      throw SemanticError("Error in call to add, argument not a number");
-    }
-  }
-
-  return Expression(result);
+	// check all arguments are numbers, while adding
+	double result = 0;
+	std::complex<double> complexAdd(0, 0);
+	if (args[0].isHeadNumber() == true && args[1].isHeadComplex() == false) { //adding only real numbers
+		for (auto & a : args) {
+			if (a.isHeadNumber()) {
+				result += a.head().asNumber();
+			}
+			else {
+				throw SemanticError("Error in call to add, argument not a number");
+			}
+		}
+		return Expression(result);
+	}
+	else if (args[0].isHeadComplex() == true && args[1].isHeadNumber() == false) { //adding only complex numbers
+		for (auto &a : args) {
+			if (a.isHeadComplex()) { //add complex numbers
+				complexAdd += a.head().asComplex();
+			}
+		}
+		return Expression(complexAdd);
+	}
+	else {
+		for (auto &a : args) {
+			complexAdd = a.head().asNumber() + a.head().asComplex();
+		}
+		return Expression(complexAdd);
+		std::cout << "inside both function";
+	}
 };
 
-Expression mul(const std::vector<Expression> & args){
- 
-  // check all arguments are numbers, while multiplying
-  double result = 1;
-  for( auto & a :args){
-    if(a.isHeadNumber()){
-      result *= a.head().asNumber();      
-    }
-    else{
-      throw SemanticError("Error in call to mul, argument not a number");
-    }
-  }
+Expression mul(const std::vector<Expression> & args) {
 
-  return Expression(result);
+	// check all arguments are numbers, while multiplying
+	double result = 1;
+	std::complex<double> complexMultiply(1, 0);
+	if (args[0].isHeadNumber()) {
+		for (auto & a : args) {
+			result *= a.head().asNumber();
+		}
+		return Expression(result);
+	}
+	else if (args[0].isHeadComplex() || args[0].isHeadNumber()) {
+		for (auto & a : args) {
+			complexMultiply *= a.head().asComplex();
+		}
+		return Expression(complexMultiply);
+	}
+	else {
+		throw SemanticError("Error in call to mul, argument not a number");
+	}
+
+
 };
 
-Expression subneg(const std::vector<Expression> & args){
+Expression subneg(const std::vector<Expression> & args) {
 
-  double result = 0;
+	double result = 0;
+	std::complex<double> complexSubtract(0, 0);
 
-  // preconditions
-  if(nargs_equal(args,1)){
-    if(args[0].isHeadNumber()){
-      result = -args[0].head().asNumber();
-    }
-    else{
-      throw SemanticError("Error in call to negate: invalid argument.");
-    }
-  }
-  else if(nargs_equal(args,2)){
-    if( (args[0].isHeadNumber()) && (args[1].isHeadNumber()) ){
-      result = args[0].head().asNumber() - args[1].head().asNumber();
-    }
-    else{      
-      throw SemanticError("Error in call to subtraction: invalid argument.");
-    }
-  }
-  else{
-    throw SemanticError("Error in call to subtraction or negation: invalid number of arguments.");
-  }
+	// preconditions
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadNumber()) {
+			result = -args[0].head().asNumber();
+		}
+		else if (args[0].isHeadComplex()) {
+			complexSubtract = -args[0].head().asComplex();
+		}
+		else {
+			throw SemanticError("Error in call to negate: invalid argument.");
+		}
+	}
+	else if (nargs_equal(args, 2)) {
+		if ((args[0].isHeadNumber()) && (args[1].isHeadNumber())) {
+			result = args[0].head().asNumber() - args[1].head().asNumber();
+			return Expression(result);
+		}
+		else if ((args[0].isHeadComplex()) && (args[1].isHeadComplex())) {
+			complexSubtract = args[0].head().asComplex() - args[1].head().asComplex();
+			return Expression(complexSubtract);
+		}
+		else {
+			throw SemanticError("Error in call to subtraction: invalid argument.");
+		}
+	}
+	else {
+		throw SemanticError("Error in call to subtraction or negation: invalid number of arguments.");
+	}
 
-  return Expression(result);
 };
 
-Expression div(const std::vector<Expression> & args){
+Expression div(const std::vector<Expression> & args) {
 
-  double result = 0;  
+	double result = 0;
+	std::complex<double> complexDivide(0, 0);
+	if (nargs_equal(args, 2)) {
+		if ((args[0].isHeadNumber()) && (args[1].isHeadNumber())) {
+			result = args[0].head().asNumber() / args[1].head().asNumber();
+			return Expression(result);
+		}
+		else if ((args[0].isHeadComplex()) && (args[1].isHeadComplex())) {
+			complexDivide = args[0].head().asComplex() / args[1].head().asComplex();
+			return Expression(complexDivide);
+		}
+		else {
+			throw SemanticError("Error in call to division: invalid argument.");
+		}
+	}
+	else {
+		throw SemanticError("Error in call to division: invalid number of arguments.");
+	}
 
-  if(nargs_equal(args,2)){
-    if( (args[0].isHeadNumber()) && (args[1].isHeadNumber()) ){
-      result = args[0].head().asNumber() / args[1].head().asNumber();
-    }
-    else{      
-      throw SemanticError("Error in call to division: invalid argument.");
-    }
-  }
-  else{
-    throw SemanticError("Error in call to division: invalid number of arguments.");
-  }
-  return Expression(result);
 };
 
 Expression exponent(const std::vector<Expression> & args) { //exponent
 	double result = 0;
+	std::complex<double> complexExponent(0, 0);
 	if (nargs_equal(args, 2)) {
 		if ((args[0].isHeadNumber()) && (args[1].isHeadNumber())) {
-			result = pow(args[0].head().asNumber(),args[1].head().asNumber());
+			result = pow(args[0].head().asNumber(), args[1].head().asNumber());
+			return Expression(result);
+		}
+		else if ((args[0].isHeadComplex()) && (args[1].isHeadComplex())) {
+			complexExponent = pow(args[0].head().asComplex(), args[1].head().asComplex());
+			return Expression(complexExponent);
 		}
 		else {
 			throw SemanticError("Error in call to exponent: invalid argument.");
@@ -118,14 +163,17 @@ Expression exponent(const std::vector<Expression> & args) { //exponent
 	else {
 		throw SemanticError("Error in call to exponent: invalid number of arguments.");
 	}
-	return Expression(result);
 }
 
 Expression squareroot(const std::vector<Expression> & args) { //square root
 	double result = 0;
+	std::complex<double> complexSqrt(0, 0);
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
 			result = sqrt(args[0].head().asNumber());
+		}
+		else if (args[0].isHeadComplex()) {
+			complexSqrt = sqrt(args[0].head().asComplex());
 		}
 		else {
 			throw SemanticError("Error in call to square root: invalid argument.");
@@ -170,10 +218,14 @@ Expression sine(const std::vector<Expression> & args) { //sine
 }
 
 Expression cosine(const std::vector<Expression> & args) { //cosine
+	std::complex<double> complexCosine;
 	double result = 0;
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
 			result = cos(args[0].head().asNumber());
+		}
+		if (args[0].isHeadComplex()) {
+			complexCosine = cos(args[0].head().asComplex());
 		}
 		else {
 			throw SemanticError("Error in call to cosine: invalid argument.");
@@ -206,118 +258,118 @@ const double EXP = std::exp(1);
 std::complex<double> i(0.0, 1.0);
 
 
-Environment::Environment(){
+Environment::Environment() {
 
-  reset();
+	reset();
 }
 
-bool Environment::is_known(const Atom & sym) const{
-  if(!sym.isSymbol()) return false;
-  
-  return envmap.find(sym.asSymbol()) != envmap.end();
+bool Environment::is_known(const Atom & sym) const {
+	if (!sym.isSymbol()) return false;
+
+	return envmap.find(sym.asSymbol()) != envmap.end();
 }
 
-bool Environment::is_exp(const Atom & sym) const{
-  if(!sym.isSymbol()) return false;
-  
-  auto result = envmap.find(sym.asSymbol());
-  return (result != envmap.end()) && (result->second.type == ExpressionType);
+bool Environment::is_exp(const Atom & sym) const {
+	if (!sym.isSymbol()) return false;
+
+	auto result = envmap.find(sym.asSymbol());
+	return (result != envmap.end()) && (result->second.type == ExpressionType);
 }
 
-Expression Environment::get_exp(const Atom & sym) const{
+Expression Environment::get_exp(const Atom & sym) const {
 
-  Expression exp;
-  
-  if(sym.isSymbol()){
-    auto result = envmap.find(sym.asSymbol());
-    if((result != envmap.end()) && (result->second.type == ExpressionType)){
-      exp = result->second.exp;
-    }
-  }
+	Expression exp;
 
-  return exp;
+	if (sym.isSymbol()) {
+		auto result = envmap.find(sym.asSymbol());
+		if ((result != envmap.end()) && (result->second.type == ExpressionType)) {
+			exp = result->second.exp;
+		}
+	}
+
+	return exp;
 }
 
-void Environment::add_exp(const Atom & sym, const Expression & exp){
+void Environment::add_exp(const Atom & sym, const Expression & exp) {
 
-  if(!sym.isSymbol()){
-    throw SemanticError("Attempt to add non-symbol to environment");
-  }
-    
-  // error if overwriting symbol map
-  if(envmap.find(sym.asSymbol()) != envmap.end()){
-    throw SemanticError("Attempt to overwrite symbol in environemnt");
-  }
+	if (!sym.isSymbol()) {
+		throw SemanticError("Attempt to add non-symbol to environment");
+	}
 
-  envmap.emplace(sym.asSymbol(), EnvResult(ExpressionType, exp)); 
+	// error if overwriting symbol map
+	if (envmap.find(sym.asSymbol()) != envmap.end()) {
+		throw SemanticError("Attempt to overwrite symbol in environemnt");
+	}
+
+	envmap.emplace(sym.asSymbol(), EnvResult(ExpressionType, exp));
 }
 
-bool Environment::is_proc(const Atom & sym) const{
-  if(!sym.isSymbol()) return false;
-  
-  auto result = envmap.find(sym.asSymbol());
-  return (result != envmap.end()) && (result->second.type == ProcedureType);
+bool Environment::is_proc(const Atom & sym) const {
+	if (!sym.isSymbol()) return false;
+
+	auto result = envmap.find(sym.asSymbol());
+	return (result != envmap.end()) && (result->second.type == ProcedureType);
 }
 
-Procedure Environment::get_proc(const Atom & sym) const{
+Procedure Environment::get_proc(const Atom & sym) const {
 
-  //Procedure proc = default_proc;
+	//Procedure proc = default_proc;
 
-  if(sym.isSymbol()){
-    auto result = envmap.find(sym.asSymbol());
-    if((result != envmap.end()) && (result->second.type == ProcedureType)){
-      return result->second.proc;
-    }
-  }
+	if (sym.isSymbol()) {
+		auto result = envmap.find(sym.asSymbol());
+		if ((result != envmap.end()) && (result->second.type == ProcedureType)) {
+			return result->second.proc;
+		}
+	}
 
-  return default_proc;
+	return default_proc;
 }
 
 /*
 Reset the environment to the default state. First remove all entries and
 then re-add the default ones.
  */
-void Environment::reset(){
+void Environment::reset() {
 
-  envmap.clear();
-  
-  // Built-In value of pi
-  envmap.emplace("pi", EnvResult(ExpressionType, Expression(PI)));
+	envmap.clear();
 
-  // Built-In value of e
-  envmap.emplace("e", EnvResult(ExpressionType, Expression(EXP)));
+	// Built-In value of pi
+	envmap.emplace("pi", EnvResult(ExpressionType, Expression(PI)));
 
-  // Built-In value of i
-  envmap.emplace("I", EnvResult(ExpressionType, Expression(i)));
+	// Built-In value of e
+	envmap.emplace("e", EnvResult(ExpressionType, Expression(EXP)));
 
-  // Procedure: add;
-  envmap.emplace("+", EnvResult(ProcedureType, add)); 
+	// Built-In value of i
+	envmap.emplace("I", EnvResult(ExpressionType, Expression(i)));
 
-  // Procedure: subneg;
-  envmap.emplace("-", EnvResult(ProcedureType, subneg)); 
+	// Procedure: add;
+	envmap.emplace("+", EnvResult(ProcedureType, add));
 
-  // Procedure: mul;
-  envmap.emplace("*", EnvResult(ProcedureType, mul)); 
+	// Procedure: subneg;
+	envmap.emplace("-", EnvResult(ProcedureType, subneg));
 
-  // Procedure: div;
-  envmap.emplace("/", EnvResult(ProcedureType, div)); 
+	// Procedure: mul;
+	envmap.emplace("*", EnvResult(ProcedureType, mul));
 
-  // Procedure: exponent;
-  envmap.emplace("^", EnvResult(ProcedureType, exponent));
+	// Procedure: div;
+	envmap.emplace("/", EnvResult(ProcedureType, div));
 
-  // Procedure: square root;
-  envmap.emplace("sqrt", EnvResult(ProcedureType, squareroot));
+	// Procedure: exponent;
+	envmap.emplace("^", EnvResult(ProcedureType, exponent));
 
-  // Procedure: natural log;
-  envmap.emplace("ln", EnvResult(ProcedureType, naturalLog));
+	// Procedure: square root;
+	envmap.emplace("sqrt", EnvResult(ProcedureType, squareroot));
 
-  // Procedure: sine;
-  envmap.emplace("sin", EnvResult(ProcedureType, sine));
+	// Procedure: natural log;
+	envmap.emplace("ln", EnvResult(ProcedureType, naturalLog));
 
-  // Procedure: cosine;
-  envmap.emplace("cos", EnvResult(ProcedureType, cosine));
+	// Procedure: sine;
+	envmap.emplace("sin", EnvResult(ProcedureType, sine));
 
-  // Procedure: tangent;
-  envmap.emplace("tan", EnvResult(ProcedureType, tangent));
+	// Procedure: cosine;
+	envmap.emplace("cos", EnvResult(ProcedureType, cosine));
+
+	// Procedure: tangent;
+	envmap.emplace("tan", EnvResult(ProcedureType, tangent));
 
 }

@@ -53,12 +53,18 @@ Expression add(const std::vector<Expression> & args) {
 		return Expression(complexAdd);
 	}
 	else {
-		for (auto &a : args) {
-			complexAdd = a.head().asNumber() + a.head().asComplex();
+		for (int i = 0; i < args.size(); i++) {
+			if (args[0].isHeadNumber() == true) {
+				std::complex<double> allnumAddition(std::real(args[i].head().asNumber()), std::imag(args[i+1].head().asComplex()));
+				return Expression(allnumAddition);
+			}
+			else if (args[0].isHeadComplex() == true) {
+				std::complex<double> allnumAddition(std::real(args[i+1].head().asNumber()), std::imag(args[i].head().asComplex()));
+				return Expression(allnumAddition);
+			}
 		}
-		return Expression(complexAdd);
-		std::cout << "inside both function";
 	}
+	//std::complex<double> negativeSqrt(0, sqrt(std::abs(args[0].head().asNumber())));
 };
 
 Expression mul(const std::vector<Expression> & args) {
@@ -170,10 +176,20 @@ Expression squareroot(const std::vector<Expression> & args) { //square root
 	std::complex<double> complexSqrt(0, 0);
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
-			result = sqrt(args[0].head().asNumber());
+			if (args[0].isHeadNumber()) {
+				result = sqrt(args[0].head().asNumber());
+				if (isnan(result)) {
+					std::complex<double> negativeSqrt(0, sqrt(std::abs(args[0].head().asNumber())));
+					return Expression(negativeSqrt);
+				}
+				else {
+					return Expression(result);
+				}
+			}
 		}
 		else if (args[0].isHeadComplex()) {
 			complexSqrt = sqrt(args[0].head().asComplex());
+			return Expression(complexSqrt);
 		}
 		else {
 			throw SemanticError("Error in call to square root: invalid argument.");
@@ -182,7 +198,6 @@ Expression squareroot(const std::vector<Expression> & args) { //square root
 	else {
 		throw SemanticError("Error in call to square root: invalid number of arguments.");
 	}
-	return Expression(result);
 }
 
 Expression naturalLog(const std::vector<Expression> & args) { //natural Log
@@ -218,14 +233,10 @@ Expression sine(const std::vector<Expression> & args) { //sine
 }
 
 Expression cosine(const std::vector<Expression> & args) { //cosine
-	std::complex<double> complexCosine;
 	double result = 0;
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
 			result = cos(args[0].head().asNumber());
-		}
-		if (args[0].isHeadComplex()) {
-			complexCosine = cos(args[0].head().asComplex());
 		}
 		else {
 			throw SemanticError("Error in call to cosine: invalid argument.");

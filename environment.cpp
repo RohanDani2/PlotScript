@@ -52,24 +52,35 @@ Expression add(const std::vector<Expression> & args) {
 		}
 		return Expression(complexAdd);
 	}
+	/*
 	else if ((args[0].isHeadComplex() == true && args[1].isHeadNumber() == true)
 		|| (args[0].isHeadNumber() == true && args[1].isHeadComplex() == true)) {
+		std::complex<double> allnumAddition_Val;
+		std::complex<double> allnumAddition_Val1;
 		std::cout << "in both";
 		for (auto i = 0; i < args.size(); i++) {
 			if (args[0].isHeadNumber() == true) {
 				std::complex<double> allnumAddition(std::real(args[i].head().asNumber()), std::imag(args[i + 1].head().asComplex()));
-				return Expression(allnumAddition);
+				allnumAddition_Val += args[i].head().asComplex();
+				//return Expression(allnumAddition);
 			}
 			else if (args[0].isHeadComplex() == true) {
 				std::complex<double> allnumAddition(std::real(args[i + 1].head().asNumber()), std::imag(args[i].head().asComplex()));
 				std::cout << allnumAddition;
-				return Expression(allnumAddition);
+				allnumAddition_Val1 += args[i].head().asComplex();
+				//return Expression(allnumAddition);
 			}
+			else {
+				throw SemanticError("Error in call to add, argument not a complex number");
+			}		
 		}
+		allnumAddition_Val += allnumAddition_Val1;
+		return Expression(allnumAddition_Val);
 	}
 	else {
 		throw SemanticError("Error in call to add, argument not a number");
 	}
+	*/
 };
 
 Expression mul(const std::vector<Expression> & args) {
@@ -276,6 +287,9 @@ Expression realNum(const std::vector<Expression> & args) { //real
 				realNum = std::real(args[0].head().asComplex());
 				return Expression(realNum);
 		}
+		else {
+			throw SemanticError("Error in call to real: wrong argument.");
+		}
 	}
 	else {
 		throw SemanticError("Error in call to real: wrong argument.");
@@ -289,6 +303,9 @@ Expression imaginary(const std::vector<Expression> & args) { //imag
 		if (args[0].isHeadComplex()) {
 			imagNum = std::imag(args[0].head().asComplex());
 			return Expression(imagNum);
+		}
+		else {
+			throw SemanticError("Error in call to imag: wrong argument.");
 		}
 	}
 	else {
@@ -304,6 +321,9 @@ Expression absoluteValue(const std::vector<Expression> & args) { //absolute valu
 			absNum = std::abs(args[0].head().asComplex());
 			return Expression(absNum);
 		}
+		else {
+			throw SemanticError("Error in call to absolute value: wrong argument.");
+		}
 	}
 	else {
 		throw SemanticError("Error in call to absolute value: wrong argument.");
@@ -317,6 +337,9 @@ Expression phaseAngle(const std::vector<Expression> & args) { //phaseAngle
 		if (args[0].isHeadComplex()) {
 			phaseAngle = std::arg(args[0].head().asComplex());
 			return Expression(phaseAngle);
+		}
+		else {
+			throw SemanticError("Error in call to phaseAngle: wrong argument.");
 		}
 	}
 	else {
@@ -332,6 +355,10 @@ Expression conjugate(const std::vector<Expression> & args) { //conjugate
 			conjugate = std::conj(args[0].head().asComplex());
 			return Expression(conjugate);
 		}
+		else {
+			throw SemanticError("Error in call to conjugate: wrong argument.");
+		}
+
 	}
 	else {
 		throw SemanticError("Error in call to conjugate: wrong argument.");

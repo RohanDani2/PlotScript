@@ -63,7 +63,7 @@ public:
   bool isHeadSymbol() const noexcept;
 
   /// convienience member to determine if head atom is a complex
-  bool Expression::isHeadComplex() const noexcept;
+  bool isHeadComplex() const noexcept;
 
   /// Evaluate expression using a post-order traversal (recursive)
   Expression eval(Environment & env);

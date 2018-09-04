@@ -33,18 +33,18 @@ Expression add(const std::vector<Expression> & args) {
 	// check all arguments are numbers, while adding
 	double result = 0;
 	std::complex<double> complexAdd(0, 0);
+	std::complex<double> allnumAddition(0, 0);
 	if (args[0].isHeadNumber() == true && args[1].isHeadComplex() == false) { //adding only real numbers
+		std::cout << "in number";
 		for (auto & a : args) {
 			if (a.isHeadNumber()) {
 				result += a.head().asNumber();
-			}
-			else {
-				throw SemanticError("Error in call to add, argument not a number");
 			}
 		}
 		return Expression(result);
 	}
 	else if (args[0].isHeadComplex() == true && args[1].isHeadNumber() == false) { //adding only complex numbers
+		std::cout << "in complex";
 		for (auto &a : args) {
 			if (a.isHeadComplex()) { //add complex numbers
 				complexAdd += a.head().asComplex();
@@ -52,19 +52,24 @@ Expression add(const std::vector<Expression> & args) {
 		}
 		return Expression(complexAdd);
 	}
-	else {
-		for (int i = 0; i < args.size(); i++) {
+	else if ((args[0].isHeadComplex() == true && args[1].isHeadNumber() == true)
+		|| (args[0].isHeadNumber() == true && args[1].isHeadComplex() == true)) {
+		std::cout << "in both";
+		for (auto i = 0; i < args.size(); i++) {
 			if (args[0].isHeadNumber() == true) {
-				std::complex<double> allnumAddition(std::real(args[i].head().asNumber()), std::imag(args[i+1].head().asComplex()));
+				std::complex<double> allnumAddition(std::real(args[i].head().asNumber()), std::imag(args[i + 1].head().asComplex()));
 				return Expression(allnumAddition);
 			}
 			else if (args[0].isHeadComplex() == true) {
-				std::complex<double> allnumAddition(std::real(args[i+1].head().asNumber()), std::imag(args[i].head().asComplex()));
+				std::complex<double> allnumAddition(std::real(args[i + 1].head().asNumber()), std::imag(args[i].head().asComplex()));
+				std::cout << allnumAddition;
 				return Expression(allnumAddition);
 			}
 		}
 	}
-	//std::complex<double> negativeSqrt(0, sqrt(std::abs(args[0].head().asNumber())));
+	else {
+		throw SemanticError("Error in call to add, argument not a number");
+	}
 };
 
 Expression mul(const std::vector<Expression> & args) {
@@ -178,7 +183,7 @@ Expression squareroot(const std::vector<Expression> & args) { //square root
 		if (args[0].isHeadNumber()) {
 			if (args[0].isHeadNumber()) {
 				result = sqrt(args[0].head().asNumber());
-				if (isnan(result)) {
+				if (std::isnan(result)) {
 					std::complex<double> negativeSqrt(0, sqrt(std::abs(args[0].head().asNumber())));
 					return Expression(negativeSqrt);
 				}
@@ -262,6 +267,76 @@ Expression tangent(const std::vector<Expression> & args) { //tan
 		throw SemanticError("Error in call to tangent: invalid number of arguments.");
 	}
 	return Expression(result);
+}
+
+Expression realNum(const std::vector<Expression> & args) { //real
+	std::complex<double> realNum(0, 0);
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadComplex()) {
+				realNum = std::real(args[0].head().asComplex());
+				return Expression(realNum);
+		}
+	}
+	else {
+		throw SemanticError("Error in call to real: wrong argument.");
+	}
+
+}
+
+Expression imaginary(const std::vector<Expression> & args) { //imag
+	std::complex<double> imagNum(0, 0);
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadComplex()) {
+			imagNum = std::imag(args[0].head().asComplex());
+			return Expression(imagNum);
+		}
+	}
+	else {
+		throw SemanticError("Error in call to imag: wrong argument.");
+	}
+
+}
+
+Expression absoluteValue(const std::vector<Expression> & args) { //absolute value
+	std::complex<double> absNum(0, 0);
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadComplex()) {
+			absNum = std::abs(args[0].head().asComplex());
+			return Expression(absNum);
+		}
+	}
+	else {
+		throw SemanticError("Error in call to absolute value: wrong argument.");
+	}
+
+}
+
+Expression phaseAngle(const std::vector<Expression> & args) { //phaseAngle
+	std::complex<double> phaseAngle(0, 0);
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadComplex()) {
+			phaseAngle = std::arg(args[0].head().asComplex());
+			return Expression(phaseAngle);
+		}
+	}
+	else {
+		throw SemanticError("Error in call to phaseAngle: wrong argument.");
+	}
+
+}
+
+Expression conjugate(const std::vector<Expression> & args) { //conjugate
+	std::complex<double> conjugate(0, 0);
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadComplex()) {
+			conjugate = std::conj(args[0].head().asComplex());
+			return Expression(conjugate);
+		}
+	}
+	else {
+		throw SemanticError("Error in call to conjugate: wrong argument.");
+	}
+
 }
 
 const double PI = std::atan2(0, -1);
@@ -382,5 +457,20 @@ void Environment::reset() {
 
 	// Procedure: tangent;
 	envmap.emplace("tan", EnvResult(ProcedureType, tangent));
+
+	// Procedure: real;
+	envmap.emplace("real", EnvResult(ProcedureType, realNum));
+
+	// Procedure: imag;
+	envmap.emplace("imag", EnvResult(ProcedureType, imaginary));
+
+	// Procedure: Absolute value
+	envmap.emplace("mag", EnvResult(ProcedureType, absoluteValue));
+
+	// Procedure: phase angle
+	envmap.emplace("arg", EnvResult(ProcedureType, phaseAngle));
+
+	// Procedure: conjugate
+	envmap.emplace("conj", EnvResult(ProcedureType, conjugate));
 
 }

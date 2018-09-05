@@ -43,26 +43,6 @@ Expression add(const std::vector<Expression> & args) {
 		}
 		return Expression(result);
 	}
-	else if (args[0].isHeadComplex() == true && args[1].isHeadNumber() == false) { //adding only complex numbers
-		std::cout << "in complex";
-		for (auto &a : args) {
-			if (a.isHeadComplex()) { //add complex numbers
-				complexAdd += a.head().asComplex();
-			}
-		}
-		return Expression(complexAdd);
-	}
-	else if ((args[0].isHeadComplex() == true && args[1].isHeadNumber() == true)
-		|| (args[0].isHeadNumber() == true && args[1].isHeadComplex() == true)) {
-		std::complex<double> allnumAddition_Val;
-		std::complex<double> allnumAddition_Val1;
-		std::cout << "in both";
-		for (auto &a : args) {	
-			//			
-		}
-		allnumAddition_Val += allnumAddition_Val1;
-		return Expression(allnumAddition_Val);
-	}
 	else {
 		throw SemanticError("Error in call to add, argument not a number");
 	}
@@ -78,12 +58,6 @@ Expression mul(const std::vector<Expression> & args) {
 			result *= a.head().asNumber();
 		}
 		return Expression(result);
-	}
-	else if (args[0].isHeadComplex() || args[0].isHeadNumber()) {
-		for (auto & a : args) {
-			complexMultiply *= a.head().asComplex();
-		}
-		return Expression(complexMultiply);
 	}
 	else {
 		throw SemanticError("Error in call to mul, argument not a number");
@@ -114,10 +88,6 @@ Expression subneg(const std::vector<Expression> & args) {
 			result = args[0].head().asNumber() - args[1].head().asNumber();
 			return Expression(result);
 		}
-		else if ((args[0].isHeadComplex()) && (args[1].isHeadComplex())) {
-			complexSubtract = args[0].head().asComplex() - args[1].head().asComplex();
-			return Expression(complexSubtract);
-		}
 		else {
 			throw SemanticError("Error in call to subtraction: invalid argument.");
 		}
@@ -137,10 +107,6 @@ Expression div(const std::vector<Expression> & args) {
 			result = args[0].head().asNumber() / args[1].head().asNumber();
 			return Expression(result);
 		}
-		else if ((args[0].isHeadComplex()) && (args[1].isHeadComplex())) {
-			complexDivide = args[0].head().asComplex() / args[1].head().asComplex();
-			return Expression(complexDivide);
-		}
 		else {
 			throw SemanticError("Error in call to division: invalid argument.");
 		}
@@ -158,10 +124,6 @@ Expression exponent(const std::vector<Expression> & args) { //exponent
 		if ((args[0].isHeadNumber()) && (args[1].isHeadNumber())) {
 			result = pow(args[0].head().asNumber(), args[1].head().asNumber());
 			return Expression(result);
-		}
-		else if ((args[0].isHeadComplex()) && (args[1].isHeadComplex())) {
-			complexExponent = pow(args[0].head().asComplex(), args[1].head().asComplex());
-			return Expression(complexExponent);
 		}
 		else {
 			throw SemanticError("Error in call to exponent: invalid argument.");

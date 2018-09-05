@@ -198,7 +198,7 @@ Expression Expression::eval(Environment & env) {
 
 
 std::ostream & operator<<(std::ostream & out, const Expression & exp) {
-	if (exp.isHeadNumber() == true && exp.isHeadSymbol() == true) {
+	if (exp.isHeadNumber() == true || exp.isHeadSymbol() == true) {
 		out << "(";
 	}
 		out << exp.head();
@@ -207,7 +207,7 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp) {
 			out << *e;
 		}
 
-		if (exp.isHeadNumber() == true && exp.isHeadSymbol() == true) {
+		if (exp.isHeadNumber() == true || exp.isHeadSymbol() == true) {
 			out << ")";
 		}
 

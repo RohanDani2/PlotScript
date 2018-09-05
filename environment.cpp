@@ -52,27 +52,13 @@ Expression add(const std::vector<Expression> & args) {
 		}
 		return Expression(complexAdd);
 	}
-	/*
 	else if ((args[0].isHeadComplex() == true && args[1].isHeadNumber() == true)
 		|| (args[0].isHeadNumber() == true && args[1].isHeadComplex() == true)) {
 		std::complex<double> allnumAddition_Val;
 		std::complex<double> allnumAddition_Val1;
 		std::cout << "in both";
-		for (auto i = 0; i < args.size(); i++) {
-			if (args[0].isHeadNumber() == true) {
-				std::complex<double> allnumAddition(std::real(args[i].head().asNumber()), std::imag(args[i + 1].head().asComplex()));
-				allnumAddition_Val += args[i].head().asComplex();
-				//return Expression(allnumAddition);
-			}
-			else if (args[0].isHeadComplex() == true) {
-				std::complex<double> allnumAddition(std::real(args[i + 1].head().asNumber()), std::imag(args[i].head().asComplex()));
-				std::cout << allnumAddition;
-				allnumAddition_Val1 += args[i].head().asComplex();
-				//return Expression(allnumAddition);
-			}
-			else {
-				throw SemanticError("Error in call to add, argument not a complex number");
-			}		
+		for (auto &a : args) {	
+			//			
 		}
 		allnumAddition_Val += allnumAddition_Val1;
 		return Expression(allnumAddition_Val);
@@ -80,7 +66,6 @@ Expression add(const std::vector<Expression> & args) {
 	else {
 		throw SemanticError("Error in call to add, argument not a number");
 	}
-	*/
 };
 
 Expression mul(const std::vector<Expression> & args) {

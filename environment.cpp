@@ -89,7 +89,7 @@ Expression subneg(const std::vector<Expression> & args) {
 
 	double result = 0;
 	std::complex<double> complexSubtract(0, 0);
-
+	std::string stringVal = nullptr;
 	// preconditions
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
@@ -98,7 +98,7 @@ Expression subneg(const std::vector<Expression> & args) {
 		else if (args[0].isHeadComplex()) {
 			complexSubtract = -args[0].head().asComplex();
 		}
-		else {
+ 		else {
 			throw SemanticError("Error in call to negate: invalid argument.");
 		}
 	}
@@ -106,6 +106,18 @@ Expression subneg(const std::vector<Expression> & args) {
 		if ((args[0].isHeadNumber()) && (args[1].isHeadNumber())) {
 			result = args[0].head().asNumber() - args[1].head().asNumber();
 			return Expression(result);
+		}
+		else if ((args[0].isHeadComplex()) && (args[1].isHeadComplex())) {
+			complexSubtract = args[0].head().asComplex() - args[1].head().asComplex();
+			return Expression(complexSubtract);
+		}
+		else if ((args[0].isHeadComplex()) && (args[1].isHeadNumber())) {
+			complexSubtract = args[0].head().asComplex() - args[1].head().asNumber();
+			return Expression(complexSubtract);
+		}
+		else if ((args[0].isHeadNumber()) && (args[1].isHeadComplex())) {
+			complexSubtract = args[0].head().asNumber() - args[1].head().asComplex();
+			return Expression(complexSubtract);
 		}
 		else {
 			throw SemanticError("Error in call to subtraction: invalid argument.");
@@ -155,6 +167,18 @@ Expression exponent(const std::vector<Expression> & args) { //exponent
 		if ((args[0].isHeadNumber()) && (args[1].isHeadNumber())) {
 			result = pow(args[0].head().asNumber(), args[1].head().asNumber());
 			return Expression(result);
+		}
+		else if ((args[0].isHeadComplex()) && (args[1].isHeadComplex())) {
+			complexExponent = pow(args[0].head().asComplex(), args[1].head().asComplex());
+			return Expression(complexExponent);
+		}
+		else if ((args[0].isHeadComplex()) && (args[1].isHeadNumber())) {
+			complexExponent = pow(args[0].head().asComplex(), args[1].head().asNumber());
+			return Expression(complexExponent);
+		}
+		else if ((args[0].isHeadNumber()) && (args[1].isHeadComplex())) {
+			complexExponent = pow(args[0].head().asNumber(), args[1].head().asComplex());
+			return Expression(complexExponent);
 		}
 		else {
 			throw SemanticError("Error in call to exponent: invalid argument.");
@@ -265,6 +289,10 @@ Expression realNum(const std::vector<Expression> & args) { //real
 			realNum = std::real(args[0].head().asComplex());
 			return Expression(realNum);
 		}
+		else if (args[1].isHeadComplex()) {
+			realNum = std::real(args[1].head().asComplex());
+			return Expression(realNum);
+		}
 		else {
 			throw SemanticError("Error in call to real: wrong argument.");
 		}
@@ -280,6 +308,10 @@ Expression imaginary(const std::vector<Expression> & args) { //imag
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadComplex()) {
 			imagNum = std::imag(args[0].head().asComplex());
+			return Expression(imagNum);
+		}
+		else if (args[1].isHeadComplex()) {
+			imagNum = std::imag(args[1].head().asComplex());
 			return Expression(imagNum);
 		}
 		else {
@@ -299,6 +331,10 @@ Expression absoluteValue(const std::vector<Expression> & args) { //absolute valu
 			absNum = std::abs(args[0].head().asComplex());
 			return Expression(absNum);
 		}
+		else if (args[1].isHeadComplex()) {
+			absNum = std::abs(args[1].head().asComplex());
+			return Expression(absNum);
+		}
 		else {
 			throw SemanticError("Error in call to absolute value: wrong argument.");
 		}
@@ -316,6 +352,10 @@ Expression phaseAngle(const std::vector<Expression> & args) { //phaseAngle
 			phaseAngle = std::arg(args[0].head().asComplex());
 			return Expression(phaseAngle);
 		}
+		else if (args[1].isHeadComplex()) {
+			phaseAngle = std::arg(args[1].head().asComplex());
+			return Expression(phaseAngle);
+		}
 		else {
 			throw SemanticError("Error in call to phaseAngle: wrong argument.");
 		}
@@ -331,6 +371,10 @@ Expression conjugate(const std::vector<Expression> & args) { //conjugate
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadComplex()) {
 			conjugate = std::conj(args[0].head().asComplex());
+			return Expression(conjugate);
+		}
+		else if (args[1].isHeadComplex()) {
+			conjugate = std::conj(args[1].head().asComplex());
 			return Expression(conjugate);
 		}
 		else {

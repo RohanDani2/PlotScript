@@ -32,16 +32,25 @@ Expression add(const std::vector<Expression> & args) {
 
 	// check all arguments are numbers, while adding
 	double result = 0;
-	std::complex<double> complexAdd(0, 0);
+	std::complex<double> complexVal(0, 0);
 	std::complex<double> allnumAddition(0, 0);
-	if (args[0].isHeadNumber() == true && args[1].isHeadComplex() == false) { //adding only real numbers
-		std::cout << "in number";
+	if (args[0].isHeadNumber() == true || args[0].isHeadComplex() == true) { //adding only real numbers
 		for (auto & a : args) {
 			if (a.isHeadNumber()) {
 				result += a.head().asNumber();
 			}
+			else if (a.isHeadComplex()) {
+				complexVal += a.head().asComplex();
+			}
 		}
-		return Expression(result);
+		if (args[0].isHeadNumber() == true && args[1].isHeadNumber() == true) {
+			return Expression(result);
+		}
+		else {
+			allnumAddition += complexVal;
+			allnumAddition += result;
+			return Expression(allnumAddition);
+		}
 	}
 	else {
 		throw SemanticError("Error in call to add, argument not a number");
@@ -231,8 +240,8 @@ Expression realNum(const std::vector<Expression> & args) { //real
 	std::complex<double> realNum(0, 0);
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadComplex()) {
-				realNum = std::real(args[0].head().asComplex());
-				return Expression(realNum);
+			realNum = std::real(args[0].head().asComplex());
+			return Expression(realNum);
 		}
 		else {
 			throw SemanticError("Error in call to real: wrong argument.");
@@ -388,7 +397,7 @@ Procedure Environment::get_proc(const Atom & sym) const {
 /*
 Reset the environment to the default state. First remove all entries and
 then re-add the default ones.
- */
+*/
 void Environment::reset() {
 
 	envmap.clear();

@@ -126,6 +126,18 @@ Expression div(const std::vector<Expression> & args) {
 			result = args[0].head().asNumber() / args[1].head().asNumber();
 			return Expression(result);
 		}
+		else if ((args[0].isHeadComplex() && (args[1].isHeadComplex()))) {
+			complexDivide = args[0].head().asComplex() / args[1].head().asComplex();
+			return Expression(complexDivide);
+		}
+		else if ((args[0].isHeadComplex() && (args[1].isHeadNumber()))) {
+			complexDivide = args[0].head().asComplex() / args[1].head().asNumber();
+			return Expression(complexDivide);
+		}
+		else if ((args[0].isHeadNumber() && (args[1].isHeadComplex()))) {
+			complexDivide = args[0].head().asNumber() / args[1].head().asComplex();
+			return Expression(complexDivide);
+		}
 		else {
 			throw SemanticError("Error in call to division: invalid argument.");
 		}

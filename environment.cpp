@@ -62,17 +62,27 @@ Expression mul(const std::vector<Expression> & args) {
 	// check all arguments are numbers, while multiplying
 	double result = 1;
 	std::complex<double> complexMultiply(1, 0);
-	if (args[0].isHeadNumber()) {
+	std::complex<double> allNumMultiply(1, 0);
+	if (args[0].isHeadNumber() == true || args[0].isHeadComplex() == true) {
 		for (auto & a : args) {
-			result *= a.head().asNumber();
+			if (a.isHeadNumber()) {
+				result *= a.head().asNumber();
+			}
+			else if (a.isHeadComplex()) {
+				complexMultiply *= a.head().asComplex();
+			}
 		}
-		return Expression(result);
+		if (args[0].isHeadNumber() == true && args[1].isHeadNumber() == true) {
+			return Expression(result);
+		}
+		else {
+			allNumMultiply = result * complexMultiply;
+			return Expression(allNumMultiply);
+		}
 	}
 	else {
 		throw SemanticError("Error in call to mul, argument not a number");
 	}
-
-
 };
 
 Expression subneg(const std::vector<Expression> & args) {

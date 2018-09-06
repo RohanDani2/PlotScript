@@ -22,11 +22,17 @@ Each of the functions below have the signature that corresponds to the
 typedef'd Procedure function pointer.
 **********************************************************************/
 
+
+
 // the default procedure always returns an expresison of type None
 Expression default_proc(const std::vector<Expression> & args) {
 	args.size(); // make compiler happy we used this parameter
 	return Expression();
 };
+
+const double PI = std::atan2(0, -1);
+const double EXP = std::exp(1);
+std::complex<double> i(0.0, 1.0);
 
 Expression add(const std::vector<Expression> & args) {
 
@@ -89,7 +95,7 @@ Expression subneg(const std::vector<Expression> & args) {
 
 	double result = 0;
 	std::complex<double> complexSubtract(0, 0);
-	std::string stringVal = nullptr;
+	std::complex<double> allnumSubtract(0, 0);
 	// preconditions
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
@@ -97,6 +103,17 @@ Expression subneg(const std::vector<Expression> & args) {
 		}
 		else if (args[0].isHeadComplex()) {
 			complexSubtract = -args[0].head().asComplex();
+		}
+		else if (args[0].isHeadSymbol()) {
+			if (args[0].head() == i) {
+				complexSubtract = -i;
+			}
+			else if (args[0].head() == EXP) {
+				result = -EXP;
+			}
+			else if (args[0].head() == PI) {
+				result = -PI;
+			}
 		}
  		else {
 			throw SemanticError("Error in call to negate: invalid argument.");
@@ -126,7 +143,12 @@ Expression subneg(const std::vector<Expression> & args) {
 	else {
 		throw SemanticError("Error in call to subtraction or negation: invalid number of arguments.");
 	}
-
+	if (args[0].isHeadNumber()) {
+		return Expression(result);
+	}
+	else if (args[0].isHeadComplex()) {
+		return Expression(complexSubtract);
+	}
 };
 
 Expression div(const std::vector<Expression> & args) {
@@ -236,9 +258,14 @@ Expression naturalLog(const std::vector<Expression> & args) { //natural Log
 
 Expression sine(const std::vector<Expression> & args) { //sine
 	double result = 0;
+	std::complex<double> sineComplex(0, 0);
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
 			result = sin(args[0].head().asNumber());
+		}
+		else if (args[0].isHeadComplex()) {
+			sineComplex = sin(args[0].head().asComplex());
+			return Expression(sineComplex);
 		}
 		else {
 			throw SemanticError("Error in call to sine: invalid argument.");
@@ -252,25 +279,37 @@ Expression sine(const std::vector<Expression> & args) { //sine
 
 Expression cosine(const std::vector<Expression> & args) { //cosine
 	double result = 0;
+	std::complex<double> cosineComplex(0,0);
 	if (nargs_equal(args, 1)) {
-		if (args[0].isHeadNumber()) {
-			result = cos(args[0].head().asNumber());
-		}
-		else {
-			throw SemanticError("Error in call to cosine: invalid argument.");
+		for (auto &a : args) {
+			if (a.isHeadNumber()) {
+				result = cos(a.head().asNumber());
+				return Expression(result);
+			}
+			else if (a.isHeadComplex()) {
+				cosineComplex = cos(a.head().asComplex());
+				return Expression(cosineComplex);
+			}
+			else {
+				throw SemanticError("Error in call to cosine: invalid argument.");
+			}
 		}
 	}
 	else {
 		throw SemanticError("Error in call to cosine: invalid number of arguments.");
 	}
-	return Expression(result);
 }
 
 Expression tangent(const std::vector<Expression> & args) { //tan
 	double result = 0;
+	std::complex<double> tangentComplex(0, 0);
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
 			result = tan(args[0].head().asNumber());
+		}
+		else if (args[0].isHeadComplex()) {
+			tangentComplex = tan(args[0].head().asComplex());
+			return Expression(tangentComplex);
 		}
 		else {
 			throw SemanticError("Error in call to tangent: invalid argument.");
@@ -387,11 +426,6 @@ Expression conjugate(const std::vector<Expression> & args) { //conjugate
 	}
 
 }
-
-const double PI = std::atan2(0, -1);
-const double EXP = std::exp(1);
-std::complex<double> i(0.0, 1.0);
-
 
 Environment::Environment() {
 

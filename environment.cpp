@@ -35,9 +35,8 @@ const double EXP = std::exp(1);
 std::complex<double> i(0.0, 1.0);
 
 Expression add(const std::vector<Expression> & args) {
-
 	// check all arguments are numbers, while adding
-	double result = 0;
+	double result = 0.0;
 	std::complex<double> complexVal(0, 0);
 	std::complex<double> allnumAddition(0, 0);
 	if (args[0].isHeadNumber() == true || args[0].isHeadComplex() == true) { //adding only real numbers
@@ -64,9 +63,8 @@ Expression add(const std::vector<Expression> & args) {
 };
 
 Expression mul(const std::vector<Expression> & args) {
-
 	// check all arguments are numbers, while multiplying
-	double result = 1;
+	double result = 1.0;
 	std::complex<double> complexMultiply(1, 0);
 	std::complex<double> allNumMultiply(1, 0);
 	if (args[0].isHeadNumber() == true || args[0].isHeadComplex() == true) {
@@ -92,8 +90,7 @@ Expression mul(const std::vector<Expression> & args) {
 };
 
 Expression subneg(const std::vector<Expression> & args) {
-
-	double result = 0;
+	double result = 0.0;
 	std::complex<double> complexSubtract(0, 0);
 	std::complex<double> allnumSubtract(0, 0);
 	// preconditions
@@ -152,8 +149,7 @@ Expression subneg(const std::vector<Expression> & args) {
 };
 
 Expression div(const std::vector<Expression> & args) {
-
-	double result = 0;
+	double result = 0.0;
 	std::complex<double> complexDivide(0, 0);
 	if (nargs_equal(args, 2)) {
 		if ((args[0].isHeadNumber()) && (args[1].isHeadNumber())) {
@@ -183,7 +179,7 @@ Expression div(const std::vector<Expression> & args) {
 };
 
 Expression exponent(const std::vector<Expression> & args) { //exponent
-	double result = 0;
+	double result = 0.0;
 	std::complex<double> complexExponent(0, 0);
 	if (nargs_equal(args, 2)) {
 		if ((args[0].isHeadNumber()) && (args[1].isHeadNumber())) {
@@ -212,7 +208,7 @@ Expression exponent(const std::vector<Expression> & args) { //exponent
 }
 
 Expression squareroot(const std::vector<Expression> & args) { //square root
-	double result = 0;
+	double result = 0.0;
 	std::complex<double> complexSqrt(0, 0);
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
@@ -241,7 +237,7 @@ Expression squareroot(const std::vector<Expression> & args) { //square root
 }
 
 Expression naturalLog(const std::vector<Expression> & args) { //natural Log
-	double result = 0;
+	double result = 0.0;
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
 			result = log(args[0].head().asNumber());
@@ -257,7 +253,7 @@ Expression naturalLog(const std::vector<Expression> & args) { //natural Log
 }
 
 Expression sine(const std::vector<Expression> & args) { //sine
-	double result = 0;
+	double result = 0.0;
 	std::complex<double> sineComplex(0, 0);
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
@@ -278,7 +274,7 @@ Expression sine(const std::vector<Expression> & args) { //sine
 }
 
 Expression cosine(const std::vector<Expression> & args) { //cosine
-	double result = 0;
+	double result = 0.0;
 	std::complex<double> cosineComplex(0,0);
 	if (nargs_equal(args, 1)) {
 		for (auto &a : args) {
@@ -301,7 +297,7 @@ Expression cosine(const std::vector<Expression> & args) { //cosine
 }
 
 Expression tangent(const std::vector<Expression> & args) { //tan
-	double result = 0;
+	double result = 0.0;
 	std::complex<double> tangentComplex(0, 0);
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
@@ -322,7 +318,7 @@ Expression tangent(const std::vector<Expression> & args) { //tan
 }
 
 Expression realNum(const std::vector<Expression> & args) { //real
-	double value = NULL;
+	double value = 0.0;
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadComplex()) {
 			value = std::real(args[0].head().asComplex());
@@ -338,7 +334,7 @@ Expression realNum(const std::vector<Expression> & args) { //real
 }
 
 Expression imaginary(const std::vector<Expression> & args) { //imag
-	double value = NULL;
+	double value = 0.0;
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadComplex()) {
 			value = std::imag(args[0].head().asComplex());
@@ -354,7 +350,7 @@ Expression imaginary(const std::vector<Expression> & args) { //imag
 }
 
 Expression absoluteValue(const std::vector<Expression> & args) { //absolute value
-	double value = NULL;
+	double value = 0.0;
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadComplex()) {
 			value = std::abs(args[0].head().asComplex());
@@ -370,11 +366,10 @@ Expression absoluteValue(const std::vector<Expression> & args) { //absolute valu
 }
 
 Expression phaseAngle(const std::vector<Expression> & args) { //phaseAngle
-	std::complex<double> phaseAngle(0, 0);
+	double value = 0.0;
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadComplex()) {
-			phaseAngle = std::arg(args[0].head().asComplex());
-			return Expression(phaseAngle);
+			value = std::arg(args[0].head().asComplex());
 		}
 		else {
 			throw SemanticError("Error in call to phaseAngle: not complex.");
@@ -383,7 +378,7 @@ Expression phaseAngle(const std::vector<Expression> & args) { //phaseAngle
 	else {
 		throw SemanticError("Error in call to phaseAngle: not one argument.");
 	}
-
+	return Expression(value);
 }
 
 Expression conjugate(const std::vector<Expression> & args) { //conjugate
@@ -405,7 +400,6 @@ Expression conjugate(const std::vector<Expression> & args) { //conjugate
 }
 
 Environment::Environment() {
-
 	reset();
 }
 

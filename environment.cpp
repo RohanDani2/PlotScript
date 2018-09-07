@@ -39,21 +39,24 @@ Expression add(const std::vector<Expression> & args) {
 	double result = 0.0;
 	std::complex<double> complexVal(0, 0);
 	std::complex<double> allnumAddition(0, 0);
+	bool value = false;
 	if (args[0].isHeadNumber() == true || args[0].isHeadComplex() == true) { //adding only real numbers
 		for (auto & a : args) {
 			if (a.isHeadNumber()) {		//adds within for loop for numbers
 				result += a.head().asNumber();
 			}
 			else if (a.isHeadComplex()) { //adds within for loop for complex nums
+				value = true;
 				complexVal += a.head().asComplex();
 			}
 		}
-		if (args[0].isHeadNumber() == true && args[1].isHeadNumber() == true) {
+		if (value == false) {
 			return Expression(result); //returns double value if both vals are numbers
 		}
 		else {
 			allnumAddition += complexVal;
 			allnumAddition += result;
+			value = false;
 			return Expression(allnumAddition); //returns complex double value if either is complex
 		}
 	}
@@ -67,20 +70,23 @@ Expression mul(const std::vector<Expression> & args) {
 	double result = 1.0;
 	std::complex<double> complexMultiply(1, 0);
 	std::complex<double> allNumMultiply(1, 0);
+	bool value = false;
 	if (args[0].isHeadNumber() == true || args[0].isHeadComplex() == true) {
 		for (auto & a : args) {
 			if (a.isHeadNumber()) {  //calculates for real value
 				result *= a.head().asNumber();
 			}
 			else if (a.isHeadComplex()) {  //calculates for imaginary value 
+				value = true;
 				complexMultiply *= a.head().asComplex();
 			}
 		}
-		if (args[0].isHeadNumber() == true && args[1].isHeadNumber() == true) {
+		if (value == false) {
 			return Expression(result); //returns double value if both vals are numbers
 		}
 		else {
 			allNumMultiply = result * complexMultiply;
+			value = true;
 			return Expression(allNumMultiply); //returns double value if both vals are complex
 		}
 	}

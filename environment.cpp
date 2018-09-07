@@ -326,20 +326,15 @@ Expression realNum(const std::vector<Expression> & args) { //real
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadComplex()) {
 			realNum = std::real(args[0].head().asComplex());
-			return Expression(realNum);
-		}
-		else if (args[1].isHeadComplex()) {
-			realNum = std::real(args[1].head().asComplex());
-			return Expression(realNum);
 		}
 		else {
-			throw SemanticError("Error in call to real: wrong argument.");
+			throw SemanticError("Error in call to realNum: not complex.");
 		}
 	}
 	else {
-		throw SemanticError("Error in call to real: wrong argument.");
+		throw SemanticError("Error in call to realNum: more than one argument.");
 	}
-
+	return Expression(realNum);
 }
 
 Expression imaginary(const std::vector<Expression> & args) { //imag
@@ -347,20 +342,15 @@ Expression imaginary(const std::vector<Expression> & args) { //imag
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadComplex()) {
 			imagNum = std::imag(args[0].head().asComplex());
-			return Expression(imagNum);
-		}
-		else if (args[1].isHeadComplex()) {
-			imagNum = std::imag(args[1].head().asComplex());
-			return Expression(imagNum);
 		}
 		else {
-			throw SemanticError("Error in call to imag: wrong argument.");
+			throw SemanticError("Error in call to imaginary: not complex.");
 		}
 	}
 	else {
-		throw SemanticError("Error in call to imag: wrong argument.");
+		throw SemanticError("Error in call to imaginary: more than one argument.");
 	}
-
+	return Expression(imagNum);
 }
 
 Expression absoluteValue(const std::vector<Expression> & args) { //absolute value
@@ -368,20 +358,15 @@ Expression absoluteValue(const std::vector<Expression> & args) { //absolute valu
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadComplex()) {
 			absNum = std::abs(args[0].head().asComplex());
-			return Expression(absNum);
-		}
-		else if (args[1].isHeadComplex()) {
-			absNum = std::abs(args[1].head().asComplex());
-			return Expression(absNum);
 		}
 		else {
-			throw SemanticError("Error in call to absolute value: wrong argument.");
+			throw SemanticError("Error in call to absoluteValue: not complex.");
 		}
 	}
 	else {
-		throw SemanticError("Error in call to absolute value: wrong argument.");
+		throw SemanticError("Error in call to absoluteValue: not one argument.");
 	}
-
+	return Expression(absNum);
 }
 
 Expression phaseAngle(const std::vector<Expression> & args) { //phaseAngle
@@ -391,16 +376,12 @@ Expression phaseAngle(const std::vector<Expression> & args) { //phaseAngle
 			phaseAngle = std::arg(args[0].head().asComplex());
 			return Expression(phaseAngle);
 		}
-		else if (args[1].isHeadComplex()) {
-			phaseAngle = std::arg(args[1].head().asComplex());
-			return Expression(phaseAngle);
-		}
 		else {
-			throw SemanticError("Error in call to phaseAngle: wrong argument.");
+			throw SemanticError("Error in call to phaseAngle: not complex.");
 		}
 	}
 	else {
-		throw SemanticError("Error in call to phaseAngle: wrong argument.");
+		throw SemanticError("Error in call to phaseAngle: not one argument.");
 	}
 
 }
@@ -412,17 +393,13 @@ Expression conjugate(const std::vector<Expression> & args) { //conjugate
 			conjugate = std::conj(args[0].head().asComplex());
 			return Expression(conjugate);
 		}
-		else if (args[1].isHeadComplex()) {
-			conjugate = std::conj(args[1].head().asComplex());
-			return Expression(conjugate);
-		}
 		else {
-			throw SemanticError("Error in call to conjugate: wrong argument.");
+			throw SemanticError("Error in call to conjugate: not complex.");
 		}
 
 	}
 	else {
-		throw SemanticError("Error in call to conjugate: wrong argument.");
+		throw SemanticError("Error in call to conjugate: more than 1 argument.");
 	}
 
 }
@@ -555,5 +532,4 @@ void Environment::reset() {
 
 	// Procedure: conjugate
 	envmap.emplace("conj", EnvResult(ProcedureType, conjugate));
-
 }

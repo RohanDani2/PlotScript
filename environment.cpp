@@ -322,10 +322,10 @@ Expression tangent(const std::vector<Expression> & args) { //tan
 }
 
 Expression realNum(const std::vector<Expression> & args) { //real
-	std::complex<double> realNum(0, 0);
+	double value = NULL;
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadComplex()) {
-			realNum = std::real(args[0].head().asComplex());
+			value = std::real(args[0].head().asComplex());
 		}
 		else {
 			throw SemanticError("Error in call to realNum: not complex.");
@@ -334,14 +334,14 @@ Expression realNum(const std::vector<Expression> & args) { //real
 	else {
 		throw SemanticError("Error in call to realNum: more than one argument.");
 	}
-	return Expression(realNum);
+	return Expression(value);
 }
 
 Expression imaginary(const std::vector<Expression> & args) { //imag
-	std::complex<double> imagNum(0, 0);
+	double value = NULL;
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadComplex()) {
-			imagNum = std::imag(args[0].head().asComplex());
+			value = std::imag(args[0].head().asComplex());
 		}
 		else {
 			throw SemanticError("Error in call to imaginary: not complex.");
@@ -350,14 +350,14 @@ Expression imaginary(const std::vector<Expression> & args) { //imag
 	else {
 		throw SemanticError("Error in call to imaginary: more than one argument.");
 	}
-	return Expression(imagNum);
+	return Expression(value);
 }
 
 Expression absoluteValue(const std::vector<Expression> & args) { //absolute value
-	std::complex<double> absNum(0, 0);
+	double value = NULL;
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadComplex()) {
-			absNum = std::abs(args[0].head().asComplex());
+			value = std::abs(args[0].head().asComplex());
 		}
 		else {
 			throw SemanticError("Error in call to absoluteValue: not complex.");
@@ -366,7 +366,7 @@ Expression absoluteValue(const std::vector<Expression> & args) { //absolute valu
 	else {
 		throw SemanticError("Error in call to absoluteValue: not one argument.");
 	}
-	return Expression(absNum);
+	return Expression(value);
 }
 
 Expression phaseAngle(const std::vector<Expression> & args) { //phaseAngle

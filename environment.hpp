@@ -95,11 +95,13 @@ private:
     EnvResultType type;
     Expression exp; // used when type is ExpressionType
     Procedure proc; // used when type is ProcedureType
+	//List li;
 
     // constructors for use in container emplace
     EnvResult(){};
     EnvResult(EnvResultType t, Expression e) : type(t), exp(e){};
     EnvResult(EnvResultType t, Procedure p) : type(t), proc(p){};
+
   };
 
   // the environment map

@@ -119,6 +119,18 @@ Expression Expression::handle_lookup(const Atom & head, const Environment & env)
 	}
 }
 
+Expression Expression::handle_list(Environment & env) {
+	Expression result = m_head;
+	if (m_tail.size() == 0) {
+		return result;
+	}
+	for (Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it) {
+		result.m_tail.push_back(it->eval(env));
+	}
+
+	return result;
+}
+
 Expression Expression::handle_begin(Environment & env) {
 
 	if (m_tail.size() == 0) {
@@ -136,9 +148,11 @@ Expression Expression::handle_begin(Environment & env) {
 
 
 Expression Expression::handle_define(Environment & env) {
+	// but tail[0] must not be a special-form or procedure
+	std::string s = m_tail[0].head().asSymbol();
 
 	// tail must have size 3 or error
-	if (m_tail.size() != 2) {
+	if (m_tail.size() != 2 && (s != "list")) {
 		throw SemanticError("Error during evaluation: invalid number of arguments to define");
 	}
 
@@ -147,8 +161,6 @@ Expression Expression::handle_define(Environment & env) {
 		throw SemanticError("Error during evaluation: first argument to define not symbol");
 	}
 
-	// but tail[0] must not be a special-form or procedure
-	std::string s = m_tail[0].head().asSymbol();
 	if ((s == "define") || (s == "begin")) {
 		throw SemanticError("Error during evaluation: attempt to redefine a special-form");
 	}
@@ -186,6 +198,9 @@ Expression Expression::eval(Environment & env) {
 	else if (m_head.isSymbol() && m_head.asSymbol() == "define") {
 		return handle_define(env);
 	}
+	else if (m_head.isSymbol() && m_head.asSymbol() == "list") {
+		return handle_list(env);
+	}
 	// else attempt to treat as procedure
 	else {
 		std::vector<Expression> results;
@@ -198,18 +213,23 @@ Expression Expression::eval(Environment & env) {
 
 
 std::ostream & operator<<(std::ostream & out, const Expression & exp) {
-	if (exp.isHeadNumber() == true || exp.isHeadSymbol() == true) {
+	if ((exp.isHeadNumber() == true || exp.isHeadSymbol() == true)) {
 		out << "(";
 	}
+	if ((exp.head().isSymbol() && exp.head().asSymbol() != "list") || (exp.head().isNumber() || exp.head().isComplex())) {
 		out << exp.head();
+	}
 
-		for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e) {
-			out << *e;
+	for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e) {
+		out << *e;
+		if (e != exp.tailConstEnd() - 1) {
+			out << " ";
 		}
+	}
 
-		if (exp.isHeadNumber() == true || exp.isHeadSymbol() == true) {
-			out << ")";
-		}
+	if (exp.isHeadNumber() == true || exp.isHeadSymbol() == true) {
+		out << ")";
+	}
 
 	return out;
 }

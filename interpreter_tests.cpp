@@ -322,3 +322,13 @@ TEST_CASE( "Test using number as procedure", "[interpreter]" ) {
   
   REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
 }
+
+TEST_CASE("Test list function", "[list]") {
+
+	{ // list, binary case
+		std::string program = "(list 2)";
+		INFO(program);
+		Expression result = run(program);
+		REQUIRE(result == Expression(2));
+	}
+}

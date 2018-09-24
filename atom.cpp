@@ -15,6 +15,10 @@ Atom::Atom(std::complex<double> myComplex) {
 	setComplex(myComplex);
 }
 
+//Atom::Atom(std::vector<Expression> myList) {
+//	setList(myList);
+//}
+
 Atom::Atom(const Token & token) : Atom() {
 
 	// is token a number?
@@ -94,6 +98,9 @@ bool Atom::isComplex() const noexcept {
 	return m_type == ComplexKind;
 }
 
+bool Atom::isList() const noexcept {
+	return m_type == ListKind;
+}
 
 void Atom::setNumber(double value) {
 	m_type = NumberKind;
@@ -108,6 +115,7 @@ void Atom::setComplex(std::complex<double> myComplex) {
 void Atom::setSymbol(const std::string & value) {
 
 	// we need to ensure the destructor of the symbol string is called
+
 	if (m_type == SymbolKind) {
 		stringValue.~basic_string();
 	}
@@ -117,7 +125,6 @@ void Atom::setSymbol(const std::string & value) {
 	// copy construct in place
 	new (&stringValue) std::string(value);
 }
-
 
 double Atom::asNumber() const noexcept {
 
@@ -138,6 +145,10 @@ std::string Atom::asSymbol() const noexcept {
 
 	return result;
 }
+
+//std::vector<Expression> Atom::asList() const noexcept {
+//	return (m_type == ListKind) ? listValue : std::vector<Expression>;
+//}
 
 bool Atom::operator==(const Atom & right) const noexcept {
 
@@ -188,5 +199,8 @@ std::ostream & operator<<(std::ostream & out, const Atom & a) {
 	if (a.isComplex()) {
 		out << a.asComplex();
 	}
+	//if (a.isList()) {
+	//	out << a.asList();
+	//}
 	return out;
 }

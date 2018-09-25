@@ -32,6 +32,8 @@ public:
 	*/
 	Expression(const Atom & a);
 
+	Expression(const std::vector<Expression> results);
+
 	/// deep-copy construct an expression (recursive)
 	Expression(const Expression & a);
 
@@ -72,7 +74,6 @@ public:
 	bool operator==(const Expression & exp) const noexcept;
 
 private:
-
 	// the head of the expression
 	Atom m_head;
 

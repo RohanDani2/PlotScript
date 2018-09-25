@@ -9,8 +9,13 @@
 Expression::Expression() {}
 
 Expression::Expression(const Atom & a) {
-
 	m_head = a;
+}
+
+Expression::Expression(const std::vector<Expression> results) {
+	for (int i = 0; i < results.size(); i++) {
+		m_tail.push_back(results[i]);
+	}
 }
 
 // recursive copy
@@ -61,7 +66,6 @@ void Expression::append(const Atom & a) {
 	m_tail.emplace_back(a);
 }
 
-
 Expression * Expression::tail() {
 	Expression * ptr = nullptr;
 
@@ -104,6 +108,9 @@ Expression Expression::handle_lookup(const Atom & head, const Environment & env)
 		if (env.is_exp(head)) {
 			return env.get_exp(head);
 		}
+		else if (head.asSymbol() == "list" && m_tail.empty()) {
+			return Expression(head);
+		}
 		else {
 			throw SemanticError("Error during evaluation: unknown symbol");
 		}
@@ -121,13 +128,9 @@ Expression Expression::handle_lookup(const Atom & head, const Environment & env)
 
 Expression Expression::handle_list(Environment & env) {
 	Expression result = m_head;
-	if (m_tail.size() == 0) {
-		return result;
-	}
 	for (Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it) {
 		result.m_tail.push_back(it->eval(env));
 	}
-
 	return result;
 }
 

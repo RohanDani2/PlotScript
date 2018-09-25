@@ -118,7 +118,7 @@ Expression subneg(const std::vector<Expression> & args) {
 				result = -PI; //negates pi
 			}
 		}
- 		else {
+		else {
 			throw SemanticError("Error in call to negate: invalid argument.");
 		}
 	}
@@ -285,7 +285,7 @@ Expression sine(const std::vector<Expression> & args) { //sine
 
 Expression cosine(const std::vector<Expression> & args) { //cosine
 	double result = 0.0;
-	std::complex<double> cosineComplex(0,0);
+	std::complex<double> cosineComplex(0, 0);
 	if (nargs_equal(args, 1)) {
 		for (auto &a : args) {
 			if (a.isHeadNumber()) {
@@ -410,8 +410,100 @@ Expression conjugate(const std::vector<Expression> & args) { //conjugate
 
 }
 
+Expression first(const std::vector<Expression> & args) { //first
+	int count = 0;
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
+			for (auto a = args[0].tailConstBegin(); a != args[0].tailConstEnd(); ++a) {
+				++count;
+				if (count == 1) {
+					if (args[0].head().isNone()) {
+						throw SemanticError("Error: argument to first is an empty list");
+					}
+					else {
+						return Expression(*a);
+					}
+				}
+
+			}
+		}
+		else {
+			throw SemanticError("Error: argument to first is not a list");
+		}
+	}
+	else {
+		throw SemanticError("Error: more than one argument in call to first.");
+	}
+}
+
+Expression rest(const std::vector<Expression> & args) { //first
+	std::vector<Expression> restStore;
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
+			for (auto &a = args[0].tailConstBegin() + 1; a != args[0].tailConstEnd(); ++a) {
+				restStore.push_back(*a);
+			}
+		}
+		
+		else {
+			throw SemanticError("Error: more than one argument in call to rest.");
+		}
+		return Expression(restStore);
+	}
+	else {
+		throw SemanticError("Error: more than one argument in call to rest.");
+	}
+}
+
+Expression length(const std::vector<Expression> & args) { //length
+	double count = 0;
+	if (nargs_equal(args, 1)) {
+		if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
+			for (auto &a = args[0].tailConstBegin(); a != args[0].tailConstEnd(); ++a) {
+				count++;
+			}
+		}
+		else {
+			throw SemanticError("Error: argument to length is not a list.");
+		}
+	}
+	return Expression(count);
+}
+
+Expression appendVal(const std::vector<Expression> & args) { //append
+	if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
+		for (auto &a = args[0].tailConstBegin(); a != args[0].tailConstEnd(); ++a) {
+			//args[0].append()
+		}
+	}
+	else {
+		throw SemanticError("Error: first argument to append not a list.");
+	}
+}
+
+Expression range(const std::vector<Expression> & args) { //range
+	double result;
+	std::vector<double> rangeVector(0, 0);
+	if (args[0].isHeadNumber()) {
+		if (args[0].tailConstBegin() > args[0].tailConstBegin() + 1) {
+
+		}
+		else {
+			throw SemanticError("Error: begin greater than end in range");
+		}
+		for (auto &a : args) {
+			result += a.head().asNumber();
+			rangeVector.push_back(result);
+		}
+	}
+	else {
+		throw SemanticError("Error: Not a number");
+	}
+	//return Expression(rangeVector);
+}
+
 Environment::Environment() {
-	reset(); 
+	reset();
 }
 
 bool Environment::is_known(const Atom & sym) const {
@@ -537,4 +629,16 @@ void Environment::reset() {
 
 	// Procedure: conjugate
 	envmap.emplace("conj", EnvResult(ProcedureType, conjugate));
+
+	//Procedure: first;
+	envmap.emplace("first", EnvResult(ProcedureType, first));
+
+	//Procedure: rest;
+	envmap.emplace("rest", EnvResult(ProcedureType, rest));
+
+	//Procedure: length;
+	envmap.emplace("length", EnvResult(ProcedureType, length));
+
+	//Procedure: append;
+	envmap.emplace("append", EnvResult(ProcedureType, appendVal));
 }

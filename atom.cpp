@@ -199,8 +199,5 @@ std::ostream & operator<<(std::ostream & out, const Atom & a) {
 	if (a.isComplex()) {
 		out << a.asComplex();
 	}
-	//if (a.isList()) {
-	//	out << a.asList();
-	//}
 	return out;
 }

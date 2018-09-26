@@ -13,7 +13,7 @@ Expression::Expression(const Atom & a) {
 }
 
 Expression::Expression(const std::vector<Expression> results) {
-	for (int i = 0; i < results.size(); i++) {
+	for (size_t i = 0; i < results.size(); i++) {
 		m_tail.push_back(results[i]);
 	}
 }
@@ -83,6 +83,14 @@ Expression::ConstIteratorType Expression::tailConstBegin() const noexcept {
 Expression::ConstIteratorType Expression::tailConstEnd() const noexcept {
 	return m_tail.cend();
 }
+
+//Expression::IteratorType Expression::tailBegin() const noexcept {
+//	return m_tail.begin();
+//}
+//
+//Expression::IteratorType Expression::tailEnd() const noexcept {
+//	return m_tail.end();
+//}
 
 Expression apply(const Atom & op, const std::vector<Expression> & args, const Environment & env) {
 

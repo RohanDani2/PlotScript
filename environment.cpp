@@ -412,19 +412,18 @@ Expression conjugate(const std::vector<Expression> & args) { //conjugate
 
 Expression first(const std::vector<Expression> & args) { //first
 	int count = 0;
+	std::vector<Expression> firstVal;
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
 			for (auto a = args[0].tailConstBegin(); a != args[0].tailConstEnd(); ++a) {
 				++count;
-				if (count == 1) {
+				if (count > 0) {
 					if (args[0].head().isNone()) {
 						throw SemanticError("Error: argument to first is an empty list");
 					}
-					else {
-						return Expression(*a);
-					}
+					firstVal.push_back(*a);
+					break;
 				}
-
 			}
 		}
 		else {
@@ -434,13 +433,14 @@ Expression first(const std::vector<Expression> & args) { //first
 	else {
 		throw SemanticError("Error: more than one argument in call to first.");
 	}
+	return Expression(firstVal);
 }
 
 Expression rest(const std::vector<Expression> & args) { //first
 	std::vector<Expression> restStore;
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
-			for (auto &a = args[0].tailConstBegin() + 1; a != args[0].tailConstEnd(); ++a) {
+			for (auto a = args[0].tailConstBegin() + 1; a != args[0].tailConstEnd(); ++a) {
 				restStore.push_back(*a);
 			}
 		}
@@ -459,7 +459,7 @@ Expression length(const std::vector<Expression> & args) { //length
 	double count = 0;
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
-			for (auto &a = args[0].tailConstBegin(); a != args[0].tailConstEnd(); ++a) {
+			for (auto a = args[0].tailConstBegin(); a != args[0].tailConstEnd(); ++a) {
 				count++;
 			}
 		}
@@ -471,35 +471,38 @@ Expression length(const std::vector<Expression> & args) { //length
 }
 
 Expression appendVal(const std::vector<Expression> & args) { //append
+	std::vector<Expression> appendStore;
 	if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
-		for (auto &a = args[0].tailConstBegin(); a != args[0].tailConstEnd(); ++a) {
-			//args[0].append()
+		for (auto a = args[0].tailConstBegin(); a != args[0].tailConstEnd(); ++a) {
+			appendStore.push_back(*a);
 		}
 	}
 	else {
 		throw SemanticError("Error: first argument to append not a list.");
 	}
+	return Expression(appendStore);
 }
 
 Expression range(const std::vector<Expression> & args) { //range
-	double result;
-	std::vector<double> rangeVector(0, 0);
+	int count = 0;
+	//auto firstVal = args[0].tailConstBegin();
+	//auto secondVal = args[0].tailConstBegin() + 1;
+	//auto incrementer = args[0].tailConstEnd();
+	std::vector<Expression> rangeVector;
 	if (args[0].isHeadNumber()) {
-		if (args[0].tailConstBegin() > args[0].tailConstBegin() + 1) {
-
+		if (true) {
+			while (count < 5) {
+				////rangeVector.push_back(firstVal + incrementer);
+			}
 		}
 		else {
 			throw SemanticError("Error: begin greater than end in range");
-		}
-		for (auto &a : args) {
-			result += a.head().asNumber();
-			rangeVector.push_back(result);
 		}
 	}
 	else {
 		throw SemanticError("Error: Not a number");
 	}
-	//return Expression(rangeVector);
+	return Expression(rangeVector);
 }
 
 Environment::Environment() {
@@ -641,4 +644,7 @@ void Environment::reset() {
 
 	//Procedure: append;
 	envmap.emplace("append", EnvResult(ProcedureType, appendVal));
+
+	//Procedure: range;
+	envmap.emplace("range", EnvResult(ProcedureType, range));
 }

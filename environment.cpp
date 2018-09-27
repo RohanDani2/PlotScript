@@ -437,20 +437,24 @@ Expression first(const std::vector<Expression> & args) { //first
 }
 
 Expression rest(const std::vector<Expression> & args) { //first
-	std::vector<Expression> restStore;
+	std::vector<Expression> restStore = args;
 	std::vector<Expression> tempStore;
 
-	for (auto b = args[0].tailConstBegin(); b != args[0].tailConstEnd(); ++b) {
+	/*for (auto b = args[0].tailConstBegin(); b != args[0].tailConstEnd(); ++b) {
 		tempStore.push_back(*b);
 	}
 	if (tempStore.empty()) {
 		throw SemanticError("Error: argument to rest is an empty list.");
-	}
+	}*/
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
-			for (auto a = args[0].tailConstBegin() + 1; a != args[0].tailConstEnd(); ++a) {
+			for (auto a = args[0].tailConstBegin(); a != args[0].tailConstEnd(); ++a) {
 				restStore.push_back(*a);
 			}
+			/*if (restStore.empty()) {
+				return Expression(args[0].head());
+
+			}*/
 		}	
 		else {
 			throw SemanticError("Error: argument to rest is not a list.");
@@ -489,18 +493,16 @@ Expression appendVal(const std::vector<Expression> & args) { //append
 }
 
 Expression join(const std::vector<Expression> & args) { //join
-	Expression result;
-	std::vector<Expression> tempVector = args;
-	std::vector<Expression> joinVector;
+	Expression result = args[0];
 	if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
-		for (int i = 0; i < tempVector.size(); ++i) {
-			joinVector.push_back(tempVector[i]);
+		for (auto a = args[1].tailConstBegin(); a != args[1].tailConstEnd(); ++a) {
+			result.append(*a);
 		}
 	}
 	else {
 		throw SemanticError("Error: first argument to join not a list.");
 	}
-	return Expression(joinVector);
+	return Expression(result);
 }
 
 Expression range(const std::vector<Expression> & args) { //range

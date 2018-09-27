@@ -112,7 +112,7 @@ Expression Expression::handle_lookup(const Atom & head, const Environment & env)
 		if (env.is_exp(head)) {
 			return env.get_exp(head);
 		}
-		else if (head.asSymbol() == "list") {
+		else if (head.asSymbol() == "list" && m_tail.empty()) {
 			return Expression(head);
 		}
 		else {

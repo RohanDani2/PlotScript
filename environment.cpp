@@ -450,7 +450,7 @@ Expression first(const std::vector<Expression> & args) { //first
 Expression rest(const std::vector<Expression> & args) { //first
 	std::vector<Expression> restStore = args;
 	std::vector<Expression> tempStore;
-	Expression result = NULL;
+	Expression result;
 	Expression finalResult;
 	/*for (auto b = args[0].tailConstBegin(); b != args[0].tailConstEnd(); ++b) {
 		tempStore.push_back(*b);

@@ -494,7 +494,8 @@ Expression appendVal(const std::vector<Expression> & args) { //append
 
 Expression join(const std::vector<Expression> & args) { //join
 	Expression result = args[0];
-	if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
+	if ((args[0].isHeadSymbol() && args[0].head().asSymbol() == "list")
+		&& (args[1].isHeadSymbol() && args[1].head().asSymbol() == "list")) {
 		for (auto a = args[1].tailConstBegin(); a != args[1].tailConstEnd(); ++a) {
 			result.append(*a);
 		}

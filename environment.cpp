@@ -440,7 +440,12 @@ Expression rest(const std::vector<Expression> & args) { //first
 	std::vector<Expression> restStore;
 	std::vector<Expression> tempStore;
 
-	//auto b = args[0].tailConstBegin();
+	for (auto b = args[0].tailConstBegin(); b != args[0].tailConstEnd(); ++b) {
+		tempStore.push_back(*b);
+	}
+	if (tempStore.empty()) {
+		throw SemanticError("Error: argument to rest is an empty list.");
+	}
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
 			for (auto a = args[0].tailConstBegin() + 1; a != args[0].tailConstEnd(); ++a) {
@@ -453,9 +458,6 @@ Expression rest(const std::vector<Expression> & args) { //first
 	}
 	else {
 		throw SemanticError("Error: more than one argument in call to rest.");
-	}
-	if (restStore.empty()) {
-		throw SemanticError("Error: argument to rest is an empty list.");
 	}
 	return Expression(restStore);
 }
@@ -476,7 +478,6 @@ Expression length(const std::vector<Expression> & args) { //length
 }
 
 Expression appendVal(const std::vector<Expression> & args) { //append
-	std::vector<Expression> appendStore = args;
 	Expression result = args[0];
 	if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
 		result.append(args[1]);
@@ -487,6 +488,21 @@ Expression appendVal(const std::vector<Expression> & args) { //append
 	return Expression(result);
 }
 
+Expression join(const std::vector<Expression> & args) { //join
+	Expression result;
+	std::vector<Expression> tempVector = args;
+	std::vector<Expression> joinVector;
+	if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
+		for (int i = 0; i < tempVector.size(); ++i) {
+			joinVector.push_back(tempVector[i]);
+		}
+	}
+	else {
+		throw SemanticError("Error: first argument to join not a list.");
+	}
+	return Expression(joinVector);
+}
+
 Expression range(const std::vector<Expression> & args) { //range
 	int count = 0;
 	//auto firstVal = args[0].tailConstBegin();
@@ -495,9 +511,7 @@ Expression range(const std::vector<Expression> & args) { //range
 	std::vector<Expression> rangeVector;
 	if (args[0].isHeadNumber()) {
 		if (true) {
-			while (count < 5) {
-				////rangeVector.push_back(firstVal + incrementer);
-			}
+			//
 		}
 		else {
 			throw SemanticError("Error: begin greater than end in range");
@@ -648,6 +662,9 @@ void Environment::reset() {
 
 	//Procedure: append;
 	envmap.emplace("append", EnvResult(ProcedureType, appendVal));
+
+	//Procedure: join;
+	envmap.emplace("join", EnvResult(ProcedureType, join));
 
 	//Procedure: range;
 	envmap.emplace("range", EnvResult(ProcedureType, range));

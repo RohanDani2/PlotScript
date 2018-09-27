@@ -66,6 +66,10 @@ void Expression::append(const Atom & a) {
 	m_tail.emplace_back(a);
 }
 
+void Expression::append(const Expression result) {
+	m_tail.emplace_back(result);
+}
+
 Expression * Expression::tail() {
 	Expression * ptr = nullptr;
 
@@ -83,14 +87,6 @@ Expression::ConstIteratorType Expression::tailConstBegin() const noexcept {
 Expression::ConstIteratorType Expression::tailConstEnd() const noexcept {
 	return m_tail.cend();
 }
-
-//Expression::IteratorType Expression::tailBegin() const noexcept {
-//	return m_tail.begin();
-//}
-//
-//Expression::IteratorType Expression::tailEnd() const noexcept {
-//	return m_tail.end();
-//}
 
 Expression apply(const Atom & op, const std::vector<Expression> & args, const Environment & env) {
 
@@ -116,7 +112,7 @@ Expression Expression::handle_lookup(const Atom & head, const Environment & env)
 		if (env.is_exp(head)) {
 			return env.get_exp(head);
 		}
-		else if (head.asSymbol() == "list" && m_tail.empty()) {
+		else if (head.asSymbol() == "list") {
 			return Expression(head);
 		}
 		else {

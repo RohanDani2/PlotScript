@@ -49,6 +49,9 @@ public:
 	/// append Atom to tail of the expression
 	void append(const Atom & a);
 
+	//append vector of expressions to the tail of another vector of expressions
+	void append(const Expression result);
+
 	/// return a pointer to the last expression in the tail, or nullptr
 	Expression * tail();
 

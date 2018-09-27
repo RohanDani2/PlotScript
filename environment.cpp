@@ -418,9 +418,6 @@ Expression first(const std::vector<Expression> & args) { //first
 			for (auto a = args[0].tailConstBegin(); a != args[0].tailConstEnd(); ++a) {
 				++count;
 				if (count > 0) {
-					if (args[0].head().isNone()) {
-						throw SemanticError("Error: argument to first is an empty list");
-					}
 					firstVal.push_back(*a);
 					break;
 				}
@@ -433,26 +430,34 @@ Expression first(const std::vector<Expression> & args) { //first
 	else {
 		throw SemanticError("Error: more than one argument in call to first.");
 	}
+	if (firstVal.size() == 0) {
+		throw SemanticError("Error: argument to first is an empty list.");
+	}
 	return Expression(firstVal);
 }
 
 Expression rest(const std::vector<Expression> & args) { //first
 	std::vector<Expression> restStore;
+	std::vector<Expression> tempStore;
+
+	//auto b = args[0].tailConstBegin();
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
 			for (auto a = args[0].tailConstBegin() + 1; a != args[0].tailConstEnd(); ++a) {
 				restStore.push_back(*a);
 			}
-		}
-		
+		}	
 		else {
-			throw SemanticError("Error: more than one argument in call to rest.");
+			throw SemanticError("Error: argument to rest is not a list.");
 		}
-		return Expression(restStore);
 	}
 	else {
 		throw SemanticError("Error: more than one argument in call to rest.");
 	}
+	if (restStore.empty()) {
+		throw SemanticError("Error: argument to rest is an empty list.");
+	}
+	return Expression(restStore);
 }
 
 Expression length(const std::vector<Expression> & args) { //length
@@ -471,16 +476,15 @@ Expression length(const std::vector<Expression> & args) { //length
 }
 
 Expression appendVal(const std::vector<Expression> & args) { //append
-	std::vector<Expression> appendStore;
+	std::vector<Expression> appendStore = args;
+	Expression result = args[0];
 	if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
-		for (auto a = args[0].tailConstBegin(); a != args[0].tailConstEnd(); ++a) {
-			appendStore.push_back(*a);
-		}
+		result.append(args[1]);
 	}
 	else {
 		throw SemanticError("Error: first argument to append not a list.");
 	}
-	return Expression(appendStore);
+	return Expression(result);
 }
 
 Expression range(const std::vector<Expression> & args) { //range

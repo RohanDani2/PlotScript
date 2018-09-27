@@ -52,6 +52,8 @@ public:
 	//append vector of expressions to the tail of another vector of expressions
 	void append(const Expression result);
 
+	void remove(const Atom & a);
+
 	/// return a pointer to the last expression in the tail, or nullptr
 	Expression * tail();
 
@@ -92,6 +94,7 @@ private:
 	Expression handle_define(Environment & env);
 	Expression handle_begin(Environment & env);
 	Expression handle_list(Environment & env);
+	Expression handle_lambda(Environment & env);
 };
 
 /// Render expression to output stream

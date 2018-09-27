@@ -4,6 +4,7 @@
 #include <cmath>
 #include <complex>
 #include <iostream>
+#include <ctype.h>
 
 #include "environment.hpp"
 #include "semantic_error.hpp"
@@ -179,6 +180,16 @@ Expression div(const std::vector<Expression> & args) {
 		}
 		else {
 			throw SemanticError("Error in call to division: invalid argument.");
+		}
+	}
+	else if (nargs_equal(args, 1)) {
+		if ((args[0].isHeadNumber())) {
+			result = 1 / args[0].head().asNumber();
+			return Expression(result);
+		}
+		else if ((args[0].isHeadComplex())) {
+			complexDivide = std::pow(args[0].head().asComplex(), -1);
+			return Expression(complexDivide);
 		}
 	}
 	else {
@@ -439,7 +450,8 @@ Expression first(const std::vector<Expression> & args) { //first
 Expression rest(const std::vector<Expression> & args) { //first
 	std::vector<Expression> restStore = args;
 	std::vector<Expression> tempStore;
-
+	Expression result = NULL;
+	Expression finalResult;
 	/*for (auto b = args[0].tailConstBegin(); b != args[0].tailConstEnd(); ++b) {
 		tempStore.push_back(*b);
 	}
@@ -448,8 +460,8 @@ Expression rest(const std::vector<Expression> & args) { //first
 	}*/
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
-			for (auto a = args[0].tailConstBegin(); a != args[0].tailConstEnd(); ++a) {
-				restStore.push_back(*a);
+			for (auto a = args[0].tailConstBegin() + 1; a != args[0].tailConstEnd(); ++a) {
+				result.append(*a);
 			}
 			/*if (restStore.empty()) {
 				return Expression(args[0].head());
@@ -463,7 +475,7 @@ Expression rest(const std::vector<Expression> & args) { //first
 	else {
 		throw SemanticError("Error: more than one argument in call to rest.");
 	}
-	return Expression(restStore);
+	return Expression(result);
 }
 
 Expression length(const std::vector<Expression> & args) { //length
@@ -507,23 +519,39 @@ Expression join(const std::vector<Expression> & args) { //join
 }
 
 Expression range(const std::vector<Expression> & args) { //range
-	int count = 0;
-	//auto firstVal = args[0].tailConstBegin();
-	//auto secondVal = args[0].tailConstBegin() + 1;
-	//auto incrementer = args[0].tailConstEnd();
-	std::vector<Expression> rangeVector;
-	if (args[0].isHeadNumber()) {
-		if (true) {
-			//
+	std::vector<Expression> rangeVector = args;
+	double decimalVal = (float)args[2].head().asNumber() / 2;
+	double sumVal = 0;
+	auto secondVal = args[1];
+	auto incrementer = args[2];
+	Expression result;
+
+	result.append(args[0].head().asNumber());
+
+	sumVal = args[0].head().asNumber() + args[2].head().asNumber();
+
+	if (args[0].isHeadNumber() && args[1].isHeadNumber() && args[2].isHeadNumber()) {
+		if (args[0].head().asNumber() > args[1].head().asNumber()) {
+			throw SemanticError("Error: Error: begin greater than end in range.");
+		}
+		if (decimalVal == 0) {
+			while (sumVal < args[1].head().asNumber()) { //for numbers
+				result.append(sumVal);
+				sumVal = sumVal + args[2].head().asNumber();
+			}
 		}
 		else {
-			throw SemanticError("Error: begin greater than end in range");
+			while (sumVal < args[1].head().asNumber()) { //for decimals
+				result.append(sumVal);
+				sumVal = sumVal + args[2].head().asNumber();
+			}
 		}
+
 	}
 	else {
-		throw SemanticError("Error: Not a number");
+		throw SemanticError("Error: first argument to range not a number.");
 	}
-	return Expression(rangeVector);
+	return Expression(result);
 }
 
 Environment::Environment() {

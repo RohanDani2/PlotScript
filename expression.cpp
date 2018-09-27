@@ -70,6 +70,11 @@ void Expression::append(const Expression result) {
 	m_tail.emplace_back(result);
 }
 
+void Expression::remove(const Atom & a) {
+	m_tail.erase(m_tail.begin());
+}
+
+
 Expression * Expression::tail() {
 	Expression * ptr = nullptr;
 
@@ -138,6 +143,11 @@ Expression Expression::handle_list(Environment & env) {
 	return result;
 }
 
+Expression Expression::handle_lambda(Environment & env)
+{
+	return Expression();
+}
+
 Expression Expression::handle_begin(Environment & env) {
 
 	if (m_tail.size() == 0) {
@@ -189,6 +199,7 @@ Expression Expression::handle_define(Environment & env) {
 	return result;
 }
 
+
 // this is a simple recursive version. the iterative version is more
 // difficult with the ast data structure used (no parent pointer).
 // this limits the practical depth of our AST
@@ -207,6 +218,9 @@ Expression Expression::eval(Environment & env) {
 	}
 	else if (m_head.isSymbol() && m_head.asSymbol() == "list") {
 		return handle_list(env);
+	}
+	else if (m_head.isSymbol() && m_head.asSymbol() == "lambda") {
+		//
 	}
 	// else attempt to treat as procedure
 	else {

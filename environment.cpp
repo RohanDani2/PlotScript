@@ -472,7 +472,7 @@ Expression rest(const std::vector<Expression> & args) { //first
 	}
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
-			for (auto &a = args[0].tailConstBegin() + 1; a != args[0].tailConstEnd(); ++a) {
+			for (auto a = args[0].tailConstBegin() + 1; a != args[0].tailConstEnd(); ++a) {
 				list.append(*a);
 			}
 			if (restStore.empty()) {

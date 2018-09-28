@@ -421,6 +421,16 @@ Expression conjugate(const std::vector<Expression> & args) { //conjugate
 
 }
 
+Expression list(const std::vector<Expression> & args) {
+	Atom head("list");
+	Expression list(head);
+
+	for (auto &a : args) {
+		list.append(a);
+	}
+	return list;
+}
+
 Expression first(const std::vector<Expression> & args) { //first
 	int count = 0;
 	std::vector<Expression> firstVal;
@@ -450,23 +460,25 @@ Expression first(const std::vector<Expression> & args) { //first
 Expression rest(const std::vector<Expression> & args) { //first
 	std::vector<Expression> restStore = args;
 	std::vector<Expression> tempStore;
-	Expression result;
-	Expression finalResult;
-	/*for (auto b = args[0].tailConstBegin(); b != args[0].tailConstEnd(); ++b) {
+
+	Atom head("list");
+	Expression list(head);
+
+	for (auto b = args[0].tailConstBegin(); b != args[0].tailConstEnd(); ++b) {
 		tempStore.push_back(*b);
 	}
 	if (tempStore.empty()) {
 		throw SemanticError("Error: argument to rest is an empty list.");
-	}*/
+	}
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
-			for (auto a = args[0].tailConstBegin() + 1; a != args[0].tailConstEnd(); ++a) {
-				result.append(*a);
+			for (auto &a = args[0].tailConstBegin() + 1; a != args[0].tailConstEnd(); ++a) {
+				list.append(*a);
 			}
-			/*if (restStore.empty()) {
+			if (restStore.empty()) {
 				return Expression(args[0].head());
 
-			}*/
+			}
 		}	
 		else {
 			throw SemanticError("Error: argument to rest is not a list.");
@@ -475,7 +487,7 @@ Expression rest(const std::vector<Expression> & args) { //first
 	else {
 		throw SemanticError("Error: more than one argument in call to rest.");
 	}
-	return Expression(result);
+	return Expression(list);
 }
 
 Expression length(const std::vector<Expression> & args) { //length
@@ -519,39 +531,38 @@ Expression join(const std::vector<Expression> & args) { //join
 }
 
 Expression range(const std::vector<Expression> & args) { //range
-	std::vector<Expression> rangeVector = args;
-	double decimalVal = (float)args[2].head().asNumber() / 2;
 	double sumVal = 0;
 	auto secondVal = args[1];
 	auto incrementer = args[2];
-	Expression result;
 
-	result.append(args[0].head().asNumber());
+	Atom head("list");
+	Expression list(head);
+
+	list.append(args[0].head().asNumber());
 
 	sumVal = args[0].head().asNumber() + args[2].head().asNumber();
 
+	if (args[2].head().asNumber() < 0) {
+		throw SemanticError("Error: negative or zero increment in range.");
+	}
 	if (args[0].isHeadNumber() && args[1].isHeadNumber() && args[2].isHeadNumber()) {
 		if (args[0].head().asNumber() > args[1].head().asNumber()) {
 			throw SemanticError("Error: Error: begin greater than end in range.");
 		}
-		if (decimalVal == 0) {
-			while (sumVal < args[1].head().asNumber()) { //for numbers
-				result.append(sumVal);
-				sumVal = sumVal + args[2].head().asNumber();
-			}
-		}
-		else {
-			while (sumVal < args[1].head().asNumber()) { //for decimals
-				result.append(sumVal);
-				sumVal = sumVal + args[2].head().asNumber();
-			}
+		while (sumVal <= args[1].head().asNumber()) { //for decimals
+			list.append(sumVal);
+			sumVal = sumVal + args[2].head().asNumber();
 		}
 
 	}
 	else {
 		throw SemanticError("Error: first argument to range not a number.");
 	}
-	return Expression(result);
+	return Expression(list);
+}
+
+Expression apply(const std::vector<Expression> & args) {
+	return Expression();
 }
 
 Environment::Environment() {
@@ -681,6 +692,9 @@ void Environment::reset() {
 
 	// Procedure: conjugate
 	envmap.emplace("conj", EnvResult(ProcedureType, conjugate));
+
+	//Procedure: first;
+	envmap.emplace("list", EnvResult(ProcedureType, list));
 
 	//Procedure: first;
 	envmap.emplace("first", EnvResult(ProcedureType, first));

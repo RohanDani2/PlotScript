@@ -32,7 +32,7 @@ public:
 	*/
 	Expression(const Atom & a);
 
-	Expression(const std::vector<Expression> results);
+	Expression(const std::vector<Expression> &results);
 
 	/// deep-copy construct an expression (recursive)
 	Expression(const Expression & a);
@@ -46,11 +46,13 @@ public:
 	/// return a const-reference to the head Atom
 	const Atom & head() const;
 
+	Expression restFunction() const noexcept;
+
 	/// append Atom to tail of the expression
 	void append(const Atom & a);
 
 	//append vector of expressions to the tail of another vector of expressions
-	void append(const Expression result);
+	void append(const Expression & result);
 
 	void remove(const Atom & a);
 

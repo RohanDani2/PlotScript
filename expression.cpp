@@ -12,7 +12,7 @@ Expression::Expression(const Atom & a) {
 	m_head = a;
 }
 
-Expression::Expression(const std::vector<Expression> results) {
+Expression::Expression(const std::vector<Expression>& results) {
 	for (size_t i = 0; i < results.size(); i++) {
 		m_tail.push_back(results[i]);
 	}
@@ -20,7 +20,6 @@ Expression::Expression(const std::vector<Expression> results) {
 
 // recursive copy
 Expression::Expression(const Expression & a) {
-
 	m_head = a.m_head;
 	for (auto e : a.m_tail) {
 		m_tail.push_back(e);
@@ -66,7 +65,7 @@ void Expression::append(const Atom & a) {
 	m_tail.emplace_back(a);
 }
 
-void Expression::append(const Expression result) {
+void Expression::append(const Expression & result) {
 	m_tail.emplace_back(result);
 }
 
@@ -135,16 +134,9 @@ Expression Expression::handle_lookup(const Atom & head, const Environment & env)
 	}
 }
 
-Expression Expression::handle_list(Environment & env) {
-	Expression result = m_head;
-	for (Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it) {
-		result.m_tail.push_back(it->eval(env));
-	}
-	return result;
-}
-
 Expression Expression::handle_lambda(Environment & env)
 {
+	Expression result = m_head;
 	return Expression();
 }
 
@@ -216,11 +208,8 @@ Expression Expression::eval(Environment & env) {
 	else if (m_head.isSymbol() && m_head.asSymbol() == "define") {
 		return handle_define(env);
 	}
-	else if (m_head.isSymbol() && m_head.asSymbol() == "list") {
-		return handle_list(env);
-	}
 	else if (m_head.isSymbol() && m_head.asSymbol() == "lambda") {
-		//
+		return handle_lambda(env);
 	}
 	// else attempt to treat as procedure
 	else {

@@ -43,6 +43,8 @@ public:
 	/// return a reference to the head Atom
 	Atom & head();
 
+	std::vector<Expression> & tailVal();
+
 	/// return a const-reference to the head Atom
 	const Atom & head() const;
 
@@ -54,7 +56,7 @@ public:
 	//append vector of expressions to the tail of another vector of expressions
 	void append(const Expression & result);
 
-	void remove(const Atom & a);
+	void remove();
 
 	/// return a pointer to the last expression in the tail, or nullptr
 	Expression * tail();
@@ -97,7 +99,7 @@ private:
 	Expression handle_lookup(const Atom & head, const Environment & env);
 	Expression handle_define(Environment & env);
 	Expression handle_begin(Environment & env);
-	Expression handle_lambda(Environment & env);
+	Expression handle_lambda();
 };
 
 /// Render expression to output stream

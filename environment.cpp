@@ -195,6 +195,7 @@ Expression div(const std::vector<Expression> & args) {
 	else {
 		throw SemanticError("Error in call to division: invalid number of arguments.");
 	}
+	return Expression();
 
 };
 

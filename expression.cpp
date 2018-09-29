@@ -3,6 +3,7 @@
 #include <sstream>
 #include <list>
 #include <iostream>
+#include <algorithm>
 
 #include "environment.hpp"
 #include "semantic_error.hpp"
@@ -46,6 +47,10 @@ Atom & Expression::head() {
 	return m_head;
 }
 
+std::vector<Expression> & Expression::tailVal() {
+	return m_tail;
+}
+
 const Atom & Expression::head() const {
 	return m_head;
 }
@@ -70,7 +75,7 @@ void Expression::append(const Expression & result) {
 	m_tail.emplace_back(result);
 }
 
-void Expression::remove(const Atom & a) {
+void Expression::remove() {
 	m_tail.erase(m_tail.begin());
 }
 
@@ -139,7 +144,7 @@ Expression Expression::handle_lookup(const Atom & head, const Environment & env)
 	}
 }
 
-Expression Expression::handle_lambda(Environment & env)
+Expression Expression::handle_lambda()
 {
 	Expression firstVal;
 
@@ -172,8 +177,8 @@ Expression Expression::handle_begin(Environment & env) {
 Expression Expression::applyLambda(const Environment & env, Expression & result, const std::vector<Expression> & args) {
 	Atom val;
 	Environment newEnv = env;
-	Expression exp = result.m_tail.back();
-	for (int it = 0; it <= result.m_tail.size() - 2; it++) {
+	Expression exp = result.m_tail.back(); //adds to lambda function
+	for (size_t it = 0; it <= result.m_tail.size() - 2; it++) {
 		val = result.m_tail.at(it).head();
 	    Expression newExp = args.at(it);
 		newEnv.add_exp(val, newExp);
@@ -237,7 +242,7 @@ Expression Expression::eval(Environment & env) {
 		return handle_define(env);
 	}
 	else if (m_head.isSymbol() && m_head.asSymbol() == "lambda") {
-		return handle_lambda(env);
+		return handle_lambda();
 	}
 	// else attempt to treat as procedure
 	else {
@@ -271,19 +276,31 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp) {
 	else if (exp.isHeadComplex()) {
 		out << exp.head();
 	}
-	else if (exp.head().asSymbol() == "lambda") {
+	else if (exp.head().asSymbol() == "lambda") { //for lambda
+		out << "(";
 		out << "(";
 		for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e) {
 			out << *e;
+			if (e == exp.tailConstEnd() - 2) {
+				out << ")";
+			}
 			if (e != exp.tailConstEnd() - 1) {
 				out << " ";
 			}
+		}
+		std::vector<std::string> stringVec = { "+", "-", "*", "/", "^" };
+		if (std::find(stringVec.begin(), stringVec.end(), exp.head().asSymbol()) != stringVec.end()) {
+			out << " ";
 		}
 		out << ")";
 	}
 	else {
 		out << "(";
 		out << exp.head();
+		std::vector<std::string> stringVec = { "+", "-", "*", "\""};
+		if (std::find(stringVec.begin(),stringVec.end(), exp.head().asSymbol()) != stringVec.end()) {
+			out << " ";
+		}
 		for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e) {
 			out << *e;
 			if (e != exp.tailConstEnd() - 1) {

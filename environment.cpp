@@ -432,6 +432,7 @@ Expression list(const std::vector<Expression> & args) {
 }
 
 Expression first(const std::vector<Expression> & args) { //first
+
 	int count = 0;
 	std::vector<Expression> firstVal;
 	if (nargs_equal(args, 1)) {
@@ -454,7 +455,7 @@ Expression first(const std::vector<Expression> & args) { //first
 	if (firstVal.size() == 0) {
 		throw SemanticError("Error: argument to first is an empty list.");
 	}
-	return Expression(firstVal);
+	return Expression(args[0].first());
 }
 
 Expression rest(const std::vector<Expression> & args) { //first
@@ -479,7 +480,7 @@ Expression rest(const std::vector<Expression> & args) { //first
 				return Expression(args[0].head());
 
 			}
-		}	
+		}
 		else {
 			throw SemanticError("Error: argument to rest is not a list.");
 		}
@@ -561,10 +562,6 @@ Expression range(const std::vector<Expression> & args) { //range
 	return Expression(list);
 }
 
-Expression apply(const std::vector<Expression> & args) {
-	return Expression();
-}
-
 Environment::Environment() {
 	reset();
 }
@@ -597,17 +594,21 @@ Expression Environment::get_exp(const Atom & sym) const {
 }
 
 void Environment::add_exp(const Atom & sym, const Expression & exp) {
-
 	if (!sym.isSymbol()) {
 		throw SemanticError("Attempt to add non-symbol to environment");
 	}
-
+	/*
 	// error if overwriting symbol map
 	if (envmap.find(sym.asSymbol()) != envmap.end()) {
 		throw SemanticError("Attempt to overwrite symbol in environemnt");
+	}*/
+	if (is_exp(sym)) {
+		auto it = envmap.find(sym.asSymbol());
+		it->second = EnvResult(ExpressionType, exp);
 	}
-
-	envmap.emplace(sym.asSymbol(), EnvResult(ExpressionType, exp));
+	else {
+		envmap.emplace(sym.asSymbol(), EnvResult(ExpressionType, exp));
+	}
 }
 
 bool Environment::is_proc(const Atom & sym) const {

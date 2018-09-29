@@ -197,6 +197,60 @@ TEST_CASE( "Test Interpreter result with simple procedures (add)", "[interpreter
     REQUIRE(result == Expression(21.));
   }
 }
+
+TEST_CASE("Test trig procedure", "[interpreter]") {
+	{
+		std::string program = "(sin 2)";
+		INFO(program);
+		Expression result = run(program);
+		REQUIRE(result == Expression(0.909297));
+	}
+	{
+		std::string program = "(cos 2)";
+		INFO(program);
+		Expression result = run(program);
+		REQUIRE(result == Expression(-0.416147));
+	}
+	{
+		std::string program = "(tan 2)";
+		INFO(program);
+		Expression result = run(program);
+		REQUIRE(result == Expression(-2.18504));
+	}
+	{
+		std::string program = "(sqrt 4)";
+		INFO(program);
+		Expression result = run(program);
+		REQUIRE(result == Expression(2));
+	}
+	{
+		std::string program = "(ln 2)";
+		INFO(program);
+		Expression result = run(program);
+		REQUIRE(result == Expression(0.693147));
+	}
+	{
+		std::string program = "(^ 2 4)";
+		INFO(program);
+		Expression result = run(program);
+		REQUIRE(result == Expression(16));
+	}
+}
+
+TEST_CASE("Test Task 2 functions", "[interpreter]") {
+	{
+		std::string program = "(first (list 1 2 3))";
+		INFO(program);
+		Expression result = run(program);
+		REQUIRE(result == Expression(1));
+	}
+	/*{
+		std::string program = "(rest (list 1 2 3))";
+		INFO(program);
+		Expression result = run(program);
+		REQUIRE(result == Expression((2) (3));
+	}*/
+}
   
 TEST_CASE( "Test Interpreter special forms: begin and define", "[interpreter]" ) {
 
@@ -230,7 +284,6 @@ TEST_CASE( "Test Interpreter special forms: begin and define", "[interpreter]" )
 }
 
 TEST_CASE( "Test a medium-sized expression", "[interpreter]" ) {
-
   {
     std::string program = "(+ (+ 10 1) (+ 30 (+ 1 1)))";
     Expression result = run(program);
@@ -241,20 +294,26 @@ TEST_CASE( "Test a medium-sized expression", "[interpreter]" ) {
 TEST_CASE( "Test arithmetic procedures", "[interpreter]" ) {
 
   {
-    std::vector<std::string> programs = {"(+ 1 -2)",
-					 "(+ -3 1 1)",
-					 "(- 1)",
-					 "(- 1 2)",
-					 "(* 1 -1)",
-					 "(* 1 1 -1)",
-					 "(/ -1 1)",
-					 "(/ 1 -1)"};
-
+    std::vector<std::string> programs = {"(+ 1 -2)","(+ -3 1 1)","(- 1)","(- 1 2)",
+					 "(* 1 -1)","(* 1 1 -1)", "(/ -1 1)","(/ 1 -1)"};
     for(auto s : programs){
       Expression result = run(s);
       REQUIRE(result == Expression(-1.));
     }
   }
+}
+
+TEST_CASE("Test imaginary/real procedures", "[interpreter]") {
+
+	{
+		std::vector<std::string> programs = { "(+ 1 -2)","(+ -3 1 1)","(- 1)","(- 1 2)",
+			"(* 1 -1)","(* 1 1 -1)","(/ -1 1)","(/ 1 -1)" };
+
+		for (auto s : programs) {
+			Expression result = run(s);
+			REQUIRE(result == Expression(-1.));
+		}
+	}
 }
 
 
@@ -274,6 +333,24 @@ TEST_CASE( "Test some semantically invalid expresions", "[interpreter]" ) {
       
       REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
     }
+}
+
+TEST_CASE("Test for invalid expressions ", "[interpreter]") {
+
+	std::vector<std::string> programs = { "(sin 1 2)","(tan 1 2)", "(cos 1 2)", "(real 1 2)","(imag 1 2)" ,"(mag 1 2)"	
+					"(conj 1 2)" ,"(arg 1 2)","(real (sin 2))","(imag (sin 2))","(mag (sin 2))","(arg (sin 2))" ,"(conj (sin 2))"
+					"(first (list 1 2) (list 3 4))" ,"(range 3 -1 1)","(range 0 5 -1)","(join(list 1 2) 10)"
+					}; // redefine builtin symbol
+	for (auto s : programs) {
+		Interpreter interp;
+
+		std::istringstream iss(s);
+
+		bool ok = interp.parseStream(iss);
+		REQUIRE(ok == true);
+
+		REQUIRE_THROWS_AS(interp.evaluate(), SemanticError);
+	}
 }
 
 TEST_CASE( "Test for exceptions from semantically incorrect input", "[interpreter]" ) {
@@ -329,6 +406,6 @@ TEST_CASE("Test list function", "[list]") {
 		std::string program = "(list 2)";
 		INFO(program);
 		Expression result = run(program);
-		REQUIRE(result == Expression(2));
+		REQUIRE(result == Expression((2)));
 	}
 }

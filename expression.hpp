@@ -46,10 +46,10 @@ public:
 	/// return a const-reference to the head Atom
 	const Atom & head() const;
 
-	Expression restFunction() const noexcept;
-
 	/// append Atom to tail of the expression
 	void append(const Atom & a);
+
+	Expression first() const noexcept;
 
 	//append vector of expressions to the tail of another vector of expressions
 	void append(const Expression & result);
@@ -64,6 +64,8 @@ public:
 
 	/// return a const-iterator to the tail end
 	ConstIteratorType tailConstEnd() const noexcept;
+
+	Expression applyLambda(const Environment & env,Expression & result,const std::vector<Expression>& args);
 
 	/// convienience member to determine if head atom is a number
 	bool isHeadNumber() const noexcept;
@@ -95,7 +97,6 @@ private:
 	Expression handle_lookup(const Atom & head, const Environment & env);
 	Expression handle_define(Environment & env);
 	Expression handle_begin(Environment & env);
-	Expression handle_list(Environment & env);
 	Expression handle_lambda(Environment & env);
 };
 

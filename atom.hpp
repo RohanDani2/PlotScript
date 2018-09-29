@@ -25,9 +25,6 @@ public:
   ///Construct an Atom of type Complex with value
   Atom(std::complex<double> myComplex);
 
-  ///Construct an Atom of type List with value
- //Atom(std::vector<Expression> myList);
-
   /// Construct an Atom of type Symbol named value
   Atom(const std::string & value);
 
@@ -75,7 +72,7 @@ public:
 private:
 
   // internal enum of known types
-  enum Type {NoneKind, NumberKind, SymbolKind, ComplexKind, ListKind};
+  enum Type {NoneKind, NumberKind, SymbolKind, ComplexKind, ListKind, ProcedureKind};
 
   // track the type
   Type m_type;
@@ -96,7 +93,6 @@ private:
 
   // helper to set type and value of Symbol
   void setSymbol(const std::string & value);
-
 };
 
 /// inequality comparison for Atom

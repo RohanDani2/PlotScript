@@ -54,7 +54,18 @@ TEST_CASE( "Test get built-in procedure", "[environment]" ) {
   Procedure p1 = env.get_proc(Atom("doesnotexist"));
   Procedure p2 = env.get_proc(Atom("alsodoesnotexist"));
   REQUIRE(p1 == p2);
+
   std::vector<Expression> args;
+  std::vector<Expression> complexArgs;
+  std::vector<Expression> complexNumArgs;
+  std::vector<Expression> numComplexArgs;
+  complexArgs.emplace_back(std::complex<double>(5.0, 6.0));
+  complexArgs.emplace_back(std::complex<double>(5.0, 6.0));
+  complexNumArgs.emplace_back(std::complex<double>(5.0, 6.0));
+  complexNumArgs.emplace_back(1.0);
+  numComplexArgs.emplace_back(1.0);
+  numComplexArgs.emplace_back(std::complex<double>(5.0, 6.0));
+
   REQUIRE(p1(args) == Expression());
   REQUIRE(p2(args) == Expression());
 
@@ -63,6 +74,31 @@ TEST_CASE( "Test get built-in procedure", "[environment]" ) {
   args.emplace_back(1.0);
   args.emplace_back(2.0);
   REQUIRE(padd(args) == Expression(3.0));
+  REQUIRE(padd(complexArgs) == Expression(std::complex<double>(10.0,12.0)));
+  REQUIRE(padd(complexNumArgs) == Expression(std::complex<double>(6.0, 6.0)));
+
+  Procedure pmul = env.get_proc(Atom("*"));
+  REQUIRE(pmul(args) == Expression(2.0));
+  REQUIRE(pmul(complexArgs) == Expression(std::complex<double>(25.0, 36.0)));
+  REQUIRE(pmul(complexNumArgs) == Expression(std::complex<double>(5.0, 6.0)));
+
+  Procedure psub = env.get_proc(Atom("-"));
+  REQUIRE(psub(args) == Expression(-1.0));
+  REQUIRE(psub(complexArgs) == Expression(std::complex<double>(0.0, 0.0)));
+  REQUIRE(psub(complexNumArgs) == Expression(std::complex<double>(4.0, 6.0)));
+  REQUIRE(psub(numComplexArgs) == Expression(std::complex<double>(-4.0, 6.0)));
+
+  Procedure pdiv = env.get_proc(Atom("/"));
+  REQUIRE(pdiv(args) == Expression(0.5));
+  REQUIRE(pdiv(complexArgs) == Expression(std::complex<double>(1.0, 1.0)));
+  REQUIRE(pdiv(complexNumArgs) == Expression(std::complex<double>(5.0, 6.0)));
+  REQUIRE(pdiv(numComplexArgs) == Expression(std::complex<double>(0.2, 6.0)));
+
+  Procedure pexp = env.get_proc(Atom("^"));
+  REQUIRE(pexp(args) == Expression(1.0));
+  REQUIRE(pexp(complexArgs) == Expression(std::complex<double>(3125.0, 46656.0)));
+  REQUIRE(pexp(complexNumArgs) == Expression(std::complex<double>(5.0, 6.0)));
+  REQUIRE(pexp(numComplexArgs) == Expression(std::complex<double>(1.0, 6.0)));
 }
 
 TEST_CASE( "Test reset", "[environment]" ) {

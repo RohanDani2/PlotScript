@@ -15,10 +15,6 @@ Atom::Atom(std::complex<double> myComplex) {
 	setComplex(myComplex);
 }
 
-//Atom::Atom(std::vector<Expression> myList) {
-//	setList(myList);
-//}
-
 Atom::Atom(const Token & token) : Atom() {
 
 	// is token a number?
@@ -145,10 +141,6 @@ std::string Atom::asSymbol() const noexcept {
 
 	return result;
 }
-
-//std::vector<Expression> Atom::asList() const noexcept {
-//	return (m_type == ListKind) ? listValue : std::vector<Expression>;
-//}
 
 bool Atom::operator==(const Atom & right) const noexcept {
 

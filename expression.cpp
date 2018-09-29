@@ -2,6 +2,7 @@
 
 #include <sstream>
 #include <list>
+#include <iostream>
 
 #include "environment.hpp"
 #include "semantic_error.hpp"
@@ -73,6 +74,9 @@ void Expression::remove(const Atom & a) {
 	m_tail.erase(m_tail.begin());
 }
 
+Expression Expression::first() const noexcept {
+	return m_tail.front();
+}
 
 Expression * Expression::tail() {
 	Expression * ptr = nullptr;
@@ -93,6 +97,7 @@ Expression::ConstIteratorType Expression::tailConstEnd() const noexcept {
 }
 
 Expression apply(const Atom & op, const std::vector<Expression> & args, const Environment & env) {
+
 
 	// head must be a symbol
 	if (!op.isSymbol()) {
@@ -136,8 +141,17 @@ Expression Expression::handle_lookup(const Atom & head, const Environment & env)
 
 Expression Expression::handle_lambda(Environment & env)
 {
-	Expression result = m_head;
-	return Expression();
+	Expression firstVal;
+
+	firstVal.m_head = Atom("lambda");
+	firstVal.m_tail.push_back(m_tail[0].head());
+	for (auto it = m_tail[0].tailConstBegin(); it != m_tail[0].tailConstEnd(); ++it) {
+		firstVal.m_tail.push_back((*it).head());
+	}
+
+	firstVal.m_tail.push_back(m_tail[1]);
+
+	return firstVal;
 }
 
 Expression Expression::handle_begin(Environment & env) {
@@ -153,6 +167,20 @@ Expression Expression::handle_begin(Environment & env) {
 	}
 
 	return result;
+}
+
+Expression Expression::applyLambda(const Environment & env, Expression & result, const std::vector<Expression> & args) {
+	Atom val;
+	Environment newEnv = env;
+	Expression exp = result.m_tail.back();
+	for (int it = 0; it <= result.m_tail.size() - 2; it++) {
+		val = result.m_tail.at(it).head();
+	    Expression newExp = args.at(it);
+		newEnv.add_exp(val, newExp);
+
+	}
+	Expression resultVal = exp.eval(newEnv);
+	return Expression(resultVal);
 }
 
 
@@ -217,27 +245,52 @@ Expression Expression::eval(Environment & env) {
 		for (Expression::IteratorType it = m_tail.begin(); it != m_tail.end(); ++it) {
 			results.push_back(it->eval(env));
 		}
+		if (env.is_exp(m_head)) {
+			Expression val = env.get_exp(m_head);
+			if (val.head().asSymbol() == "lambda") {
+				Expression exp = applyLambda(env, val, results);
+				return exp;
+			}
+		}
 		return apply(m_head, results, env);
 	}
 }
 
 
 std::ostream & operator<<(std::ostream & out, const Expression & exp) {
-	if ((exp.isHeadNumber() == true || exp.isHeadSymbol() == true)) {
+	if (exp.head().asSymbol() == "list") {
 		out << "(";
+		for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e) {
+			out << *e;
+			if (e != exp.tailConstEnd() - 1) {
+				out << " ";
+			}
+		}
+		out << ")";
 	}
-	if ((exp.head().isSymbol() && exp.head().asSymbol() != "list") || (exp.head().isNumber() || exp.head().isComplex())) {
+	else if (exp.isHeadComplex()) {
 		out << exp.head();
 	}
-
-	for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e) {
-		out << *e;
-		if (e != exp.tailConstEnd() - 1) {
-			out << " ";
+	else if (exp.head().asSymbol() == "lambda") {
+		out << "(";
+		for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e) {
+			out << *e;
+			if (e != exp.tailConstEnd() - 1) {
+				out << " ";
+			}
 		}
+		out << ")";
 	}
+	else {
+		out << "(";
+		out << exp.head();
+		for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e) {
+			out << *e;
+			if (e != exp.tailConstEnd() - 1) {
+				out << " ";
+			}
+		}
 
-	if (exp.isHeadNumber() == true || exp.isHeadSymbol() == true) {
 		out << ")";
 	}
 
@@ -262,6 +315,5 @@ bool Expression::operator==(const Expression & exp) const noexcept {
 }
 
 bool operator!=(const Expression & left, const Expression & right) noexcept {
-
 	return !(left == right);
 }

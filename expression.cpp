@@ -1,5 +1,4 @@
 #include "expression.hpp"
-
 #include <sstream>
 #include <list>
 #include <iostream>
@@ -144,8 +143,7 @@ Expression Expression::handle_lookup(const Atom & head, const Environment & env)
 	}
 }
 
-Expression Expression::handle_lambda()
-{
+Expression Expression::handle_lambda() {
 	Expression firstVal;
 
 	firstVal.m_head = Atom("lambda");
@@ -174,15 +172,64 @@ Expression Expression::handle_begin(Environment & env) {
 	return result;
 }
 
+Expression Expression::handle_apply(Environment & env) {
+	Atom op = m_tail[0].head();
+	std::vector<Expression> args;
+	Expression result;
+	if (env.is_proc(op) && (m_tail[0]).m_tail.empty()) {
+		result = m_tail[1].eval(env);
+		if (m_tail[1].head().asSymbol() == "list") {
+			for (auto it = result.tailConstBegin(); it != result.tailConstEnd(); it++) {
+				args.push_back(*it);
+			}
+		}
+		else {
+			throw SemanticError("Error: second argument to apply not a list");
+		}
+	}
+	else if (m_tail[0].head().isSymbol()) {
+		return applyLambda(env, m_tail[0], args);
+	}
+	else {
+		throw SemanticError("Error: first argument to apply not a procedure");
+	}
+	return apply(op, args, env);
+}
+
+Expression Expression::handle_map(Environment & env) {
+	Atom op = m_tail[0].head();
+	std::vector<Expression> args;
+	std::vector<Expression> argsMap;
+	Expression result;
+	if (env.is_proc(op) && (m_tail[0]).m_tail.empty()) {
+		result = m_tail[1].eval(env);
+		if (m_tail[1].head().asSymbol() == "list") {
+			for (auto it = result.tailConstBegin(); it != result.tailConstEnd(); it++) {
+				args.push_back(*it);
+				argsMap.push_back(apply(op, args, env));
+				if (!args.empty()) {
+					args.clear();
+				}
+			}
+		}
+		else {
+			throw SemanticError("Error: second argument to map not a list");
+		}
+	}
+	else {
+		throw SemanticError("Error: first argument to map not a procedure");
+	}
+	return argsMap;
+}
+
 Expression Expression::applyLambda(const Environment & env, Expression & result, const std::vector<Expression> & args) {
 	Atom val;
 	Environment newEnv = env;
 	Expression exp = result.m_tail.back(); //adds to lambda function
 	for (size_t it = 0; it <= result.m_tail.size() - 2; it++) {
 		val = result.m_tail.at(it).head();
-	    Expression newExp = args.at(it);
+		Expression newExp = args.at(it);
 		newEnv.add_exp(val, newExp);
-
 	}
 	Expression resultVal = exp.eval(newEnv);
 	return Expression(resultVal);
@@ -244,6 +291,12 @@ Expression Expression::eval(Environment & env) {
 	else if (m_head.isSymbol() && m_head.asSymbol() == "lambda") {
 		return handle_lambda();
 	}
+	else if (m_head.isSymbol() && m_head.asSymbol() == "apply") {
+		return handle_apply(env);
+	}
+	else if (m_head.isSymbol() && m_head.asSymbol() == "map") {
+		return handle_map(env);
+	}
 	// else attempt to treat as procedure
 	else {
 		std::vector<Expression> results;
@@ -288,17 +341,13 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp) {
 				out << " ";
 			}
 		}
-		std::vector<std::string> stringVec = { "+", "-", "*", "/", "^" };
-		if (std::find(stringVec.begin(), stringVec.end(), exp.head().asSymbol()) != stringVec.end()) {
-			out << " ";
-		}
 		out << ")";
 	}
 	else {
 		out << "(";
 		out << exp.head();
-		std::vector<std::string> stringVec = { "+", "-", "*", "\""};
-		if (std::find(stringVec.begin(),stringVec.end(), exp.head().asSymbol()) != stringVec.end()) {
+		std::vector<std::string> stringVec = { "+", "-", "*", "/", "^" };
+		if (std::find(stringVec.begin(), stringVec.end(), exp.head().asSymbol()) != stringVec.end()) {
 			out << " ";
 		}
 		for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e) {

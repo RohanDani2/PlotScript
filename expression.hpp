@@ -67,7 +67,7 @@ public:
 	/// return a const-iterator to the tail end
 	ConstIteratorType tailConstEnd() const noexcept;
 
-	Expression applyLambda(const Environment & env,Expression & result,const std::vector<Expression>& args);
+	Expression applyLambda(const Environment & env, Expression & result, const std::vector<Expression>& args);
 
 	/// convienience member to determine if head atom is a number
 	bool isHeadNumber() const noexcept;
@@ -100,6 +100,8 @@ private:
 	Expression handle_define(Environment & env);
 	Expression handle_begin(Environment & env);
 	Expression handle_lambda();
+	Expression handle_apply(Environment & env);
+	Expression handle_map(Environment & env);
 };
 
 /// Render expression to output stream

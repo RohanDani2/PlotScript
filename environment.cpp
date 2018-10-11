@@ -184,6 +184,9 @@ Expression div(const std::vector<Expression> & args) {
 	}
 	else if (nargs_equal(args, 1)) {
 		if ((args[0].isHeadNumber())) {
+			if (args[0].head().asNumber() == 0) {
+				throw SemanticError("Error in call to division: invalid argument.");
+			}
 			result = 1 / args[0].head().asNumber();
 			return Expression(result);
 		}
@@ -601,7 +604,7 @@ void Environment::add_exp(const Atom & sym, const Expression & exp) {
 	/*
 	// error if overwriting symbol map
 	if (envmap.find(sym.asSymbol()) != envmap.end()) {
-		throw SemanticError("Attempt to overwrite symbol in environemnt");
+	throw SemanticError("Attempt to overwrite symbol in environemnt");
 	}*/
 	if (is_exp(sym)) {
 		auto it = envmap.find(sym.asSymbol());

@@ -62,7 +62,7 @@ Expression add(const std::vector<Expression> & args) {
 		}
 	}
 	else {
-		throw SemanticError("Error in call to add, argument not a number/complex"); //semantic error if no number
+		throw SemanticError("Error: in call to add, argument not a number/complex"); //semantic error if no number
 	}
 };
 
@@ -92,7 +92,7 @@ Expression mul(const std::vector<Expression> & args) {
 		}
 	}
 	else {
-		throw SemanticError("Error in call to mul, argument not a number");
+		throw SemanticError("Error: in call to mul, argument not a number");
 	}
 };
 
@@ -120,7 +120,7 @@ Expression subneg(const std::vector<Expression> & args) {
 			}
 		}
 		else {
-			throw SemanticError("Error in call to negate: invalid argument.");
+			throw SemanticError("Error: in call to negate: invalid argument.");
 		}
 	}
 	else if (nargs_equal(args, 2)) {
@@ -141,11 +141,11 @@ Expression subneg(const std::vector<Expression> & args) {
 			return Expression(complexSubtract); //calculates for one complex and one number
 		}
 		else {
-			throw SemanticError("Error in call to subtraction: invalid argument.");
+			throw SemanticError("Error: in call to subtraction: invalid argument.");
 		}
 	}
 	else {
-		throw SemanticError("Error in call to subtraction or negation: invalid number of arguments.");
+		throw SemanticError("Error: in call to subtraction or negation: invalid number of arguments.");
 	}
 	if (args[0].isHeadNumber()) {
 		return Expression(result);
@@ -154,7 +154,7 @@ Expression subneg(const std::vector<Expression> & args) {
 		return Expression(complexSubtract);
 	}
 	else {
-		throw SemanticError("Error in call to subtraction or negation: invalid number of arguments.");
+		throw SemanticError("Error: in call to subtraction or negation: invalid number of arguments.");
 	}
 };
 
@@ -179,13 +179,13 @@ Expression div(const std::vector<Expression> & args) {
 			return Expression(complexDivide); //calculates for one complex and one number
 		}
 		else {
-			throw SemanticError("Error in call to division: invalid argument.");
+			throw SemanticError("Error: in call to division: invalid argument.");
 		}
 	}
 	else if (nargs_equal(args, 1)) {
 		if ((args[0].isHeadNumber())) {
 			if (args[0].head().asNumber() == 0) {
-				throw SemanticError("Error in call to division: invalid argument.");
+				throw SemanticError("Error: in call to division: invalid argument.");
 			}
 			result = 1 / args[0].head().asNumber();
 			return Expression(result);
@@ -196,7 +196,7 @@ Expression div(const std::vector<Expression> & args) {
 		}
 	}
 	else {
-		throw SemanticError("Error in call to division: invalid number of arguments.");
+		throw SemanticError("Error: in call to division: invalid number of arguments.");
 	}
 	return Expression();
 
@@ -223,11 +223,11 @@ Expression exponent(const std::vector<Expression> & args) { //exponent
 			return Expression(complexExponent); //calculates for one complex and one number
 		}
 		else {
-			throw SemanticError("Error in call to exponent: invalid argument.");
+			throw SemanticError("Error: in call to exponent: invalid argument.");
 		}
 	}
 	else {
-		throw SemanticError("Error in call to exponent: invalid number of arguments.");
+		throw SemanticError("Error: in call to exponent: invalid number of arguments.");
 	}
 }
 
@@ -252,11 +252,11 @@ Expression squareroot(const std::vector<Expression> & args) { //square root
 			return Expression(complexSqrt);
 		}
 		else {
-			throw SemanticError("Error in call to square root: invalid argument.");
+			throw SemanticError("Error: in call to square root: invalid argument.");
 		}
 	}
 	else {
-		throw SemanticError("Error in call to square root: invalid number of arguments.");
+		throw SemanticError("Error: in call to square root: invalid number of arguments.");
 	}
 	return Expression(result);
 }
@@ -268,11 +268,11 @@ Expression naturalLog(const std::vector<Expression> & args) { //natural Log
 			result = log(args[0].head().asNumber()); //calculates log of number
 		}
 		else {
-			throw SemanticError("Error in call to natural log: invalid argument.");
+			throw SemanticError("Error: in call to natural log: invalid argument.");
 		}
 	}
 	else {
-		throw SemanticError("Error in call to natural log: invalid number of arguments.");
+		throw SemanticError("Error: in call to natural log: invalid number of arguments.");
 	}
 	return Expression(result);
 }
@@ -289,11 +289,11 @@ Expression sine(const std::vector<Expression> & args) { //sine
 			return Expression(sineComplex);
 		}
 		else {
-			throw SemanticError("Error in call to sine: invalid argument.");
+			throw SemanticError("Error: in call to sine: invalid argument.");
 		}
 	}
 	else {
-		throw SemanticError("Error in call to sine: invalid number of arguments.");
+		throw SemanticError("Error: in call to sine: invalid number of arguments.");
 	}
 	return Expression(result);
 }
@@ -312,12 +312,12 @@ Expression cosine(const std::vector<Expression> & args) { //cosine
 				return Expression(cosineComplex);
 			}
 			else {
-				throw SemanticError("Error in call to cosine: invalid argument.");
+				throw SemanticError("Error: in call to cosine: invalid argument.");
 			}
 		}
 	}
 	else {
-		throw SemanticError("Error in call to cosine: invalid number of arguments.");
+		throw SemanticError("Error: in call to cosine: invalid number of arguments.");
 	}
 	return Expression(result);
 }
@@ -334,11 +334,11 @@ Expression tangent(const std::vector<Expression> & args) { //tan
 			return Expression(tangentComplex);
 		}
 		else {
-			throw SemanticError("Error in call to tangent: invalid argument.");
+			throw SemanticError("Error: in call to tangent: invalid argument.");
 		}
 	}
 	else {
-		throw SemanticError("Error in call to tangent: invalid number of arguments.");
+		throw SemanticError("Error: in call to tangent: invalid number of arguments.");
 	}
 	return Expression(result);
 }
@@ -350,11 +350,11 @@ Expression realNum(const std::vector<Expression> & args) { //real
 			value = std::real(args[0].head().asComplex()); //find real value for compelx num
 		}
 		else {
-			throw SemanticError("Error in call to realNum: not complex.");
+			throw SemanticError("Error: in call to realNum: not complex.");
 		}
 	}
 	else {
-		throw SemanticError("Error in call to realNum: more than one argument.");
+		throw SemanticError("Error: in call to realNum: more than one argument.");
 	}
 	return Expression(value); //returns real double
 }
@@ -366,11 +366,11 @@ Expression imaginary(const std::vector<Expression> & args) { //imag
 			value = std::imag(args[0].head().asComplex()); //uses complex imaginary lib to get value
 		}
 		else {
-			throw SemanticError("Error in call to imaginary: not complex.");
+			throw SemanticError("Error: in call to imaginary: not complex.");
 		}
 	}
 	else {
-		throw SemanticError("Error in call to imaginary: more than one argument.");
+		throw SemanticError("Error: in call to imaginary: more than one argument.");
 	}
 	return Expression(value); //returns double value
 }
@@ -382,11 +382,11 @@ Expression absoluteValue(const std::vector<Expression> & args) { //absolute valu
 			value = std::abs(args[0].head().asComplex());  //calculates the magnitude value
 		}
 		else {
-			throw SemanticError("Error in call to absoluteValue: not complex.");
+			throw SemanticError("Error: in call to absoluteValue: not complex.");
 		}
 	}
 	else {
-		throw SemanticError("Error in call to absoluteValue: not one argument.");
+		throw SemanticError("Error: in call to absoluteValue: not one argument.");
 	}
 	return Expression(value); //returns the magnitude
 }
@@ -398,11 +398,11 @@ Expression phaseAngle(const std::vector<Expression> & args) { //phaseAngle
 			value = std::arg(args[0].head().asComplex());  //calculates the phase angle value
 		}
 		else {
-			throw SemanticError("Error in call to phaseAngle: not complex.");
+			throw SemanticError("Error: in call to phaseAngle: not complex.");
 		}
 	}
 	else {
-		throw SemanticError("Error in call to phaseAngle: not one argument.");
+		throw SemanticError("Error: in call to phaseAngle: not one argument.");
 	}
 	return Expression(value); //returns the phase angle value 
 }
@@ -415,12 +415,12 @@ Expression conjugate(const std::vector<Expression> & args) { //conjugate
 			return Expression(conjugate); //returns the conjugate value 
 		}
 		else {
-			throw SemanticError("Error in call to conjugate: not complex.");
+			throw SemanticError("Error: in call to conjugate: not complex.");
 		}
 
 	}
 	else {
-		throw SemanticError("Error in call to conjugate: more than 1 argument.");
+		throw SemanticError("Error: in call to conjugate: more than 1 argument.");
 	}
 
 }
@@ -552,7 +552,7 @@ Expression range(const std::vector<Expression> & args) { //range
 	}
 	if (args[0].isHeadNumber() && args[1].isHeadNumber() && args[2].isHeadNumber()) {
 		if (args[0].head().asNumber() > args[1].head().asNumber()) {
-			throw SemanticError("Error: Error: begin greater than end in range.");
+			throw SemanticError("Error: begin greater than end in range.");
 		}
 		while (sumVal <= args[1].head().asNumber()) { //for decimals
 			list.append(sumVal);

@@ -175,9 +175,9 @@ Expression Expression::handle_begin(Environment & env) {
 Expression Expression::handle_apply(Environment & env) {
 	Atom op = m_tail[0].head();
 	std::vector<Expression> args;
-	Expression result;
+	Expression result = m_tail[1].eval(env);
+	Expression val = env.get_exp(m_tail[0].head());
 	if (env.is_proc(op) && (m_tail[0]).m_tail.empty()) {
-		result = m_tail[1].eval(env);
 		if (m_tail[1].head().asSymbol() == "list") {
 			for (auto it = result.tailConstBegin(); it != result.tailConstEnd(); it++) {
 				args.push_back(*it);
@@ -187,8 +187,11 @@ Expression Expression::handle_apply(Environment & env) {
 			throw SemanticError("Error: second argument to apply not a list");
 		}
 	}
-	else if (m_tail[0].head().isSymbol()) {
-		return applyLambda(env, m_tail[0], args);
+	else if (val.head().asSymbol() == "lambda") {
+		for (auto it = result.tailConstBegin(); it != result.tailConstEnd(); it++) {
+			args.push_back(*it);
+		}
+		return applyLambda(env, val, args);
 	}
 	else {
 		throw SemanticError("Error: first argument to apply not a procedure");
@@ -200,7 +203,8 @@ Expression Expression::handle_map(Environment & env) {
 	Atom op = m_tail[0].head();
 	std::vector<Expression> args;
 	std::vector<Expression> argsMap;
-	Expression result;
+	Expression result = m_tail[1].eval(env);
+	Expression val = env.get_exp(m_tail[0].head());
 	if (env.is_proc(op) && (m_tail[0]).m_tail.empty()) {
 		result = m_tail[1].eval(env);
 		if (m_tail[1].head().asSymbol() == "list") {
@@ -214,6 +218,15 @@ Expression Expression::handle_map(Environment & env) {
 		}
 		else {
 			throw SemanticError("Error: second argument to map not a list");
+		}
+	}
+	else if (val.head().asSymbol() == "lambda") {
+		for (auto it = result.tailConstBegin(); it != result.tailConstEnd(); it++) {
+			args.push_back(*it);
+			argsMap.push_back(applyLambda(env,val,args));
+			if (!args.empty()) {
+				args.clear();
+			}
 		}
 	}
 	else {

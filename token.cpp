@@ -8,6 +8,7 @@
 const char OPENCHAR = '(';
 const char CLOSECHAR = ')';
 const char COMMENTCHAR = ';';
+const char QUOTE = '"';
 
 Token::Token(TokenType t): m_type(t){}
 
@@ -23,6 +24,8 @@ std::string Token::asString() const{
     return "(";
   case CLOSE:
     return ")";
+  case QUOTE:
+	return "\"";
   case STRING:
     return value;
   }
@@ -61,6 +64,10 @@ TokenSequenceType tokenize(std::istream & seq){
       store_ifnot_empty(token, tokens);
       tokens.push_back(Token::TokenType::CLOSE);
     }
+	else if (c == QUOTE) {
+		store_ifnot_empty(token, tokens);
+		tokens.push_back(Token::TokenType::QUOTE);
+	}
     else if(isspace(c)){
       store_ifnot_empty(token, tokens);
     }

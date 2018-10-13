@@ -20,7 +20,8 @@ public:
    */
   enum TokenType { OPEN,  //< open tag, aka '('
 		   CLOSE, //< close tag, aka ')'
-		   STRING //< string tag
+		   STRING, 
+		   QUOTE//< string tag
   };
 
   /// construct a token of type t (if string default to empty value)

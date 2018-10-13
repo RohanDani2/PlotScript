@@ -239,6 +239,9 @@ Expression Expression::applyLambda(const Environment & env, Expression & result,
 	Atom val;
 	Environment newEnv = env;
 	Expression exp = result.m_tail.back(); //adds to lambda function
+	if (result.m_tail.size() - 1 != args.size()) {
+		throw SemanticError("Error: in call to procedure: invalid number of arguments.");
+	}
 	for (size_t it = 0; it <= result.m_tail.size() - 2; it++) {
 		val = result.m_tail.at(it).head();
 		Expression newExp = args.at(it);

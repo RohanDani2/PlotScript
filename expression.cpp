@@ -3,6 +3,7 @@
 #include <list>
 #include <iostream>
 #include <algorithm>
+#include <unordered_map> 
 
 #include "environment.hpp"
 #include "semantic_error.hpp"
@@ -125,7 +126,10 @@ Expression Expression::handle_lookup(const Atom & head, const Environment & env)
 		if (env.is_exp(head)) {
 			return env.get_exp(head);
 		}
-		else if (head.asSymbol() == "list" && m_tail.empty()) {
+		else if (head.asSymbol() == "list") {
+			return Expression(head);
+		}
+		else if (head.asSymbol().front() == '"') {
 			return Expression(head);
 		}
 		else {
@@ -251,6 +255,26 @@ Expression Expression::applyLambda(const Environment & env, Expression & result,
 	return Expression(resultVal);
 }
 
+//Expression Expression::setProperty(Environment & env,const std::vector<Expression> & args) { //set Property
+//	Expression key;
+//	Expression value = args[1];
+//	Expression result = args[2];
+//	//std::unordered_map<Expression, Expression> propertyMap;
+//	for (auto i = args[0].tailConstBegin(); i != args[0].tailConstEnd(); i++) {
+//		key.append(*i);
+//	}
+//	if (!key.head().isString()) {
+//		throw SemanticError("Error: first argument to set-property not a string.");
+//	}
+//	//propertyMap.insert(key, value.eval(env));
+//
+//
+//}
+
+//Expression Expression::getProperty(Environment & env, const std::vector<Expression> & args) { //set Property
+//	Expression key;
+//	Expression value = args[1];
+//}
 
 Expression Expression::handle_define(Environment & env) {
 	// but tail[0] must not be a special-form or procedure

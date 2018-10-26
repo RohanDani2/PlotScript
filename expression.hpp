@@ -69,6 +69,10 @@ public:
 
 	Expression applyLambda(const Environment & env, Expression & result, const std::vector<Expression>& args);
 
+	Expression setProperty(Environment & env, const std::vector<Expression> & args);
+
+	Expression getProperty(Environment & env, const std::vector<Expression> & args);
+
 	/// convienience member to determine if head atom is a number
 	bool isHeadNumber() const noexcept;
 

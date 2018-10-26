@@ -35,7 +35,9 @@ Atom::Atom(const Token & token) : Atom() {
 }
 
 Atom::Atom(const std::string & value) : Atom() {
-
+	if (value[0] == '"') {
+		setString(value);
+	}
 	setSymbol(value);
 }
 
@@ -48,6 +50,9 @@ Atom::Atom(const Atom & x) : Atom() {
 	}
 	else if (x.isComplex()) {
 		setComplex(x.complexValue);
+	}
+	else if (x.isString()) {
+		setString(x.stringValue);
 	}
 }
 
@@ -65,6 +70,9 @@ Atom & Atom::operator=(const Atom & x) {
 		}
 		else if (x.m_type == ComplexKind) {
 			setComplex(x.complexValue);
+		}
+		else if (x.m_type == StringKind) {
+			setString(x.stringValue);
 		}
 	}
 	return *this;
@@ -98,6 +106,11 @@ bool Atom::isList() const noexcept {
 	return m_type == ListKind;
 }
 
+bool Atom::isString() const noexcept
+{
+	return m_type == StringKind;
+}
+
 void Atom::setNumber(double value) {
 	m_type = NumberKind;
 	numberValue = value;
@@ -111,6 +124,9 @@ void Atom::setComplex(std::complex<double> myComplex) {
 void Atom::setSymbol(const std::string & value) {
 
 	// we need to ensure the destructor of the symbol string is called
+	if (value[0] == '"') {
+		setString(value);
+	}
 
 	if (m_type == SymbolKind) {
 		stringValue.~basic_string();
@@ -119,6 +135,16 @@ void Atom::setSymbol(const std::string & value) {
 	m_type = SymbolKind;
 
 	// copy construct in place
+	new (&stringValue) std::string(value);
+}
+
+void Atom::setString(const std::string & value) {
+	if (m_type == StringKind) {
+		stringValue.~basic_string();
+	}
+
+	m_type = StringKind;
+
 	new (&stringValue) std::string(value);
 }
 
@@ -136,6 +162,16 @@ std::string Atom::asSymbol() const noexcept {
 	std::string result;
 
 	if (m_type == SymbolKind) {
+		result = stringValue;
+	}
+
+	return result;
+}
+
+std::string Atom::asString() const noexcept {
+	std::string result;
+
+	if (m_type == StringKind) {
 		result = stringValue;
 	}
 
@@ -190,6 +226,9 @@ std::ostream & operator<<(std::ostream & out, const Atom & a) {
 	}
 	if (a.isComplex()) {
 		out << a.asComplex();
+	}
+	if (a.isString()) {
+		out << a.asString();
 	}
 	return out;
 }

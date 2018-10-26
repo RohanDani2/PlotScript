@@ -55,6 +55,8 @@ public:
   ///// predicate to determine if an Atom is of type List
   bool isList() const noexcept;
 
+  bool isString() const noexcept;
+
   /// value of Atom as a number, return 0 if not a Number
   double asNumber() const noexcept;
 
@@ -64,7 +66,9 @@ public:
   /// value of Atom as a number, returns empty-string if not a Symbol
   std::string asSymbol() const noexcept;
 
-  //std::vector<Expression> asList() const noexcept;
+  std::string asString() const noexcept;
+
+  void setString(const std::string & value);
 
   /// equality comparison based on type and value
   bool operator==(const Atom & right) const noexcept;
@@ -72,7 +76,7 @@ public:
 private:
 
   // internal enum of known types
-  enum Type {NoneKind, NumberKind, SymbolKind, ComplexKind, ListKind, ProcedureKind};
+  enum Type {NoneKind, NumberKind, SymbolKind, ComplexKind, ListKind, StringKind};
 
   // track the type
   Type m_type;
@@ -93,6 +97,7 @@ private:
 
   // helper to set type and value of Symbol
   void setSymbol(const std::string & value);
+
 };
 
 /// inequality comparison for Atom

@@ -44,7 +44,6 @@ void store_ifnot_empty(std::string & token, TokenSequenceType & seq){
 TokenSequenceType tokenize(std::istream & seq){
   TokenSequenceType tokens;
   std::string token;
-  int quoteCount = 0;
   
   while(true){
     char c = seq.get();

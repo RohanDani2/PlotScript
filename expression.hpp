@@ -6,6 +6,7 @@ Defines the Expression type and assiciated functions.
 
 #include <string>
 #include <vector>
+#include <map>
 
 #include "token.hpp"
 #include "atom.hpp"
@@ -69,10 +70,6 @@ public:
 
 	Expression applyLambda(const Environment & env, Expression & result, const std::vector<Expression>& args);
 
-	Expression setProperty(Environment & env, const std::vector<Expression> & args);
-
-	Expression getProperty(Environment & env, const std::vector<Expression> & args);
-
 	/// convienience member to determine if head atom is a number
 	bool isHeadNumber() const noexcept;
 
@@ -88,6 +85,9 @@ public:
 	/// equality comparison for two expressions (recursive)
 	bool operator==(const Expression & exp) const noexcept;
 
+	void setProp(const std::string & key, const Expression & value);
+
+	Expression getProp(const std::string & key);
 private:
 	// the head of the expression
 	Atom m_head;
@@ -95,6 +95,8 @@ private:
 	// the tail list is expressed as a vector for access efficiency
 	// and cache coherence, at the cost of wasted memory.
 	std::vector<Expression> m_tail;
+
+	std::map<std::string, Expression> propertyMap;
 
 	// convenience typedef
 	typedef std::vector<Expression>::iterator IteratorType;

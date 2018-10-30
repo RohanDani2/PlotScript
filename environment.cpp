@@ -566,6 +566,20 @@ Expression range(const std::vector<Expression> & args) { //range
 	return Expression(list);
 }
 
+Expression setProperty(const std::vector<Expression> & args) { //set Property
+	if (!args[0].head().isSymbol() && !args[0].head().isString()) {
+		throw SemanticError("Error: first argument to set-property not a string");
+	}
+	Expression setProperty = args[2];
+	setProperty.setProp(args[0].head().asSymbol(), args[1]);
+	return setProperty;
+}
+
+Expression getProperty(const std::vector<Expression> & args) { //set Property
+	Expression getValue = args[1];
+	return getValue.getProp(args[0].head().asSymbol());
+}
+
 
 Environment::Environment() {
 	reset();
@@ -719,4 +733,9 @@ void Environment::reset() {
 
 	//Procedure: range;
 	envmap.emplace("range", EnvResult(ProcedureType, range));
+
+	envmap.emplace("set-property", EnvResult(ProcedureType, setProperty));
+
+	envmap.emplace("get-property", EnvResult(ProcedureType, getProperty));
 }
+

@@ -3,7 +3,6 @@
 #include <list>
 #include <iostream>
 #include <algorithm>
-#include <unordered_map> 
 
 #include "environment.hpp"
 #include "semantic_error.hpp"
@@ -23,6 +22,7 @@ Expression::Expression(const std::vector<Expression>& results) {
 // recursive copy
 Expression::Expression(const Expression & a) {
 	m_head = a.m_head;
+	propertyMap = a.propertyMap;
 	for (auto e : a.m_tail) {
 		m_tail.push_back(e);
 	}
@@ -33,6 +33,7 @@ Expression & Expression::operator=(const Expression & a) {
 	// prevent self-assignment
 	if (this != &a) {
 		m_head = a.m_head;
+		propertyMap = a.propertyMap;
 		m_tail.clear();
 		for (auto e : a.m_tail) {
 			m_tail.push_back(e);
@@ -102,8 +103,6 @@ Expression::ConstIteratorType Expression::tailConstEnd() const noexcept {
 }
 
 Expression apply(const Atom & op, const std::vector<Expression> & args, const Environment & env) {
-
-
 	// head must be a symbol
 	if (!op.isSymbol()) {
 		throw SemanticError("Error during evaluation: procedure name not symbol");
@@ -255,31 +254,20 @@ Expression Expression::applyLambda(const Environment & env, Expression & result,
 	return Expression(resultVal);
 }
 
-//Expression Expression::setProperty(Environment & env,const std::vector<Expression> & args) { //set Property
-//	Expression key;
-//	Expression value = args[1];
-//	Expression result = args[2];
-//	//std::unordered_map<Expression, Expression> propertyMap;
-//	for (auto i = args[0].tailConstBegin(); i != args[0].tailConstEnd(); i++) {
-//		key.append(*i);
-//	}
-//	if (!key.head().isString()) {
-//		throw SemanticError("Error: first argument to set-property not a string.");
-//	}
-//	//propertyMap.insert(key, value.eval(env));
-//
-//
-//}
+void Expression::setProp(const std::string & key, const Expression & value) {
+	 propertyMap[key] = value;
+}
 
-//Expression Expression::getProperty(Environment & env, const std::vector<Expression> & args) { //set Property
-//	Expression key;
-//	Expression value = args[1];
-//}
+Expression Expression::getProp(const std::string & key) {
+	while (propertyMap.find(key) == propertyMap.end()) {
+		return Expression();
+	}
+	return propertyMap.at(key);
+}
 
 Expression Expression::handle_define(Environment & env) {
 	// but tail[0] must not be a special-form or procedure
 	std::string s = m_tail[0].head().asSymbol();
-
 	// tail must have size 3 or error
 	if (m_tail.size() != 2 && (s != "list")) {
 		throw SemanticError("Error during evaluation: invalid number of arguments to define");
@@ -382,6 +370,9 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp) {
 			}
 		}
 		out << ")";
+	}
+	else if (exp.head().isNone()) {
+		out << "NONE";
 	}
 	else {
 		out << "(";

@@ -7,7 +7,7 @@
 #include <QWidget>
 
 class OutputWidget : QPlainTextEdit {
-	Q_OBJECT
+Q_OBJECT
 public:
 
 };

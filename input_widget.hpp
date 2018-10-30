@@ -9,7 +9,8 @@
 class InputWidget : QPlainTextEdit {
 Q_OBJECT
 public:
-
+	InputWidget(const char * input);
+	void keyPressEvent();
 };
 
 #endif // ! INPUT_WIDGET_H

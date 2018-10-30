@@ -5,4 +5,9 @@
 #include <QApplication>
 #include <QWidget>
 
+class NotebookApp : public QWidget{
+Q_OBJECT
+public:
+	bool event();
+};
 #endif

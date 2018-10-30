@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <startup_config.hpp>
 
 #include "interpreter.hpp"
 #include "semantic_error.hpp"
@@ -29,6 +30,20 @@ int eval_from_stream(std::istream & stream){
 
   Interpreter interp;
   
+  std::ifstream ifs(STARTUP_FILE);
+
+
+  if (!interp.parseStream(ifs)) {
+	  error("Invalid Program. Could not parse.");
+  }
+  else {
+	  try {
+		  Expression exp = interp.evaluate();
+	  }
+	  catch (const SemanticError & ex) {
+		  std::cerr << ex.what() << std::endl;
+	  }
+  }
   if(!interp.parseStream(stream)){
     error("Invalid Program. Could not parse.");
     return EXIT_FAILURE;
@@ -69,6 +84,21 @@ int eval_from_command(std::string argexp){
 // A REPL is a repeated read-eval-print loop
 void repl(){
   Interpreter interp;
+
+  std::ifstream ifs(STARTUP_FILE);
+
+
+  if (!interp.parseStream(ifs)) {
+	  error("Invalid Program. Could not parse.");
+  }
+  else {
+	  try {
+		  Expression exp = interp.evaluate();
+	  }
+	  catch (const SemanticError & ex) {
+		  std::cerr << ex.what() << std::endl;
+	  }
+  }
     
   while(!std::cin.eof()){
     

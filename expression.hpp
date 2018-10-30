@@ -103,11 +103,11 @@ private:
 
 	// internal helper methods
 	Expression handle_lookup(const Atom & head, const Environment & env);
-	Expression handle_define(Environment & env);
-	Expression handle_begin(Environment & env);
-	Expression handle_lambda();
-	Expression handle_apply(Environment & env);
-	Expression handle_map(Environment & env);
+	Expression handle_define(Environment & env); //handles define function 
+	Expression handle_begin(Environment & env); //handles begin function 
+	Expression handle_lambda(); //handles lambda function 
+	Expression handle_apply(Environment & env); //handles apply function 
+	Expression handle_map(Environment & env);  //handles map 
 };
 
 /// Render expression to output stream

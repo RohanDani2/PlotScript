@@ -1,0 +1,817 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - Coverage.combined.cleaned - /vagrant/environment.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">vagrant</a> - environment.cpp<span style="font-size: 80%;"> (source / <a href="environment.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">Coverage.combined.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">193</td>
+            <td class="headerCovTableEntry">381</td>
+            <td class="headerCovTableEntryLo">50.7 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2018-11-01 19:15:12</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">26</td>
+            <td class="headerCovTableEntry">36</td>
+            <td class="headerCovTableEntryLo">72.2 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;environment.hpp&quot;</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span>            : #include &lt;cassert&gt;
+<span class="lineNum">       4 </span>            : #include &lt;cmath&gt;
+<span class="lineNum">       5 </span>            : #include &lt;complex&gt;
+<span class="lineNum">       6 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">       7 </span>            : #include &lt;ctype.h&gt;
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : #include &quot;environment.hpp&quot;
+<span class="lineNum">      10 </span>            : #include &quot;semantic_error.hpp&quot;
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : /***********************************************************************
+<span class="lineNum">      13 </span>            : Helper Functions
+<span class="lineNum">      14 </span>            : **********************************************************************/
+<a name="15"><span class="lineNum">      15 </span>            : </a>
+<span class="lineNum">      16 </span>            : // predicate, the number of args is nargs
+<span class="lineNum">      17 </span><span class="lineCov">        330 : bool nargs_equal(const std::vector&lt;Expression&gt; &amp; args, unsigned nargs) {</span>
+<span class="lineNum">      18 </span><span class="lineCov">        330 :         return args.size() == nargs;</span>
+<span class="lineNum">      19 </span>            : }
+<span class="lineNum">      20 </span>            : 
+<span class="lineNum">      21 </span>            : /***********************************************************************
+<span class="lineNum">      22 </span>            : Each of the functions below have the signature that corresponds to the
+<span class="lineNum">      23 </span>            : typedef'd Procedure function pointer.
+<span class="lineNum">      24 </span>            : **********************************************************************/
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : 
+<a name="27"><span class="lineNum">      27 </span>            : </a>
+<span class="lineNum">      28 </span>            : // the default procedure always returns an expresison of type None
+<span class="lineNum">      29 </span><span class="lineCov">         60 : Expression default_proc(const std::vector&lt;Expression&gt; &amp; args) {</span>
+<span class="lineNum">      30 </span><span class="lineCov">         60 :         args.size(); // make compiler happy we used this parameter</span>
+<span class="lineNum">      31 </span><span class="lineCov">         60 :         return Expression();</span>
+<span class="lineNum">      32 </span>            : };
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span>            : const double PI = std::atan2(0, -1);
+<span class="lineNum">      35 </span>            : const double EXP = std::exp(1);
+<a name="36"><span class="lineNum">      36 </span>            : std::complex&lt;double&gt; i(0.0, 1.0);</a>
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span><span class="lineCov">        276 : Expression add(const std::vector&lt;Expression&gt; &amp; args) {</span>
+<span class="lineNum">      39 </span>            :         // check all arguments are numbers, while adding
+<span class="lineNum">      40 </span><span class="lineCov">        276 :         double result = 0.0;</span>
+<span class="lineNum">      41 </span><span class="lineCov">        276 :         std::complex&lt;double&gt; complexVal(0, 0);</span>
+<span class="lineNum">      42 </span><span class="lineCov">        276 :         std::complex&lt;double&gt; allnumAddition(0, 0);</span>
+<span class="lineNum">      43 </span><span class="lineCov">        276 :         bool value = false;</span>
+<span class="lineNum">      44 </span><span class="lineCov">        276 :         if (args[0].isHeadNumber() == true || args[0].isHeadComplex() == true) { //adding only real numbers</span>
+<span class="lineNum">      45 </span><span class="lineCov">        970 :                 for (auto &amp; a : args) {</span>
+<span class="lineNum">      46 </span><span class="lineCov">        694 :                         if (a.isHeadNumber()) {         //adds within for loop for numbers</span>
+<span class="lineNum">      47 </span><span class="lineCov">        686 :                                 result += a.head().asNumber();</span>
+<span class="lineNum">      48 </span>            :                         }
+<span class="lineNum">      49 </span><span class="lineCov">          8 :                         else if (a.isHeadComplex()) { //adds within for loop for complex nums</span>
+<span class="lineNum">      50 </span><span class="lineCov">          8 :                                 value = true;</span>
+<span class="lineNum">      51 </span><span class="lineCov">          8 :                                 complexVal += a.head().asComplex();</span>
+<span class="lineNum">      52 </span>            :                         }
+<span class="lineNum">      53 </span>            :                 }
+<span class="lineNum">      54 </span><span class="lineCov">        276 :                 if (value == false) {</span>
+<span class="lineNum">      55 </span><span class="lineCov">        272 :                         return Expression(result); //returns double value if both vals are numbers</span>
+<span class="lineNum">      56 </span>            :                 }
+<span class="lineNum">      57 </span>            :                 else {
+<span class="lineNum">      58 </span><span class="lineCov">          4 :                         allnumAddition += complexVal;</span>
+<span class="lineNum">      59 </span><span class="lineCov">          4 :                         allnumAddition += result;</span>
+<span class="lineNum">      60 </span><span class="lineCov">          4 :                         value = false;</span>
+<span class="lineNum">      61 </span><span class="lineCov">          4 :                         return Expression(allnumAddition); //returns complex double value if either is complex</span>
+<span class="lineNum">      62 </span>            :                 }
+<span class="lineNum">      63 </span>            :         }
+<span class="lineNum">      64 </span>            :         else {
+<span class="lineNum">      65 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: in call to add, argument not a number/complex&quot;); //semantic error if no number</span>
+<span class="lineNum">      66 </span>            :         }
+<a name="67"><span class="lineNum">      67 </span>            : };</a>
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span><span class="lineCov">         72 : Expression mul(const std::vector&lt;Expression&gt; &amp; args) {</span>
+<span class="lineNum">      70 </span>            :         // check all arguments are numbers, while multiplying
+<span class="lineNum">      71 </span><span class="lineCov">         72 :         double result = 1.0;</span>
+<span class="lineNum">      72 </span><span class="lineCov">         72 :         std::complex&lt;double&gt; complexMultiply(1, 0);</span>
+<span class="lineNum">      73 </span><span class="lineCov">         72 :         std::complex&lt;double&gt; allNumMultiply(1, 0);</span>
+<span class="lineNum">      74 </span><span class="lineCov">         72 :         bool value = false;</span>
+<span class="lineNum">      75 </span><span class="lineCov">         72 :         if (args[0].isHeadNumber() == true || args[0].isHeadComplex() == true) {</span>
+<span class="lineNum">      76 </span><span class="lineCov">        252 :                 for (auto &amp; a : args) {</span>
+<span class="lineNum">      77 </span><span class="lineCov">        180 :                         if (a.isHeadNumber()) {  //calculates for real value</span>
+<span class="lineNum">      78 </span><span class="lineCov">        180 :                                 result *= a.head().asNumber();</span>
+<span class="lineNum">      79 </span>            :                         }
+<span class="lineNum">      80 </span><span class="lineNoCov">          0 :                         else if (a.isHeadComplex()) {  //calculates for imaginary value </span>
+<span class="lineNum">      81 </span><span class="lineNoCov">          0 :                                 value = true;</span>
+<span class="lineNum">      82 </span><span class="lineNoCov">          0 :                                 complexMultiply *= a.head().asComplex();</span>
+<span class="lineNum">      83 </span>            :                         }
+<span class="lineNum">      84 </span>            :                 }
+<span class="lineNum">      85 </span><span class="lineCov">         72 :                 if (value == false) {</span>
+<span class="lineNum">      86 </span><span class="lineCov">         72 :                         return Expression(result); //returns double value if both vals are numbers</span>
+<span class="lineNum">      87 </span>            :                 }
+<span class="lineNum">      88 </span>            :                 else {
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :                         allNumMultiply = result * complexMultiply;</span>
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :                         value = true;</span>
+<span class="lineNum">      91 </span><span class="lineNoCov">          0 :                         return Expression(allNumMultiply); //returns double value if both vals are complex</span>
+<span class="lineNum">      92 </span>            :                 }
+<span class="lineNum">      93 </span>            :         }
+<span class="lineNum">      94 </span>            :         else {
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: in call to mul, argument not a number&quot;);</span>
+<span class="lineNum">      96 </span>            :         }
+<a name="97"><span class="lineNum">      97 </span>            : };</a>
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span><span class="lineCov">         86 : Expression subneg(const std::vector&lt;Expression&gt; &amp; args) {</span>
+<span class="lineNum">     100 </span><span class="lineCov">         86 :         double result = 0.0;</span>
+<span class="lineNum">     101 </span><span class="lineCov">         86 :         std::complex&lt;double&gt; complexSubtract(0, 0);</span>
+<span class="lineNum">     102 </span><span class="lineCov">         86 :         std::complex&lt;double&gt; allnumSubtract(0, 0);</span>
+<span class="lineNum">     103 </span>            :         // preconditions
+<span class="lineNum">     104 </span><span class="lineCov">         86 :         if (nargs_equal(args, 1)) {</span>
+<span class="lineNum">     105 </span><span class="lineCov">         40 :                 if (args[0].isHeadNumber()) {</span>
+<span class="lineNum">     106 </span><span class="lineCov">         40 :                         result = -args[0].head().asNumber(); //negates value if result is double</span>
+<span class="lineNum">     107 </span>            :                 }
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :                 else if (args[0].isHeadComplex()) {</span>
+<span class="lineNum">     109 </span><span class="lineNoCov">          0 :                         complexSubtract = -args[0].head().asComplex(); //negates complex value</span>
+<span class="lineNum">     110 </span>            :                 }
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :                 else if (args[0].isHeadSymbol()) {</span>
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :                         if (args[0].head() == i) {</span>
+<span class="lineNum">     113 </span><span class="lineNoCov">          0 :                                 complexSubtract = -i; //negates imaginary </span>
+<span class="lineNum">     114 </span>            :                         }
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 :                         else if (args[0].head() == EXP) {</span>
+<span class="lineNum">     116 </span><span class="lineNoCov">          0 :                                 result = -EXP; //negates e</span>
+<span class="lineNum">     117 </span>            :                         }
+<span class="lineNum">     118 </span><span class="lineNoCov">          0 :                         else if (args[0].head() == PI) {</span>
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 :                                 result = -PI; //negates pi</span>
+<span class="lineNum">     120 </span>            :                         }
+<span class="lineNum">     121 </span>            :                 }
+<span class="lineNum">     122 </span>            :                 else {
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: in call to negate: invalid argument.&quot;);</span>
+<span class="lineNum">     124 </span>            :                 }
+<span class="lineNum">     125 </span>            :         }
+<span class="lineNum">     126 </span><span class="lineCov">         46 :         else if (nargs_equal(args, 2)) {</span>
+<span class="lineNum">     127 </span><span class="lineCov">         42 :                 if ((args[0].isHeadNumber()) &amp;&amp; (args[1].isHeadNumber())) {</span>
+<span class="lineNum">     128 </span><span class="lineCov">         42 :                         result = args[0].head().asNumber() - args[1].head().asNumber();</span>
+<span class="lineNum">     129 </span><span class="lineCov">         42 :                         return Expression(result); //calculates for two numbers</span>
+<span class="lineNum">     130 </span>            :                 }
+<span class="lineNum">     131 </span><span class="lineNoCov">          0 :                 else if ((args[0].isHeadComplex()) &amp;&amp; (args[1].isHeadComplex())) {</span>
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :                         complexSubtract = args[0].head().asComplex() - args[1].head().asComplex();</span>
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :                         return Expression(complexSubtract); //calculates for two complex</span>
+<span class="lineNum">     134 </span>            :                 }
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :                 else if ((args[0].isHeadComplex()) &amp;&amp; (args[1].isHeadNumber())) {</span>
+<span class="lineNum">     136 </span><span class="lineNoCov">          0 :                         complexSubtract = args[0].head().asComplex() - args[1].head().asNumber();</span>
+<span class="lineNum">     137 </span><span class="lineNoCov">          0 :                         return Expression(complexSubtract); //calculates for one complex and one number</span>
+<span class="lineNum">     138 </span>            :                 }
+<span class="lineNum">     139 </span><span class="lineNoCov">          0 :                 else if ((args[0].isHeadNumber()) &amp;&amp; (args[1].isHeadComplex())) {</span>
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 :                         complexSubtract = args[0].head().asNumber() - args[1].head().asComplex();</span>
+<span class="lineNum">     141 </span><span class="lineNoCov">          0 :                         return Expression(complexSubtract); //calculates for one complex and one number</span>
+<span class="lineNum">     142 </span>            :                 }
+<span class="lineNum">     143 </span>            :                 else {
+<span class="lineNum">     144 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: in call to subtraction: invalid argument.&quot;);</span>
+<span class="lineNum">     145 </span>            :                 }
+<span class="lineNum">     146 </span>            :         }
+<span class="lineNum">     147 </span>            :         else {
+<span class="lineNum">     148 </span><span class="lineCov">          4 :                 throw SemanticError(&quot;Error: in call to subtraction or negation: invalid number of arguments.&quot;);</span>
+<span class="lineNum">     149 </span>            :         }
+<span class="lineNum">     150 </span><span class="lineCov">         40 :         if (args[0].isHeadNumber()) {</span>
+<span class="lineNum">     151 </span><span class="lineCov">         40 :                 return Expression(result);</span>
+<span class="lineNum">     152 </span>            :         }
+<span class="lineNum">     153 </span><span class="lineNoCov">          0 :         else if (args[0].isHeadComplex()) {</span>
+<span class="lineNum">     154 </span><span class="lineNoCov">          0 :                 return Expression(complexSubtract);</span>
+<span class="lineNum">     155 </span>            :         }
+<span class="lineNum">     156 </span>            :         else {
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: in call to subtraction or negation: invalid number of arguments.&quot;);</span>
+<span class="lineNum">     158 </span>            :         }
+<a name="159"><span class="lineNum">     159 </span>            : };</a>
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span><span class="lineCov">         76 : Expression div(const std::vector&lt;Expression&gt; &amp; args) {</span>
+<span class="lineNum">     162 </span><span class="lineCov">         76 :         double result = 0.0;</span>
+<span class="lineNum">     163 </span><span class="lineCov">         76 :         std::complex&lt;double&gt; complexDivide(0, 0);</span>
+<span class="lineNum">     164 </span><span class="lineCov">         76 :         if (nargs_equal(args, 2)) {</span>
+<span class="lineNum">     165 </span><span class="lineCov">         76 :                 if ((args[0].isHeadNumber()) &amp;&amp; (args[1].isHeadNumber())) {</span>
+<span class="lineNum">     166 </span><span class="lineCov">         76 :                         result = args[0].head().asNumber() / args[1].head().asNumber();</span>
+<span class="lineNum">     167 </span><span class="lineCov">         76 :                         return Expression(result); //calculates for two numbers</span>
+<span class="lineNum">     168 </span>            :                 }
+<span class="lineNum">     169 </span><span class="lineNoCov">          0 :                 else if ((args[0].isHeadComplex() &amp;&amp; (args[1].isHeadComplex()))) {</span>
+<span class="lineNum">     170 </span><span class="lineNoCov">          0 :                         complexDivide = args[0].head().asComplex() / args[1].head().asComplex();</span>
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 :                         return Expression(complexDivide); //calculates for two complex</span>
+<span class="lineNum">     172 </span>            :                 }
+<span class="lineNum">     173 </span><span class="lineNoCov">          0 :                 else if ((args[0].isHeadComplex() &amp;&amp; (args[1].isHeadNumber()))) {</span>
+<span class="lineNum">     174 </span><span class="lineNoCov">          0 :                         complexDivide = args[0].head().asComplex() / args[1].head().asNumber();</span>
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 :                         return Expression(complexDivide); //calculates for one complex and one number</span>
+<span class="lineNum">     176 </span>            :                 }
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 :                 else if ((args[0].isHeadNumber() &amp;&amp; (args[1].isHeadComplex()))) {</span>
+<span class="lineNum">     178 </span><span class="lineNoCov">          0 :                         complexDivide = args[0].head().asNumber() / args[1].head().asComplex();</span>
+<span class="lineNum">     179 </span><span class="lineNoCov">          0 :                         return Expression(complexDivide); //calculates for one complex and one number</span>
+<span class="lineNum">     180 </span>            :                 }
+<span class="lineNum">     181 </span>            :                 else {
+<span class="lineNum">     182 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: in call to division: invalid argument.&quot;);</span>
+<span class="lineNum">     183 </span>            :                 }
+<span class="lineNum">     184 </span>            :         }
+<span class="lineNum">     185 </span><span class="lineNoCov">          0 :         else if (nargs_equal(args, 1)) {</span>
+<span class="lineNum">     186 </span><span class="lineNoCov">          0 :                 if ((args[0].isHeadNumber())) {</span>
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 :                         if (args[0].head().asNumber() == 0) {</span>
+<span class="lineNum">     188 </span><span class="lineNoCov">          0 :                                 throw SemanticError(&quot;Error: in call to division: invalid argument.&quot;);</span>
+<span class="lineNum">     189 </span>            :                         }
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 :                         result = 1 / args[0].head().asNumber();</span>
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 :                         return Expression(result);</span>
+<span class="lineNum">     192 </span>            :                 }
+<span class="lineNum">     193 </span><span class="lineNoCov">          0 :                 else if ((args[0].isHeadComplex())) {</span>
+<span class="lineNum">     194 </span><span class="lineNoCov">          0 :                         complexDivide = std::pow(args[0].head().asComplex(), -1);</span>
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 :                         return Expression(complexDivide);</span>
+<span class="lineNum">     196 </span>            :                 }
+<span class="lineNum">     197 </span>            :         }
+<span class="lineNum">     198 </span>            :         else {
+<span class="lineNum">     199 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: in call to division: invalid number of arguments.&quot;);</span>
+<span class="lineNum">     200 </span>            :         }
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 :         return Expression();</span>
+<span class="lineNum">     202 </span>            : 
+<a name="203"><span class="lineNum">     203 </span>            : };</a>
+<span class="lineNum">     204 </span>            : 
+<span class="lineNum">     205 </span><span class="lineCov">          9 : Expression exponent(const std::vector&lt;Expression&gt; &amp; args) { //exponent</span>
+<span class="lineNum">     206 </span><span class="lineCov">          9 :         double result = 0.0;</span>
+<span class="lineNum">     207 </span><span class="lineCov">          9 :         std::complex&lt;double&gt; complexExponent(0, 0);</span>
+<span class="lineNum">     208 </span><span class="lineCov">          9 :         if (nargs_equal(args, 2)) {</span>
+<span class="lineNum">     209 </span><span class="lineCov">          9 :                 if ((args[0].isHeadNumber()) &amp;&amp; (args[1].isHeadNumber())) {</span>
+<span class="lineNum">     210 </span><span class="lineCov">          9 :                         result = pow(args[0].head().asNumber(), args[1].head().asNumber());</span>
+<span class="lineNum">     211 </span><span class="lineCov">          9 :                         return Expression(result); //calculates for two numbers</span>
+<span class="lineNum">     212 </span>            :                 }
+<span class="lineNum">     213 </span><span class="lineNoCov">          0 :                 else if ((args[0].isHeadComplex()) &amp;&amp; (args[1].isHeadComplex())) {</span>
+<span class="lineNum">     214 </span><span class="lineNoCov">          0 :                         complexExponent = pow(args[0].head().asComplex(), args[1].head().asComplex());</span>
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 :                         return Expression(complexExponent); //calculates for two complex</span>
+<span class="lineNum">     216 </span>            :                 }
+<span class="lineNum">     217 </span><span class="lineNoCov">          0 :                 else if ((args[0].isHeadComplex()) &amp;&amp; (args[1].isHeadNumber())) {</span>
+<span class="lineNum">     218 </span><span class="lineNoCov">          0 :                         complexExponent = pow(args[0].head().asComplex(), args[1].head().asNumber());</span>
+<span class="lineNum">     219 </span><span class="lineNoCov">          0 :                         return Expression(complexExponent); //calculates for one complex and one number</span>
+<span class="lineNum">     220 </span>            :                 }
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :                 else if ((args[0].isHeadNumber()) &amp;&amp; (args[1].isHeadComplex())) {</span>
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 :                         complexExponent = pow(args[0].head().asNumber(), args[1].head().asComplex());</span>
+<span class="lineNum">     223 </span><span class="lineNoCov">          0 :                         return Expression(complexExponent); //calculates for one complex and one number</span>
+<span class="lineNum">     224 </span>            :                 }
+<span class="lineNum">     225 </span>            :                 else {
+<span class="lineNum">     226 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: in call to exponent: invalid argument.&quot;);</span>
+<span class="lineNum">     227 </span>            :                 }
+<span class="lineNum">     228 </span>            :         }
+<span class="lineNum">     229 </span>            :         else {
+<span class="lineNum">     230 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: in call to exponent: invalid number of arguments.&quot;);</span>
+<span class="lineNum">     231 </span>            :         }
+<a name="232"><span class="lineNum">     232 </span>            : }</a>
+<span class="lineNum">     233 </span>            : 
+<span class="lineNum">     234 </span><span class="lineCov">         11 : Expression squareroot(const std::vector&lt;Expression&gt; &amp; args) { //square root</span>
+<span class="lineNum">     235 </span><span class="lineCov">         11 :         double result = 0.0;</span>
+<span class="lineNum">     236 </span><span class="lineCov">         11 :         std::complex&lt;double&gt; complexSqrt(0, 0);</span>
+<span class="lineNum">     237 </span><span class="lineCov">         11 :         if (nargs_equal(args, 1)) {</span>
+<span class="lineNum">     238 </span><span class="lineCov">         11 :                 if (args[0].isHeadNumber()) {</span>
+<span class="lineNum">     239 </span><span class="lineCov">         11 :                         if (args[0].isHeadNumber()) {</span>
+<span class="lineNum">     240 </span><span class="lineCov">         11 :                                 result = sqrt(args[0].head().asNumber());</span>
+<span class="lineNum">     241 </span><span class="lineCov">         11 :                                 if (std::isnan(result)) { //check for negative square root</span>
+<span class="lineNum">     242 </span><span class="lineNoCov">          0 :                                         std::complex&lt;double&gt; negativeSqrt(0, sqrt(std::abs(args[0].head().asNumber())));</span>
+<span class="lineNum">     243 </span><span class="lineNoCov">          0 :                                         return Expression(negativeSqrt);</span>
+<span class="lineNum">     244 </span>            :                                 }
+<span class="lineNum">     245 </span>            :                                 else {
+<span class="lineNum">     246 </span><span class="lineCov">         11 :                                         return Expression(result); //otherwise return result</span>
+<span class="lineNum">     247 </span>            :                                 }
+<span class="lineNum">     248 </span>            :                         }
+<span class="lineNum">     249 </span>            :                 }
+<span class="lineNum">     250 </span><span class="lineNoCov">          0 :                 else if (args[0].isHeadComplex()) {</span>
+<span class="lineNum">     251 </span><span class="lineNoCov">          0 :                         complexSqrt = sqrt(args[0].head().asComplex()); //check for complex</span>
+<span class="lineNum">     252 </span><span class="lineNoCov">          0 :                         return Expression(complexSqrt);</span>
+<span class="lineNum">     253 </span>            :                 }
+<span class="lineNum">     254 </span>            :                 else {
+<span class="lineNum">     255 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: in call to square root: invalid argument.&quot;);</span>
+<span class="lineNum">     256 </span>            :                 }
+<span class="lineNum">     257 </span>            :         }
+<span class="lineNum">     258 </span>            :         else {
+<span class="lineNum">     259 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: in call to square root: invalid number of arguments.&quot;);</span>
+<span class="lineNum">     260 </span>            :         }
+<span class="lineNum">     261 </span><span class="lineNoCov">          0 :         return Expression(result);</span>
+<a name="262"><span class="lineNum">     262 </span>            : }</a>
+<span class="lineNum">     263 </span>            : 
+<span class="lineNum">     264 </span><span class="lineCov">         11 : Expression naturalLog(const std::vector&lt;Expression&gt; &amp; args) { //natural Log</span>
+<span class="lineNum">     265 </span><span class="lineCov">         11 :         double result = 0.0;</span>
+<span class="lineNum">     266 </span><span class="lineCov">         11 :         if (nargs_equal(args, 1)) {</span>
+<span class="lineNum">     267 </span><span class="lineCov">         11 :                 if (args[0].isHeadNumber()) {</span>
+<span class="lineNum">     268 </span><span class="lineCov">         11 :                         result = log(args[0].head().asNumber()); //calculates log of number</span>
+<span class="lineNum">     269 </span>            :                 }
+<span class="lineNum">     270 </span>            :                 else {
+<span class="lineNum">     271 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: in call to natural log: invalid argument.&quot;);</span>
+<span class="lineNum">     272 </span>            :                 }
+<span class="lineNum">     273 </span>            :         }
+<span class="lineNum">     274 </span>            :         else {
+<span class="lineNum">     275 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: in call to natural log: invalid number of arguments.&quot;);</span>
+<span class="lineNum">     276 </span>            :         }
+<span class="lineNum">     277 </span><span class="lineCov">         11 :         return Expression(result);</span>
+<a name="278"><span class="lineNum">     278 </span>            : }</a>
+<span class="lineNum">     279 </span>            : 
+<span class="lineNum">     280 </span><span class="lineCov">         23 : Expression sine(const std::vector&lt;Expression&gt; &amp; args) { //sine</span>
+<span class="lineNum">     281 </span><span class="lineCov">         23 :         double result = 0.0;</span>
+<span class="lineNum">     282 </span><span class="lineCov">         23 :         std::complex&lt;double&gt; sineComplex(0, 0);</span>
+<span class="lineNum">     283 </span><span class="lineCov">         23 :         if (nargs_equal(args, 1)) {</span>
+<span class="lineNum">     284 </span><span class="lineCov">         18 :                 if (args[0].isHeadNumber()) { //checks sine for number value</span>
+<span class="lineNum">     285 </span><span class="lineCov">         18 :                         result = sin(args[0].head().asNumber());</span>
+<span class="lineNum">     286 </span>            :                 }
+<span class="lineNum">     287 </span><span class="lineNoCov">          0 :                 else if (args[0].isHeadComplex()) {</span>
+<span class="lineNum">     288 </span><span class="lineNoCov">          0 :                         sineComplex = sin(args[0].head().asComplex()); //check sine for complex</span>
+<span class="lineNum">     289 </span><span class="lineNoCov">          0 :                         return Expression(sineComplex);</span>
+<span class="lineNum">     290 </span>            :                 }
+<span class="lineNum">     291 </span>            :                 else {
+<span class="lineNum">     292 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: in call to sine: invalid argument.&quot;);</span>
+<span class="lineNum">     293 </span>            :                 }
+<span class="lineNum">     294 </span>            :         }
+<span class="lineNum">     295 </span>            :         else {
+<span class="lineNum">     296 </span><span class="lineCov">          5 :                 throw SemanticError(&quot;Error: in call to sine: invalid number of arguments.&quot;);</span>
+<span class="lineNum">     297 </span>            :         }
+<span class="lineNum">     298 </span><span class="lineCov">         18 :         return Expression(result);</span>
+<a name="299"><span class="lineNum">     299 </span>            : }</a>
+<span class="lineNum">     300 </span>            : 
+<span class="lineNum">     301 </span><span class="lineCov">         21 : Expression cosine(const std::vector&lt;Expression&gt; &amp; args) { //cosine</span>
+<span class="lineNum">     302 </span><span class="lineCov">         21 :         double result = 0.0;</span>
+<span class="lineNum">     303 </span><span class="lineCov">         21 :         std::complex&lt;double&gt; cosineComplex(0, 0);</span>
+<span class="lineNum">     304 </span><span class="lineCov">         21 :         if (nargs_equal(args, 1)) {</span>
+<span class="lineNum">     305 </span><span class="lineCov">         16 :                 for (auto &amp;a : args) {</span>
+<span class="lineNum">     306 </span><span class="lineCov">         16 :                         if (a.isHeadNumber()) {</span>
+<span class="lineNum">     307 </span><span class="lineCov">         16 :                                 result = cos(a.head().asNumber()); //calculates cosine number value</span>
+<span class="lineNum">     308 </span><span class="lineCov">         16 :                                 return Expression(result);</span>
+<span class="lineNum">     309 </span>            :                         }
+<span class="lineNum">     310 </span><span class="lineNoCov">          0 :                         else if (a.isHeadComplex()) {</span>
+<span class="lineNum">     311 </span><span class="lineNoCov">          0 :                                 cosineComplex = cos(a.head().asComplex()); //calculates cosine complex val</span>
+<span class="lineNum">     312 </span><span class="lineNoCov">          0 :                                 return Expression(cosineComplex);</span>
+<span class="lineNum">     313 </span>            :                         }
+<span class="lineNum">     314 </span>            :                         else {
+<span class="lineNum">     315 </span><span class="lineNoCov">          0 :                                 throw SemanticError(&quot;Error: in call to cosine: invalid argument.&quot;);</span>
+<span class="lineNum">     316 </span>            :                         }
+<span class="lineNum">     317 </span>            :                 }
+<span class="lineNum">     318 </span>            :         }
+<span class="lineNum">     319 </span>            :         else {
+<span class="lineNum">     320 </span><span class="lineCov">          5 :                 throw SemanticError(&quot;Error: in call to cosine: invalid number of arguments.&quot;);</span>
+<span class="lineNum">     321 </span>            :         }
+<span class="lineNum">     322 </span><span class="lineNoCov">          0 :         return Expression(result);</span>
+<a name="323"><span class="lineNum">     323 </span>            : }</a>
+<span class="lineNum">     324 </span>            : 
+<span class="lineNum">     325 </span><span class="lineCov">         19 : Expression tangent(const std::vector&lt;Expression&gt; &amp; args) { //tan</span>
+<span class="lineNum">     326 </span><span class="lineCov">         19 :         double result = 0.0;</span>
+<span class="lineNum">     327 </span><span class="lineCov">         19 :         std::complex&lt;double&gt; tangentComplex(0, 0);</span>
+<span class="lineNum">     328 </span><span class="lineCov">         19 :         if (nargs_equal(args, 1)) {</span>
+<span class="lineNum">     329 </span><span class="lineCov">         14 :                 if (args[0].isHeadNumber()) {</span>
+<span class="lineNum">     330 </span><span class="lineCov">         14 :                         result = tan(args[0].head().asNumber()); //tangent as number value </span>
+<span class="lineNum">     331 </span>            :                 }
+<span class="lineNum">     332 </span><span class="lineNoCov">          0 :                 else if (args[0].isHeadComplex()) {</span>
+<span class="lineNum">     333 </span><span class="lineNoCov">          0 :                         tangentComplex = tan(args[0].head().asComplex()); //tangent as complex val</span>
+<span class="lineNum">     334 </span><span class="lineNoCov">          0 :                         return Expression(tangentComplex);</span>
+<span class="lineNum">     335 </span>            :                 }
+<span class="lineNum">     336 </span>            :                 else {
+<span class="lineNum">     337 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: in call to tangent: invalid argument.&quot;);</span>
+<span class="lineNum">     338 </span>            :                 }
+<span class="lineNum">     339 </span>            :         }
+<span class="lineNum">     340 </span>            :         else {
+<span class="lineNum">     341 </span><span class="lineCov">          5 :                 throw SemanticError(&quot;Error: in call to tangent: invalid number of arguments.&quot;);</span>
+<span class="lineNum">     342 </span>            :         }
+<span class="lineNum">     343 </span><span class="lineCov">         14 :         return Expression(result);</span>
+<a name="344"><span class="lineNum">     344 </span>            : }</a>
+<span class="lineNum">     345 </span>            : 
+<span class="lineNum">     346 </span><span class="lineCov">          5 : Expression realNum(const std::vector&lt;Expression&gt; &amp; args) { //real</span>
+<span class="lineNum">     347 </span><span class="lineCov">          5 :         double value = 0.0;</span>
+<span class="lineNum">     348 </span><span class="lineCov">          5 :         if (nargs_equal(args, 1)) {</span>
+<span class="lineNum">     349 </span><span class="lineNoCov">          0 :                 if (args[0].isHeadComplex()) {</span>
+<span class="lineNum">     350 </span><span class="lineNoCov">          0 :                         value = std::real(args[0].head().asComplex()); //find real value for compelx num</span>
+<span class="lineNum">     351 </span>            :                 }
+<span class="lineNum">     352 </span>            :                 else {
+<span class="lineNum">     353 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: in call to realNum: not complex.&quot;);</span>
+<span class="lineNum">     354 </span>            :                 }
+<span class="lineNum">     355 </span>            :         }
+<span class="lineNum">     356 </span>            :         else {
+<span class="lineNum">     357 </span><span class="lineCov">          5 :                 throw SemanticError(&quot;Error: in call to realNum: more than one argument.&quot;);</span>
+<span class="lineNum">     358 </span>            :         }
+<span class="lineNum">     359 </span><span class="lineNoCov">          0 :         return Expression(value); //returns real double</span>
+<a name="360"><span class="lineNum">     360 </span>            : }</a>
+<span class="lineNum">     361 </span>            : 
+<span class="lineNum">     362 </span><span class="lineCov">          5 : Expression imaginary(const std::vector&lt;Expression&gt; &amp; args) { //imag</span>
+<span class="lineNum">     363 </span><span class="lineCov">          5 :         double value = 0.0;</span>
+<span class="lineNum">     364 </span><span class="lineCov">          5 :         if (nargs_equal(args, 1)) {</span>
+<span class="lineNum">     365 </span><span class="lineNoCov">          0 :                 if (args[0].isHeadComplex()) {</span>
+<span class="lineNum">     366 </span><span class="lineNoCov">          0 :                         value = std::imag(args[0].head().asComplex()); //uses complex imaginary lib to get value</span>
+<span class="lineNum">     367 </span>            :                 }
+<span class="lineNum">     368 </span>            :                 else {
+<span class="lineNum">     369 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: in call to imaginary: not complex.&quot;);</span>
+<span class="lineNum">     370 </span>            :                 }
+<span class="lineNum">     371 </span>            :         }
+<span class="lineNum">     372 </span>            :         else {
+<span class="lineNum">     373 </span><span class="lineCov">          5 :                 throw SemanticError(&quot;Error: in call to imaginary: more than one argument.&quot;);</span>
+<span class="lineNum">     374 </span>            :         }
+<span class="lineNum">     375 </span><span class="lineNoCov">          0 :         return Expression(value); //returns double value</span>
+<a name="376"><span class="lineNum">     376 </span>            : }</a>
+<span class="lineNum">     377 </span>            : 
+<span class="lineNum">     378 </span><span class="lineNoCov">          0 : Expression absoluteValue(const std::vector&lt;Expression&gt; &amp; args) { //absolute value</span>
+<span class="lineNum">     379 </span><span class="lineNoCov">          0 :         double value = 0.0;</span>
+<span class="lineNum">     380 </span><span class="lineNoCov">          0 :         if (nargs_equal(args, 1)) {</span>
+<span class="lineNum">     381 </span><span class="lineNoCov">          0 :                 if (args[0].isHeadComplex()) {</span>
+<span class="lineNum">     382 </span><span class="lineNoCov">          0 :                         value = std::abs(args[0].head().asComplex());  //calculates the magnitude value</span>
+<span class="lineNum">     383 </span>            :                 }
+<span class="lineNum">     384 </span>            :                 else {
+<span class="lineNum">     385 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: in call to absoluteValue: not complex.&quot;);</span>
+<span class="lineNum">     386 </span>            :                 }
+<span class="lineNum">     387 </span>            :         }
+<span class="lineNum">     388 </span>            :         else {
+<span class="lineNum">     389 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: in call to absoluteValue: not one argument.&quot;);</span>
+<span class="lineNum">     390 </span>            :         }
+<span class="lineNum">     391 </span><span class="lineNoCov">          0 :         return Expression(value); //returns the magnitude</span>
+<a name="392"><span class="lineNum">     392 </span>            : }</a>
+<span class="lineNum">     393 </span>            : 
+<span class="lineNum">     394 </span><span class="lineNoCov">          0 : Expression phaseAngle(const std::vector&lt;Expression&gt; &amp; args) { //phaseAngle</span>
+<span class="lineNum">     395 </span><span class="lineNoCov">          0 :         double value = 0.0;</span>
+<span class="lineNum">     396 </span><span class="lineNoCov">          0 :         if (nargs_equal(args, 1)) {</span>
+<span class="lineNum">     397 </span><span class="lineNoCov">          0 :                 if (args[0].isHeadComplex()) {</span>
+<span class="lineNum">     398 </span><span class="lineNoCov">          0 :                         value = std::arg(args[0].head().asComplex());  //calculates the phase angle value</span>
+<span class="lineNum">     399 </span>            :                 }
+<span class="lineNum">     400 </span>            :                 else {
+<span class="lineNum">     401 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: in call to phaseAngle: not complex.&quot;);</span>
+<span class="lineNum">     402 </span>            :                 }
+<span class="lineNum">     403 </span>            :         }
+<span class="lineNum">     404 </span>            :         else {
+<span class="lineNum">     405 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: in call to phaseAngle: not one argument.&quot;);</span>
+<span class="lineNum">     406 </span>            :         }
+<span class="lineNum">     407 </span><span class="lineNoCov">          0 :         return Expression(value); //returns the phase angle value </span>
+<a name="408"><span class="lineNum">     408 </span>            : }</a>
+<span class="lineNum">     409 </span>            : 
+<span class="lineNum">     410 </span><span class="lineNoCov">          0 : Expression conjugate(const std::vector&lt;Expression&gt; &amp; args) { //conjugate</span>
+<span class="lineNum">     411 </span><span class="lineNoCov">          0 :         std::complex&lt;double&gt; conjugate(0, 0);</span>
+<span class="lineNum">     412 </span><span class="lineNoCov">          0 :         if (nargs_equal(args, 1)) {</span>
+<span class="lineNum">     413 </span><span class="lineNoCov">          0 :                 if (args[0].isHeadComplex()) {</span>
+<span class="lineNum">     414 </span><span class="lineNoCov">          0 :                         conjugate = std::conj(args[0].head().asComplex());</span>
+<span class="lineNum">     415 </span><span class="lineNoCov">          0 :                         return Expression(conjugate); //returns the conjugate value </span>
+<span class="lineNum">     416 </span>            :                 }
+<span class="lineNum">     417 </span>            :                 else {
+<span class="lineNum">     418 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: in call to conjugate: not complex.&quot;);</span>
+<span class="lineNum">     419 </span>            :                 }
+<span class="lineNum">     420 </span>            : 
+<span class="lineNum">     421 </span>            :         }
+<span class="lineNum">     422 </span>            :         else {
+<span class="lineNum">     423 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: in call to conjugate: more than 1 argument.&quot;);</span>
+<span class="lineNum">     424 </span>            :         }
+<span class="lineNum">     425 </span>            : 
+<a name="426"><span class="lineNum">     426 </span>            : }</a>
+<span class="lineNum">     427 </span>            : 
+<span class="lineNum">     428 </span><span class="lineCov">         23 : Expression list(const std::vector&lt;Expression&gt; &amp; args) {</span>
+<span class="lineNum">     429 </span><span class="lineCov">         46 :         Atom head(&quot;list&quot;);</span>
+<span class="lineNum">     430 </span><span class="lineCov">         23 :         Expression list(head);</span>
+<span class="lineNum">     431 </span>            : 
+<span class="lineNum">     432 </span><span class="lineCov">         82 :         for (auto &amp;a : args) {</span>
+<span class="lineNum">     433 </span><span class="lineCov">         59 :                 list.append(a);</span>
+<span class="lineNum">     434 </span>            :         }
+<span class="lineNum">     435 </span><span class="lineCov">         46 :         return list;</span>
+<a name="436"><span class="lineNum">     436 </span>            : }</a>
+<span class="lineNum">     437 </span>            : 
+<span class="lineNum">     438 </span><span class="lineCov">         18 : Expression first(const std::vector&lt;Expression&gt; &amp; args) { //first</span>
+<span class="lineNum">     439 </span>            : 
+<span class="lineNum">     440 </span><span class="lineCov">         18 :         int count = 0;</span>
+<span class="lineNum">     441 </span><span class="lineCov">         36 :         std::vector&lt;Expression&gt; firstVal;</span>
+<span class="lineNum">     442 </span><span class="lineCov">         18 :         if (nargs_equal(args, 1)) {</span>
+<span class="lineNum">     443 </span><span class="lineCov">         18 :                 if (args[0].isHeadSymbol() &amp;&amp; args[0].head().asSymbol() == &quot;list&quot;) {</span>
+<span class="lineNum">     444 </span><span class="lineCov">         18 :                         for (auto a = args[0].tailConstBegin(); a != args[0].tailConstEnd(); ++a) {</span>
+<span class="lineNum">     445 </span><span class="lineCov">         18 :                                 ++count;</span>
+<span class="lineNum">     446 </span><span class="lineCov">         18 :                                 if (count &gt; 0) {</span>
+<span class="lineNum">     447 </span><span class="lineCov">         18 :                                         firstVal.push_back(*a);</span>
+<span class="lineNum">     448 </span><span class="lineCov">         18 :                                         break;</span>
+<span class="lineNum">     449 </span>            :                                 }
+<span class="lineNum">     450 </span>            :                         }
+<span class="lineNum">     451 </span>            :                 }
+<span class="lineNum">     452 </span>            :                 else {
+<span class="lineNum">     453 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: argument to first is not a list&quot;);</span>
+<span class="lineNum">     454 </span>            :                 }
+<span class="lineNum">     455 </span>            :         }
+<span class="lineNum">     456 </span>            :         else {
+<span class="lineNum">     457 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: more than one argument in call to first.&quot;);</span>
+<span class="lineNum">     458 </span>            :         }
+<span class="lineNum">     459 </span><span class="lineCov">         18 :         if (firstVal.size() == 0) {</span>
+<span class="lineNum">     460 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: argument to first is an empty list.&quot;);</span>
+<span class="lineNum">     461 </span>            :         }
+<span class="lineNum">     462 </span><span class="lineCov">         36 :         return Expression(args[0].first());</span>
+<a name="463"><span class="lineNum">     463 </span>            : }</a>
+<span class="lineNum">     464 </span>            : 
+<span class="lineNum">     465 </span><span class="lineNoCov">          0 : Expression rest(const std::vector&lt;Expression&gt; &amp; args) { //first</span>
+<span class="lineNum">     466 </span><span class="lineNoCov">          0 :         std::vector&lt;Expression&gt; restStore = args;</span>
+<span class="lineNum">     467 </span><span class="lineNoCov">          0 :         std::vector&lt;Expression&gt; tempStore;</span>
+<span class="lineNum">     468 </span>            : 
+<span class="lineNum">     469 </span><span class="lineNoCov">          0 :         Atom head(&quot;list&quot;);</span>
+<span class="lineNum">     470 </span><span class="lineNoCov">          0 :         Expression list(head);</span>
+<span class="lineNum">     471 </span>            : 
+<span class="lineNum">     472 </span><span class="lineNoCov">          0 :         for (auto b = args[0].tailConstBegin(); b != args[0].tailConstEnd(); ++b) {</span>
+<span class="lineNum">     473 </span><span class="lineNoCov">          0 :                 tempStore.push_back(*b);</span>
+<span class="lineNum">     474 </span>            :         }
+<span class="lineNum">     475 </span><span class="lineNoCov">          0 :         if (tempStore.empty()) {</span>
+<span class="lineNum">     476 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: argument to rest is an empty list.&quot;);</span>
+<span class="lineNum">     477 </span>            :         }
+<span class="lineNum">     478 </span><span class="lineNoCov">          0 :         if (nargs_equal(args, 1)) {</span>
+<span class="lineNum">     479 </span><span class="lineNoCov">          0 :                 if (args[0].isHeadSymbol() &amp;&amp; args[0].head().asSymbol() == &quot;list&quot;) {</span>
+<span class="lineNum">     480 </span><span class="lineNoCov">          0 :                         for (auto a = args[0].tailConstBegin() + 1; a != args[0].tailConstEnd(); ++a) {</span>
+<span class="lineNum">     481 </span><span class="lineNoCov">          0 :                                 list.append(*a);</span>
+<span class="lineNum">     482 </span>            :                         }
+<span class="lineNum">     483 </span><span class="lineNoCov">          0 :                         if (restStore.empty()) {</span>
+<span class="lineNum">     484 </span><span class="lineNoCov">          0 :                                 return Expression(args[0].head());</span>
+<span class="lineNum">     485 </span>            : 
+<span class="lineNum">     486 </span>            :                         }
+<span class="lineNum">     487 </span>            :                 }
+<span class="lineNum">     488 </span>            :                 else {
+<span class="lineNum">     489 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: argument to rest is not a list.&quot;);</span>
+<span class="lineNum">     490 </span>            :                 }
+<span class="lineNum">     491 </span>            :         }
+<span class="lineNum">     492 </span>            :         else {
+<span class="lineNum">     493 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: more than one argument in call to rest.&quot;);</span>
+<span class="lineNum">     494 </span>            :         }
+<span class="lineNum">     495 </span><span class="lineNoCov">          0 :         return Expression(list);</span>
+<a name="496"><span class="lineNum">     496 </span>            : }</a>
+<span class="lineNum">     497 </span>            : 
+<span class="lineNum">     498 </span><span class="lineNoCov">          0 : Expression length(const std::vector&lt;Expression&gt; &amp; args) { //length</span>
+<span class="lineNum">     499 </span><span class="lineNoCov">          0 :         double count = 0;</span>
+<span class="lineNum">     500 </span><span class="lineNoCov">          0 :         if (nargs_equal(args, 1)) {</span>
+<span class="lineNum">     501 </span><span class="lineNoCov">          0 :                 if (args[0].isHeadSymbol() &amp;&amp; args[0].head().asSymbol() == &quot;list&quot;) {</span>
+<span class="lineNum">     502 </span><span class="lineNoCov">          0 :                         for (auto a = args[0].tailConstBegin(); a != args[0].tailConstEnd(); ++a) {</span>
+<span class="lineNum">     503 </span><span class="lineNoCov">          0 :                                 count++;</span>
+<span class="lineNum">     504 </span>            :                         }
+<span class="lineNum">     505 </span>            :                 }
+<span class="lineNum">     506 </span>            :                 else {
+<span class="lineNum">     507 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: argument to length is not a list.&quot;);</span>
+<span class="lineNum">     508 </span>            :                 }
+<span class="lineNum">     509 </span>            :         }
+<span class="lineNum">     510 </span><span class="lineNoCov">          0 :         return Expression(count);</span>
+<a name="511"><span class="lineNum">     511 </span>            : }</a>
+<span class="lineNum">     512 </span>            : 
+<span class="lineNum">     513 </span><span class="lineNoCov">          0 : Expression appendVal(const std::vector&lt;Expression&gt; &amp; args) { //append</span>
+<span class="lineNum">     514 </span><span class="lineNoCov">          0 :         Expression result = args[0];</span>
+<span class="lineNum">     515 </span><span class="lineNoCov">          0 :         if (args[0].isHeadSymbol() &amp;&amp; args[0].head().asSymbol() == &quot;list&quot;) {</span>
+<span class="lineNum">     516 </span><span class="lineNoCov">          0 :                 result.append(args[1]);</span>
+<span class="lineNum">     517 </span>            :         }
+<span class="lineNum">     518 </span>            :         else {
+<span class="lineNum">     519 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: first argument to append not a list.&quot;);</span>
+<span class="lineNum">     520 </span>            :         }
+<span class="lineNum">     521 </span><span class="lineNoCov">          0 :         return Expression(result);</span>
+<a name="522"><span class="lineNum">     522 </span>            : }</a>
+<span class="lineNum">     523 </span>            : 
+<span class="lineNum">     524 </span><span class="lineNoCov">          0 : Expression join(const std::vector&lt;Expression&gt; &amp; args) { //join</span>
+<span class="lineNum">     525 </span><span class="lineNoCov">          0 :         Expression result = args[0];</span>
+<span class="lineNum">     526 </span><span class="lineNoCov">          0 :         if ((args[0].isHeadSymbol() &amp;&amp; args[0].head().asSymbol() == &quot;list&quot;)</span>
+<span class="lineNum">     527 </span><span class="lineNoCov">          0 :                 &amp;&amp; (args[1].isHeadSymbol() &amp;&amp; args[1].head().asSymbol() == &quot;list&quot;)) {</span>
+<span class="lineNum">     528 </span><span class="lineNoCov">          0 :                 for (auto a = args[1].tailConstBegin(); a != args[1].tailConstEnd(); ++a) {</span>
+<span class="lineNum">     529 </span><span class="lineNoCov">          0 :                         result.append(*a);</span>
+<span class="lineNum">     530 </span>            :                 }
+<span class="lineNum">     531 </span>            :         }
+<span class="lineNum">     532 </span>            :         else {
+<span class="lineNum">     533 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: first argument to join not a list.&quot;);</span>
+<span class="lineNum">     534 </span>            :         }
+<span class="lineNum">     535 </span><span class="lineNoCov">          0 :         return Expression(result);</span>
+<a name="536"><span class="lineNum">     536 </span>            : }</a>
+<span class="lineNum">     537 </span>            : 
+<span class="lineNum">     538 </span><span class="lineNoCov">          0 : Expression range(const std::vector&lt;Expression&gt; &amp; args) { //range</span>
+<span class="lineNum">     539 </span><span class="lineNoCov">          0 :         double sumVal = 0;</span>
+<span class="lineNum">     540 </span><span class="lineNoCov">          0 :         auto secondVal = args[1];</span>
+<span class="lineNum">     541 </span><span class="lineNoCov">          0 :         auto incrementer = args[2];</span>
+<span class="lineNum">     542 </span>            : 
+<span class="lineNum">     543 </span><span class="lineNoCov">          0 :         Atom head(&quot;list&quot;);</span>
+<span class="lineNum">     544 </span><span class="lineNoCov">          0 :         Expression list(head);</span>
+<span class="lineNum">     545 </span>            : 
+<span class="lineNum">     546 </span><span class="lineNoCov">          0 :         list.append(args[0].head().asNumber());</span>
+<span class="lineNum">     547 </span>            : 
+<span class="lineNum">     548 </span><span class="lineNoCov">          0 :         sumVal = args[0].head().asNumber() + args[2].head().asNumber();</span>
+<span class="lineNum">     549 </span>            : 
+<span class="lineNum">     550 </span><span class="lineNoCov">          0 :         if (args[2].head().asNumber() &lt; 0) {</span>
+<span class="lineNum">     551 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: negative or zero increment in range.&quot;);</span>
+<span class="lineNum">     552 </span>            :         }
+<span class="lineNum">     553 </span><span class="lineNoCov">          0 :         if (args[0].isHeadNumber() &amp;&amp; args[1].isHeadNumber() &amp;&amp; args[2].isHeadNumber()) {</span>
+<span class="lineNum">     554 </span><span class="lineNoCov">          0 :                 if (args[0].head().asNumber() &gt; args[1].head().asNumber()) {</span>
+<span class="lineNum">     555 </span><span class="lineNoCov">          0 :                         throw SemanticError(&quot;Error: begin greater than end in range.&quot;);</span>
+<span class="lineNum">     556 </span>            :                 }
+<span class="lineNum">     557 </span><span class="lineNoCov">          0 :                 while (sumVal &lt;= args[1].head().asNumber()) { //for decimals</span>
+<span class="lineNum">     558 </span><span class="lineNoCov">          0 :                         list.append(sumVal);</span>
+<span class="lineNum">     559 </span><span class="lineNoCov">          0 :                         sumVal = sumVal + args[2].head().asNumber();</span>
+<span class="lineNum">     560 </span>            :                 }
+<span class="lineNum">     561 </span>            : 
+<span class="lineNum">     562 </span>            :         }
+<span class="lineNum">     563 </span>            :         else {
+<span class="lineNum">     564 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: first argument to range not a number.&quot;);</span>
+<span class="lineNum">     565 </span>            :         }
+<span class="lineNum">     566 </span><span class="lineNoCov">          0 :         return Expression(list);</span>
+<a name="567"><span class="lineNum">     567 </span>            : }</a>
+<span class="lineNum">     568 </span>            : 
+<span class="lineNum">     569 </span><span class="lineNoCov">          0 : Expression setProperty(const std::vector&lt;Expression&gt; &amp; args) { //set Property</span>
+<span class="lineNum">     570 </span><span class="lineNoCov">          0 :         if (!args[0].head().isSymbol() &amp;&amp; !args[0].head().isString()) {</span>
+<span class="lineNum">     571 </span><span class="lineNoCov">          0 :                 throw SemanticError(&quot;Error: first argument to set-property not a string&quot;);</span>
+<span class="lineNum">     572 </span>            :         }
+<span class="lineNum">     573 </span><span class="lineNoCov">          0 :         Expression setProperty = args[2];</span>
+<span class="lineNum">     574 </span><span class="lineNoCov">          0 :         setProperty.setProp(args[0].head().asSymbol(), args[1]);</span>
+<span class="lineNum">     575 </span><span class="lineNoCov">          0 :         return setProperty;</span>
+<a name="576"><span class="lineNum">     576 </span>            : }</a>
+<span class="lineNum">     577 </span>            : 
+<span class="lineNum">     578 </span><span class="lineNoCov">          0 : Expression getProperty(const std::vector&lt;Expression&gt; &amp; args) { //set Property</span>
+<span class="lineNum">     579 </span><span class="lineNoCov">          0 :         Expression getValue = args[1];</span>
+<span class="lineNum">     580 </span><span class="lineNoCov">          0 :         return getValue.getProp(args[0].head().asSymbol());</span>
+<span class="lineNum">     581 </span>            : }
+<a name="582"><span class="lineNum">     582 </span>            : </a>
+<span class="lineNum">     583 </span>            : 
+<span class="lineNum">     584 </span><span class="lineCov">       1297 : Environment::Environment() {</span>
+<span class="lineNum">     585 </span><span class="lineCov">       1297 :         reset();</span>
+<a name="586"><span class="lineNum">     586 </span><span class="lineCov">       1297 : }</span></a>
+<span class="lineNum">     587 </span>            : 
+<span class="lineNum">     588 </span><span class="lineCov">        180 : bool Environment::is_known(const Atom &amp; sym) const {</span>
+<span class="lineNum">     589 </span><span class="lineCov">        180 :         if (!sym.isSymbol()) return false;</span>
+<span class="lineNum">     590 </span>            : 
+<span class="lineNum">     591 </span><span class="lineCov">        180 :         return envmap.find(sym.asSymbol()) != envmap.end(); //checks if the symbol is found</span>
+<a name="592"><span class="lineNum">     592 </span>            : }</a>
+<span class="lineNum">     593 </span>            : 
+<span class="lineNum">     594 </span><span class="lineCov">       1327 : bool Environment::is_exp(const Atom &amp; sym) const {</span>
+<span class="lineNum">     595 </span><span class="lineCov">       1327 :         if (!sym.isSymbol()) return false;</span>
+<span class="lineNum">     596 </span>            : 
+<span class="lineNum">     597 </span><span class="lineCov">       1311 :         auto result = envmap.find(sym.asSymbol());</span>
+<span class="lineNum">     598 </span><span class="lineCov">       1311 :         return (result != envmap.end()) &amp;&amp; (result-&gt;second.type == ExpressionType);</span>
+<a name="599"><span class="lineNum">     599 </span>            : }</a>
+<span class="lineNum">     600 </span>            : 
+<span class="lineNum">     601 </span><span class="lineCov">        274 : Expression Environment::get_exp(const Atom &amp; sym) const {</span>
+<span class="lineNum">     602 </span>            : 
+<span class="lineNum">     603 </span><span class="lineCov">        274 :         Expression exp;</span>
+<span class="lineNum">     604 </span>            : 
+<span class="lineNum">     605 </span><span class="lineCov">        274 :         if (sym.isSymbol()) {</span>
+<span class="lineNum">     606 </span><span class="lineCov">        274 :                 auto result = envmap.find(sym.asSymbol());</span>
+<span class="lineNum">     607 </span><span class="lineCov">        274 :                 if ((result != envmap.end()) &amp;&amp; (result-&gt;second.type == ExpressionType)) {</span>
+<span class="lineNum">     608 </span><span class="lineCov">        184 :                         exp = result-&gt;second.exp;</span>
+<span class="lineNum">     609 </span>            :                 }
+<span class="lineNum">     610 </span>            :         }
+<span class="lineNum">     611 </span>            : 
+<span class="lineNum">     612 </span><span class="lineCov">        274 :         return exp;</span>
+<a name="613"><span class="lineNum">     613 </span>            : }</a>
+<span class="lineNum">     614 </span>            : 
+<span class="lineNum">     615 </span><span class="lineCov">        274 : void Environment::add_exp(const Atom &amp; sym, const Expression &amp; exp) {</span>
+<span class="lineNum">     616 </span><span class="lineCov">        274 :         if (!sym.isSymbol()) {</span>
+<span class="lineNum">     617 </span><span class="lineCov">         30 :                 throw SemanticError(&quot;Attempt to add non-symbol to environment&quot;);</span>
+<span class="lineNum">     618 </span>            :         }
+<span class="lineNum">     619 </span>            :         /*
+<span class="lineNum">     620 </span>            :         // error if overwriting symbol map
+<span class="lineNum">     621 </span>            :         if (envmap.find(sym.asSymbol()) != envmap.end()) {
+<span class="lineNum">     622 </span>            :         throw SemanticError(&quot;Attempt to overwrite symbol in environemnt&quot;);
+<span class="lineNum">     623 </span>            :         }*/
+<span class="lineNum">     624 </span><span class="lineCov">        244 :         if (is_exp(sym)) {</span>
+<span class="lineNum">     625 </span><span class="lineCov">          2 :                 auto it = envmap.find(sym.asSymbol());</span>
+<span class="lineNum">     626 </span><span class="lineCov">          2 :                 it-&gt;second = EnvResult(ExpressionType, exp);</span>
+<span class="lineNum">     627 </span>            :         }
+<span class="lineNum">     628 </span>            :         else {
+<span class="lineNum">     629 </span><span class="lineCov">        242 :                 envmap.emplace(sym.asSymbol(), EnvResult(ExpressionType, exp));</span>
+<span class="lineNum">     630 </span>            :         }
+<a name="631"><span class="lineNum">     631 </span><span class="lineCov">        244 : }</span></a>
+<span class="lineNum">     632 </span>            : 
+<span class="lineNum">     633 </span><span class="lineCov">        895 : bool Environment::is_proc(const Atom &amp; sym) const {</span>
+<span class="lineNum">     634 </span><span class="lineCov">        895 :         if (!sym.isSymbol()) return false;</span>
+<span class="lineNum">     635 </span>            : 
+<span class="lineNum">     636 </span><span class="lineCov">        895 :         auto result = envmap.find(sym.asSymbol());</span>
+<span class="lineNum">     637 </span><span class="lineCov">        895 :         return (result != envmap.end()) &amp;&amp; (result-&gt;second.type == ProcedureType);</span>
+<a name="638"><span class="lineNum">     638 </span>            : }</a>
+<span class="lineNum">     639 </span>            : 
+<span class="lineNum">     640 </span><span class="lineCov">        711 : Procedure Environment::get_proc(const Atom &amp; sym) const {</span>
+<span class="lineNum">     641 </span>            : 
+<span class="lineNum">     642 </span>            :         //Procedure proc = default_proc;
+<span class="lineNum">     643 </span>            : 
+<span class="lineNum">     644 </span><span class="lineCov">        711 :         if (sym.isSymbol()) {</span>
+<span class="lineNum">     645 </span><span class="lineCov">        711 :                 auto result = envmap.find(sym.asSymbol());</span>
+<span class="lineNum">     646 </span><span class="lineCov">        711 :                 if ((result != envmap.end()) &amp;&amp; (result-&gt;second.type == ProcedureType)) {</span>
+<span class="lineNum">     647 </span><span class="lineCov">        651 :                         return result-&gt;second.proc;</span>
+<span class="lineNum">     648 </span>            :                 }
+<span class="lineNum">     649 </span>            :         }
+<span class="lineNum">     650 </span>            : 
+<span class="lineNum">     651 </span><span class="lineCov">         60 :         return default_proc;</span>
+<span class="lineNum">     652 </span>            : }
+<span class="lineNum">     653 </span>            : 
+<span class="lineNum">     654 </span>            : /*
+<span class="lineNum">     655 </span>            : Reset the environment to the default state. First remove all entries and
+<a name="656"><span class="lineNum">     656 </span>            : then re-add the default ones.</a>
+<span class="lineNum">     657 </span>            : */
+<span class="lineNum">     658 </span><span class="lineCov">       1327 : void Environment::reset() {</span>
+<span class="lineNum">     659 </span>            : 
+<span class="lineNum">     660 </span><span class="lineCov">       1327 :         envmap.clear();</span>
+<span class="lineNum">     661 </span>            : 
+<span class="lineNum">     662 </span>            :         // Built-In value of pi
+<span class="lineNum">     663 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;pi&quot;, EnvResult(ExpressionType, Expression(PI)));</span>
+<span class="lineNum">     664 </span>            : 
+<span class="lineNum">     665 </span>            :         // Built-In value of e
+<span class="lineNum">     666 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;e&quot;, EnvResult(ExpressionType, Expression(EXP)));</span>
+<span class="lineNum">     667 </span>            : 
+<span class="lineNum">     668 </span>            :         // Built-In value of i
+<span class="lineNum">     669 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;I&quot;, EnvResult(ExpressionType, Expression(i)));</span>
+<span class="lineNum">     670 </span>            : 
+<span class="lineNum">     671 </span>            :         // Procedure: add;
+<span class="lineNum">     672 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;+&quot;, EnvResult(ProcedureType, add));</span>
+<span class="lineNum">     673 </span>            : 
+<span class="lineNum">     674 </span>            :         // Procedure: subneg;
+<span class="lineNum">     675 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;-&quot;, EnvResult(ProcedureType, subneg));</span>
+<span class="lineNum">     676 </span>            : 
+<span class="lineNum">     677 </span>            :         // Procedure: mul;
+<span class="lineNum">     678 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;*&quot;, EnvResult(ProcedureType, mul));</span>
+<span class="lineNum">     679 </span>            : 
+<span class="lineNum">     680 </span>            :         // Procedure: div;
+<span class="lineNum">     681 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;/&quot;, EnvResult(ProcedureType, div));</span>
+<span class="lineNum">     682 </span>            : 
+<span class="lineNum">     683 </span>            :         // Procedure: exponent;
+<span class="lineNum">     684 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;^&quot;, EnvResult(ProcedureType, exponent));</span>
+<span class="lineNum">     685 </span>            : 
+<span class="lineNum">     686 </span>            :         // Procedure: square root;
+<span class="lineNum">     687 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;sqrt&quot;, EnvResult(ProcedureType, squareroot));</span>
+<span class="lineNum">     688 </span>            : 
+<span class="lineNum">     689 </span>            :         // Procedure: natural log;
+<span class="lineNum">     690 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;ln&quot;, EnvResult(ProcedureType, naturalLog));</span>
+<span class="lineNum">     691 </span>            : 
+<span class="lineNum">     692 </span>            :         // Procedure: sine;
+<span class="lineNum">     693 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;sin&quot;, EnvResult(ProcedureType, sine));</span>
+<span class="lineNum">     694 </span>            : 
+<span class="lineNum">     695 </span>            :         // Procedure: cosine;
+<span class="lineNum">     696 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;cos&quot;, EnvResult(ProcedureType, cosine));</span>
+<span class="lineNum">     697 </span>            : 
+<span class="lineNum">     698 </span>            :         // Procedure: tangent;
+<span class="lineNum">     699 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;tan&quot;, EnvResult(ProcedureType, tangent));</span>
+<span class="lineNum">     700 </span>            : 
+<span class="lineNum">     701 </span>            :         // Procedure: real;
+<span class="lineNum">     702 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;real&quot;, EnvResult(ProcedureType, realNum));</span>
+<span class="lineNum">     703 </span>            : 
+<span class="lineNum">     704 </span>            :         // Procedure: imag;
+<span class="lineNum">     705 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;imag&quot;, EnvResult(ProcedureType, imaginary));</span>
+<span class="lineNum">     706 </span>            : 
+<span class="lineNum">     707 </span>            :         // Procedure: Absolute value
+<span class="lineNum">     708 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;mag&quot;, EnvResult(ProcedureType, absoluteValue));</span>
+<span class="lineNum">     709 </span>            : 
+<span class="lineNum">     710 </span>            :         // Procedure: phase angle
+<span class="lineNum">     711 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;arg&quot;, EnvResult(ProcedureType, phaseAngle));</span>
+<span class="lineNum">     712 </span>            : 
+<span class="lineNum">     713 </span>            :         // Procedure: conjugate
+<span class="lineNum">     714 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;conj&quot;, EnvResult(ProcedureType, conjugate));</span>
+<span class="lineNum">     715 </span>            : 
+<span class="lineNum">     716 </span>            :         //Procedure: first;
+<span class="lineNum">     717 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;list&quot;, EnvResult(ProcedureType, list));</span>
+<span class="lineNum">     718 </span>            : 
+<span class="lineNum">     719 </span>            :         //Procedure: first;
+<span class="lineNum">     720 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;first&quot;, EnvResult(ProcedureType, first));</span>
+<span class="lineNum">     721 </span>            : 
+<span class="lineNum">     722 </span>            :         //Procedure: rest;
+<span class="lineNum">     723 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;rest&quot;, EnvResult(ProcedureType, rest));</span>
+<span class="lineNum">     724 </span>            : 
+<span class="lineNum">     725 </span>            :         //Procedure: length;
+<span class="lineNum">     726 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;length&quot;, EnvResult(ProcedureType, length));</span>
+<span class="lineNum">     727 </span>            : 
+<span class="lineNum">     728 </span>            :         //Procedure: append;
+<span class="lineNum">     729 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;append&quot;, EnvResult(ProcedureType, appendVal));</span>
+<span class="lineNum">     730 </span>            : 
+<span class="lineNum">     731 </span>            :         //Procedure: join;
+<span class="lineNum">     732 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;join&quot;, EnvResult(ProcedureType, join));</span>
+<span class="lineNum">     733 </span>            : 
+<span class="lineNum">     734 </span>            :         //Procedure: range;
+<span class="lineNum">     735 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;range&quot;, EnvResult(ProcedureType, range));</span>
+<span class="lineNum">     736 </span>            : 
+<span class="lineNum">     737 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;set-property&quot;, EnvResult(ProcedureType, setProperty));</span>
+<a name="738"><span class="lineNum">     738 </span>            : </a>
+<span class="lineNum">     739 </span><span class="lineCov">       1327 :         envmap.emplace(&quot;get-property&quot;, EnvResult(ProcedureType, getProperty));</span>
+<span class="lineNum">     740 </span><span class="lineCov">       1447 : }</span>
+<span class="lineNum">     741 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

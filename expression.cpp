@@ -13,12 +13,6 @@ Expression::Expression(const Atom & a) {
 	m_head = a;
 }
 
-Expression::Expression(const std::vector<Expression>& results) {
-	for (size_t i = 0; i < results.size(); i++) {
-		m_tail.push_back(results[i]);
-	}
-}
-
 // recursive copy
 Expression::Expression(const Expression & a) {
 	m_head = a.m_head;
@@ -48,9 +42,6 @@ Atom & Expression::head() {
 	return m_head;
 }
 
-std::vector<Expression> & Expression::tailVal() {
-	return m_tail;
-}
 
 const Atom & Expression::head() const {
 	return m_head;
@@ -68,6 +59,11 @@ bool Expression::isHeadComplex() const noexcept {
 	return m_head.isComplex();
 }
 
+int Expression::length()
+{
+	return m_tail.size();
+}
+
 void Expression::append(const Atom & a) {
 	m_tail.emplace_back(a);
 }
@@ -76,13 +72,11 @@ void Expression::append(const Expression & result) {
 	m_tail.emplace_back(result);
 }
 
-void Expression::remove() {
-	m_tail.erase(m_tail.begin());
-}
 
 Expression Expression::first() const noexcept {
 	return m_tail.front();
 }
+
 
 Expression * Expression::tail() {
 	Expression * ptr = nullptr;
@@ -148,7 +142,6 @@ Expression Expression::handle_lookup(const Atom & head, const Environment & env)
 
 Expression Expression::handle_lambda() {
 	Expression firstVal;
-
 	firstVal.m_head = Atom("lambda");
 	firstVal.m_tail.push_back(m_tail[0].head());
 	for (auto it = m_tail[0].tailConstBegin(); it != m_tail[0].tailConstEnd(); ++it) {
@@ -205,15 +198,16 @@ Expression Expression::handle_apply(Environment & env) {
 Expression Expression::handle_map(Environment & env) {
 	Atom op = m_tail[0].head();
 	std::vector<Expression> args;
-	std::vector<Expression> argsMap;
 	Expression result = m_tail[1].eval(env);
 	Expression val = env.get_exp(m_tail[0].head());
+	Expression mapResult;
+	mapResult.head() = Atom("map");
 	if (env.is_proc(op) && (m_tail[0]).m_tail.empty()) {
 		result = m_tail[1].eval(env);
 		if (m_tail[1].head().asSymbol() == "list") {
 			for (auto it = result.tailConstBegin(); it != result.tailConstEnd(); it++) {
 				args.push_back(*it);
-				argsMap.push_back(apply(op, args, env));
+				mapResult.append(apply(op, args, env));
 				if (!args.empty()) {
 					args.clear();
 				}
@@ -226,7 +220,7 @@ Expression Expression::handle_map(Environment & env) {
 	else if (val.head().asSymbol() == "lambda") {
 		for (auto it = result.tailConstBegin(); it != result.tailConstEnd(); it++) {
 			args.push_back(*it);
-			argsMap.push_back(applyLambda(env,val,args));
+			mapResult.append(applyLambda(env,val,args));
 			if (!args.empty()) {
 				args.clear();
 			}
@@ -235,7 +229,7 @@ Expression Expression::handle_map(Environment & env) {
 	else {
 		throw SemanticError("Error: first argument to map not a procedure");
 	}
-	return argsMap;
+	return mapResult;
 }
 
 Expression Expression::applyLambda(const Environment & env, Expression & result, const std::vector<Expression> & args) {
@@ -365,6 +359,16 @@ std::ostream & operator<<(std::ostream & out, const Expression & exp) {
 			if (e == exp.tailConstEnd() - 2) {
 				out << ")";
 			}
+			if (e != exp.tailConstEnd() - 1) {
+				out << " ";
+			}
+		}
+		out << ")";
+	}
+	else if (exp.head().asSymbol() == "map") {
+		out << "(";
+		for (auto e = exp.tailConstBegin(); e != exp.tailConstEnd(); ++e) {
+			out << *e;
 			if (e != exp.tailConstEnd() - 1) {
 				out << " ";
 			}

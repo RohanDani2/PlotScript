@@ -44,8 +44,6 @@ public:
 	/// return a reference to the head Atom
 	Atom & head();
 
-	std::vector<Expression> & tailVal();
-
 	/// return a const-reference to the head Atom
 	const Atom & head() const;
 
@@ -56,8 +54,6 @@ public:
 
 	//append vector of expressions to the tail of another vector of expressions
 	void append(const Expression & result);
-
-	void remove();
 
 	/// return a pointer to the last expression in the tail, or nullptr
 	Expression * tail();
@@ -79,6 +75,8 @@ public:
 	/// convienience member to determine if head atom is a complex
 	bool isHeadComplex() const noexcept;
 
+	int length();
+
 	/// Evaluate expression using a post-order traversal (recursive)
 	Expression eval(Environment & env);
 
@@ -91,7 +89,6 @@ public:
 private:
 	// the head of the expression
 	Atom m_head;
-
 	// the tail list is expressed as a vector for access efficiency
 	// and cache coherence, at the cost of wasted memory.
 	std::vector<Expression> m_tail;

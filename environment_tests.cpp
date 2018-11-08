@@ -8,7 +8,7 @@
 TEST_CASE( "Test default constructor", "[environment]" ) {
 
   Environment env;
-
+  
   REQUIRE(env.is_known(Atom("pi")));
   REQUIRE(env.is_exp(Atom("pi")));
 

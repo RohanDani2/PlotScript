@@ -4,10 +4,15 @@
 
 #include <QApplication>
 #include <QWidget>
+#include <input_widget.hpp>
+#include <output_widget.hpp>
 
 class NotebookApp : public QWidget{
 Q_OBJECT
 public:
-	bool event();
+	NotebookApp(QWidget * parent = nullptr);
+private:
+	InputWidget inputWidget;
+	OutputWidget outputWidget;
 };
 #endif

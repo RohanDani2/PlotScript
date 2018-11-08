@@ -102,10 +102,6 @@ bool Atom::isComplex() const noexcept {
 	return m_type == ComplexKind;
 }
 
-bool Atom::isList() const noexcept {
-	return m_type == ListKind;
-}
-
 bool Atom::isString() const noexcept
 {
 	return m_type == StringKind;
@@ -168,16 +164,6 @@ std::string Atom::asSymbol() const noexcept {
 	return result;
 }
 
-std::string Atom::asString() const noexcept {
-	std::string result;
-
-	if (m_type == StringKind) {
-		result = stringValue;
-	}
-
-	return result;
-}
-
 bool Atom::operator==(const Atom & right) const noexcept {
 
 	if (m_type != right.m_type) return false;
@@ -226,9 +212,6 @@ std::ostream & operator<<(std::ostream & out, const Atom & a) {
 	}
 	if (a.isComplex()) {
 		out << a.asComplex();
-	}
-	if (a.isString()) {
-		out << a.asString();
 	}
 	return out;
 }

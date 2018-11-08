@@ -4,9 +4,9 @@
 //
 TEST_CASE( "Test Token creation", "[token]" ) {
 
-  Token tko(Token::QUOTE);
-  REQUIRE(tko.type() == Token::QUOTE);
-  REQUIRE(tko.asString() == "\"");
+  Token tkq(Token::QUOTE);
+  REQUIRE(tkq.type() == Token::QUOTE);
+  REQUIRE(tkq.asString() == "\"");
 
   Token tko(Token::OPEN);
 

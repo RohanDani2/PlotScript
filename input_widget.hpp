@@ -5,12 +5,13 @@
 #include <QApplication>
 #include <QPlainTextEdit>
 #include <QWidget>
+#include <QLayout>
 
-class InputWidget : QPlainTextEdit {
+class InputWidget : public QPlainTextEdit {
 Q_OBJECT
 public:
-	InputWidget(const char * input);
-	void keyPressEvent();
+	InputWidget(QPlainTextEdit * parent = nullptr);
+	void keyPressEvent(QKeyEvent *event);
 };
 
 #endif // ! INPUT_WIDGET_H

@@ -3,13 +3,20 @@
 #define OUTPUT_WIDGET_H
 
 #include <QApplication>
-#include <QPlainTextEdit>
 #include <QWidget>
+#include <QPlainTextEdit>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QGraphicsItem>
+#include <QLayout>
 
-class OutputWidget : QPlainTextEdit {
+class OutputWidget : public QWidget {
 Q_OBJECT
 public:
-
+	OutputWidget(QWidget * parent = nullptr);
+private:
+	QGraphicsScene * scene;
+	QGraphicsTextItem *text;
 };
 
 #endif // ! OUTPUT_WIDGET_H

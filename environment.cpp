@@ -61,9 +61,7 @@ Expression add(const std::vector<Expression> & args) {
 			return Expression(allnumAddition); //returns complex double value if either is complex
 		}
 	}
-	else {
-		throw SemanticError("Error: in call to add, argument not a number/complex"); //semantic error if no number
-	}
+	return Expression();
 };
 
 Expression mul(const std::vector<Expression> & args) {
@@ -91,9 +89,7 @@ Expression mul(const std::vector<Expression> & args) {
 			return Expression(allNumMultiply); //returns double value if both vals are complex
 		}
 	}
-	else {
-		throw SemanticError("Error: in call to mul, argument not a number");
-	}
+	return Expression();
 };
 
 Expression subneg(const std::vector<Expression> & args) {
@@ -107,20 +103,6 @@ Expression subneg(const std::vector<Expression> & args) {
 		}
 		else if (args[0].isHeadComplex()) {
 			complexSubtract = -args[0].head().asComplex(); //negates complex value
-		}
-		else if (args[0].isHeadSymbol()) {
-			if (args[0].head() == i) {
-				complexSubtract = -i; //negates imaginary 
-			}
-			else if (args[0].head() == EXP) {
-				result = -EXP; //negates e
-			}
-			else if (args[0].head() == PI) {
-				result = -PI; //negates pi
-			}
-		}
-		else {
-			throw SemanticError("Error: in call to negate: invalid argument.");
 		}
 	}
 	else if (nargs_equal(args, 2)) {
@@ -140,9 +122,6 @@ Expression subneg(const std::vector<Expression> & args) {
 			complexSubtract = args[0].head().asNumber() - args[1].head().asComplex();
 			return Expression(complexSubtract); //calculates for one complex and one number
 		}
-		else {
-			throw SemanticError("Error: in call to subtraction: invalid argument.");
-		}
 	}
 	else {
 		throw SemanticError("Error: in call to subtraction or negation: invalid number of arguments.");
@@ -153,9 +132,7 @@ Expression subneg(const std::vector<Expression> & args) {
 	else if (args[0].isHeadComplex()) {
 		return Expression(complexSubtract);
 	}
-	else {
-		throw SemanticError("Error: in call to subtraction or negation: invalid number of arguments.");
-	}
+	return Expression();
 };
 
 Expression div(const std::vector<Expression> & args) {
@@ -177,9 +154,6 @@ Expression div(const std::vector<Expression> & args) {
 		else if ((args[0].isHeadNumber() && (args[1].isHeadComplex()))) {
 			complexDivide = args[0].head().asNumber() / args[1].head().asComplex();
 			return Expression(complexDivide); //calculates for one complex and one number
-		}
-		else {
-			throw SemanticError("Error: in call to division: invalid argument.");
 		}
 	}
 	else if (nargs_equal(args, 1)) {
@@ -222,13 +196,11 @@ Expression exponent(const std::vector<Expression> & args) { //exponent
 			complexExponent = pow(args[0].head().asNumber(), args[1].head().asComplex());
 			return Expression(complexExponent); //calculates for one complex and one number
 		}
-		else {
-			throw SemanticError("Error: in call to exponent: invalid argument.");
-		}
 	}
 	else {
 		throw SemanticError("Error: in call to exponent: invalid number of arguments.");
 	}
+	return Expression();
 }
 
 Expression squareroot(const std::vector<Expression> & args) { //square root
@@ -242,23 +214,18 @@ Expression squareroot(const std::vector<Expression> & args) { //square root
 					std::complex<double> negativeSqrt(0, sqrt(std::abs(args[0].head().asNumber())));
 					return Expression(negativeSqrt);
 				}
-				else {
-					return Expression(result); //otherwise return result
-				}
+				return Expression(result);
 			}
 		}
 		else if (args[0].isHeadComplex()) {
 			complexSqrt = sqrt(args[0].head().asComplex()); //check for complex
 			return Expression(complexSqrt);
 		}
-		else {
-			throw SemanticError("Error: in call to square root: invalid argument.");
-		}
 	}
 	else {
 		throw SemanticError("Error: in call to square root: invalid number of arguments.");
 	}
-	return Expression(result);
+	return Expression();
 }
 
 Expression naturalLog(const std::vector<Expression> & args) { //natural Log
@@ -266,9 +233,6 @@ Expression naturalLog(const std::vector<Expression> & args) { //natural Log
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
 			result = log(args[0].head().asNumber()); //calculates log of number
-		}
-		else {
-			throw SemanticError("Error: in call to natural log: invalid argument.");
 		}
 	}
 	else {
@@ -288,9 +252,6 @@ Expression sine(const std::vector<Expression> & args) { //sine
 			sineComplex = sin(args[0].head().asComplex()); //check sine for complex
 			return Expression(sineComplex);
 		}
-		else {
-			throw SemanticError("Error: in call to sine: invalid argument.");
-		}
 	}
 	else {
 		throw SemanticError("Error: in call to sine: invalid number of arguments.");
@@ -305,14 +266,10 @@ Expression cosine(const std::vector<Expression> & args) { //cosine
 		for (auto &a : args) {
 			if (a.isHeadNumber()) {
 				result = cos(a.head().asNumber()); //calculates cosine number value
-				return Expression(result);
 			}
 			else if (a.isHeadComplex()) {
 				cosineComplex = cos(a.head().asComplex()); //calculates cosine complex val
 				return Expression(cosineComplex);
-			}
-			else {
-				throw SemanticError("Error: in call to cosine: invalid argument.");
 			}
 		}
 	}
@@ -332,9 +289,6 @@ Expression tangent(const std::vector<Expression> & args) { //tan
 		else if (args[0].isHeadComplex()) {
 			tangentComplex = tan(args[0].head().asComplex()); //tangent as complex val
 			return Expression(tangentComplex);
-		}
-		else {
-			throw SemanticError("Error: in call to tangent: invalid argument.");
 		}
 	}
 	else {
@@ -485,9 +439,6 @@ Expression rest(const std::vector<Expression> & args) { //first
 
 			}
 		}
-		else {
-			throw SemanticError("Error: argument to rest is not a list.");
-		}
 	}
 	else {
 		throw SemanticError("Error: more than one argument in call to rest.");
@@ -514,9 +465,6 @@ Expression appendVal(const std::vector<Expression> & args) { //append
 	Expression result = args[0];
 	if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
 		result.append(args[1]);
-	}
-	else {
-		throw SemanticError("Error: first argument to append not a list.");
 	}
 	return Expression(result);
 }
@@ -559,9 +507,6 @@ Expression range(const std::vector<Expression> & args) { //range
 			sumVal = sumVal + args[2].head().asNumber();
 		}
 
-	}
-	else {
-		throw SemanticError("Error: first argument to range not a number.");
 	}
 	return Expression(list);
 }

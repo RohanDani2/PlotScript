@@ -1,11 +1,9 @@
 #include "input_widget.hpp"
 #include "interpreter.hpp"
 
-InputWidget::InputWidget(QPlainTextEdit * parent) : QPlainTextEdit(parent) {
-	auto input = new QPlainTextEdit;
-	input->setObjectName("input");
+InputWidget::InputWidget(QWidget * parent) : QWidget(parent) {
 	auto layout = new QGridLayout;
-	layout->addWidget(input, 0, 0);
+	//layout->addWidget(input, 0, 0);
 	setLayout(layout);
 }
 

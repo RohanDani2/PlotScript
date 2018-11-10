@@ -254,6 +254,12 @@ TEST_CASE("Test trig procedure", "[interpreter]") {
 		Expression result = run(program);
 		REQUIRE(result == Expression(16));
 	}
+	{
+		std::string program = "(I)";
+		INFO(program);
+		Expression result = run(program);
+		REQUIRE(result.isHeadComplex() == true);
+	}
 }
 
 TEST_CASE("Test M1/M2 functions", "[interpreter]") {
@@ -317,8 +323,21 @@ TEST_CASE("Test M1/M2 functions", "[interpreter]") {
 		bool ok = interp.parseStream(iss);
 		REQUIRE(ok == true);
 	}
-
-
+	{
+		std::string program = "(begin (define f(lambda (x) x)) (define a (list 5)) (apply f a))";
+		Expression result = run(program);
+		REQUIRE(result == Expression(5));
+	}
+	{
+		std::string program = "(begin (define f(lambda (x) x)) (define a (list 5)) (map f a))";
+		Expression result = run(program);
+		REQUIRE(result.length() == 1);
+	}
+	{
+		std::string program = "(\"a string with spaces\")";
+		Expression result = run(program);
+		REQUIRE(result.head().isSymbol() == true);
+	}
 	{
 		std::string program = "(/ I)";
 		std::string program1 = "(/ I I)";
@@ -387,6 +406,7 @@ TEST_CASE("Test M1/M2 functions", "[interpreter]") {
 		std::string program14 = "(map / (list 1 2 4))";
 		std::string program15 = "(lambda (x) (* 2 x))";
 		std::string program16 = "(begin (define x (list 0 1 2 3)) (define y (list 1 2 4)) (define x (join x y)))";
+		std::string program17 = "(get-property \"note\" (set-property \"note\" \"a complex number\" (+ 1 I)))";
 		Expression result = run(program);
 		REQUIRE(result == Expression(3));
 		Expression result1 = run(program1);
@@ -410,7 +430,7 @@ TEST_CASE("Test M1/M2 functions", "[interpreter]") {
 		Expression result10 = run(program10);
 		REQUIRE(result10.isHeadComplex() == true);
 		Expression result11 = run(program11);
-		REQUIRE(result11.length() == 0);
+		REQUIRE(result11.head().isComplex() == true);
 		Expression result12 = run(program12);
 		REQUIRE(result12.isHeadComplex() == true);
 		Expression result13 = run(program13);
@@ -421,6 +441,8 @@ TEST_CASE("Test M1/M2 functions", "[interpreter]") {
 		REQUIRE(result15.isHeadSymbol() == true);
 		Expression result16 = run(program16);
 		REQUIRE(result16.length() == 7);
+		Expression result17 = run(program17);
+		REQUIRE(result17.head().isSymbol() == true);
 	}
 }
   
@@ -493,7 +515,10 @@ TEST_CASE("Test for invalid expressions ", "[interpreter]") {
 
 	std::vector<std::string> programs = { "(sin 1 2 3)","(tan 1 2 3)", "(cos 1 2 3)", 
 		"(sqrt 1 2 5)","(ln 1 2)","(real 1 2)","(imag 1 2)","(abs 1 2)","(mag 1 2)","(^ 1 2 2)",
-		"(/ 1 2 5)","(- 1 2 6)"
+		"(/ 1 2 5)","(- 1 2 6)", "(range 0 5 -1)","(range 5 0 1)","(set-property (+ 1 2) \"number\" \"three\")",
+		"(join (list 1 2) 10)","(length 1)","(first (1))","(first(list))","(first(list 1 2) (list 3 4))",
+		"(mag 1)","(imag 1)","(conj 1)","(real 1)","(map 3 (list 1 2 3))","(map + 3)","(rest (1))",
+		"(rest (list 1 2) (list 3 4))","(range a 0 1)","(conj 1 2)","(arg 1 2)","(arg 1)","(append 3 x)","(/ 0)"
 					}; // redefine builtin symbol
 	for (auto s : programs) {
 		Interpreter interp;

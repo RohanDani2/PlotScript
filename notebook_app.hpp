@@ -11,6 +11,8 @@ class NotebookApp : public QWidget{
 Q_OBJECT
 public:
 	NotebookApp(QWidget * parent = nullptr);
+signals:
+	void interpreterDisplay();
 private:
 	InputWidget inputWidget;
 	OutputWidget outputWidget;

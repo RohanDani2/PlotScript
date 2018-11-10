@@ -7,10 +7,10 @@
 #include <QWidget>
 #include <QLayout>
 
-class InputWidget : public QPlainTextEdit {
+class InputWidget : public QWidget {
 Q_OBJECT
 public:
-	InputWidget(QPlainTextEdit * parent = nullptr);
+	InputWidget(QWidget * parent = nullptr);
 	void keyPressEvent(QKeyEvent *event);
 };
 

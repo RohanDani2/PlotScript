@@ -11,10 +11,10 @@ class NotebookApp : public QWidget{
 Q_OBJECT
 public:
 	NotebookApp(QWidget * parent = nullptr);
-signals:
-	void interpreterDisplay();
+public slots:
+
 private:
-	InputWidget inputWidget;
-	OutputWidget outputWidget;
+	InputWidget *input;
+	OutputWidget *output;
 };
 #endif

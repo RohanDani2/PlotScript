@@ -1,22 +1,28 @@
-#pragma once
-#ifndef  OUTPUT_WIDGET_H
+#ifndef OUTPUT_WIDGET_H
 #define OUTPUT_WIDGET_H
 
-#include <QApplication>
+#include "expression.hpp"
+
 #include <QWidget>
-#include <QPlainTextEdit>
+#include <QGraphicsTextItem>
+#include <QGraphicsEllipseItem>
 #include <QGraphicsScene>
 #include <QGraphicsView>
-#include <QGraphicsItem>
-#include <QLayout>
+#include <string>
+
 
 class OutputWidget : public QWidget {
-Q_OBJECT
+	Q_OBJECT
 public:
 	OutputWidget(QWidget * parent = nullptr);
+public slots:
+	void displayExpression(std::string interpretString);
+	void displayError(std::string errorString);
+	void displayPoint(double x1, double x2, double width, double height);
+	void displayLine(double x1, double x2, double y1, double y2);
 private:
-	QGraphicsScene * scene;
-	QGraphicsTextItem *text;
+	QGraphicsView *view;
+	QGraphicsScene *scene;
 };
 
 #endif // ! OUTPUT_WIDGET_H

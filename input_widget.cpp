@@ -9,11 +9,11 @@
 InputWidget::InputWidget(QWidget * parent) : QPlainTextEdit(parent) {
 	setReadOnly(false);
 	std::ifstream ifs;
-	std::string line;
+	/*std::string line;
 	ifs.open(STARTUP_FILE);
 	while (!ifs.eof()) {
 		ifs >> line;
-	}
+	}*/
 }
 
 void InputWidget::keyPressEvent(QKeyEvent *event){
@@ -23,7 +23,7 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 	double y2;
 	std::string textString;
 	if ((event->matches(QKeySequence::InsertLineSeparator))) {
-		std::stringstream iss(QPlainTextEdit::toPlainText().toStdString());
+		std::istringstream iss(QPlainTextEdit::toPlainText().toStdString());
 		std::cout << "keypressShiftEnter";
 		if (!interp.parseStream(iss)) {
 			std::cout << "error";
@@ -60,8 +60,11 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 					}
 					emit sendText(tempVal.head().asSymbol());
 				}
-				os << expression;
-				emit sendExpression(os.str());
+				std::string expressionString;
+				std::stringstream ss;
+				ss << expression.head().asNumber();
+				expressionString = ss.str();
+				emit sendExpression(expressionString);
 			}
 			catch (const SemanticError & ex) {
 				std::cerr << ex.what() << std::endl;

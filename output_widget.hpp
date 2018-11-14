@@ -8,6 +8,7 @@
 #include <QGraphicsEllipseItem>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QGraphicsTextItem>
 #include <string>
 
 
@@ -16,8 +17,9 @@ class OutputWidget : public QWidget {
 public:
 	OutputWidget(QWidget * parent = nullptr);
 public slots:
-	void displayExpression(std::string interpretString);
+	void displayExpression(std::string expressionString);
 	void displayError(std::string errorString);
+	void displayText(std::string textString);
 	void displayPoint(double x1, double x2, double width, double height);
 	void displayLine(double x1, double x2, double y1, double y2);
 private:

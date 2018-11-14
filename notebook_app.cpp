@@ -2,10 +2,13 @@
 #include "interpreter.hpp"
 
 NotebookApp::NotebookApp(QWidget * parent) : QWidget(parent) {
-	QObject::connect(input, SIGNAL(sendError(std::string)), output, SLOT(displayError(std::string)));
-	QObject::connect(input, SIGNAL(sendText(std::string)), output, SLOT(displayText(std::string)));
-	QObject::connect(input, SIGNAL(sendLine(double x1, double x2, double y1, double y2)), output, SLOT(displayLine(double x1, double x2, double y1, double y2)));
-	QObject::connect(input, SIGNAL(sendPoint(double x1, double x2, double width, double height)), output, SLOT(displayPoint(double x1, double x2, double width, double height)));
+	InputWidget *input = new InputWidget;
+	OutputWidget *output = new OutputWidget;
+	QObject::connect(input, &InputWidget::sendExpression, output, &OutputWidget::displayExpression);
+	QObject::connect(input, &InputWidget::sendError, output, &OutputWidget::displayError);
+	QObject::connect(input, &InputWidget::sendText, output, &OutputWidget::displayText);
+	QObject::connect(input, &InputWidget::sendLine, output, &OutputWidget::displayLine);
+	QObject::connect(input, &InputWidget::sendPoint, output, &OutputWidget::displayPoint);
 	auto layout = new QVBoxLayout;
 	input->setObjectName("input");
 	output->setObjectName("output");

@@ -14,7 +14,6 @@ public:
 public slots:
 
 private:
-	InputWidget *input;
-	OutputWidget *output;
+
 };
 #endif

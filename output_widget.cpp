@@ -50,6 +50,7 @@ void OutputWidget::displayExpression(std::string expressionString) {
 	qstr = QString::fromStdString(expressionString);
 	text = scene->addText(qstr);
 	text->setPos(0, 0);*/
+	expressionString.append("a");
 }
 
 void OutputWidget::displayPoint(double x1, double y1, double size)

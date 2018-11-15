@@ -44,6 +44,9 @@ public:
 	/// return a reference to the head Atom
 	Atom & head();
 
+	/// return a reference to the head Atom
+	std::vector<Expression> tailVal() const noexcept;
+
 	/// return a const-reference to the head Atom
 	const Atom & head() const;
 

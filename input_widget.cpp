@@ -5,66 +5,92 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <math.h>
 
 InputWidget::InputWidget(QWidget * parent) : QPlainTextEdit(parent) {
 	setReadOnly(false);
 	std::ifstream ifs;
-	/*std::string line;
 	ifs.open(STARTUP_FILE);
-	while (!ifs.eof()) {
-		ifs >> line;
-	}*/
+	if (!interp.parseStream(ifs)) {
+		std::string errorString = "Error: Could not Parse";
+		emit sendError(errorString);
+	}
+	else {
+		try {
+			Expression exp = interp.evaluate();
+		}
+		catch (const SemanticError & ex) {
+			std::cerr << ex.what() << std::endl;
+		}
+	}
 }
 
 void InputWidget::keyPressEvent(QKeyEvent *event){
-	double x1;
-	double x2;
-	double y1;
-	double y2;
 	std::string textString;
+	std::string expressionString;
+	std::stringstream ss;
+	const double PI = std::atan2(0, -1);
 	if ((event->matches(QKeySequence::InsertLineSeparator))) {
+		emit sendErase();
 		std::istringstream iss(QPlainTextEdit::toPlainText().toStdString());
-		std::cout << "keypressShiftEnter";
+		//std::cout << "keypressShiftEnter";
 		if (!interp.parseStream(iss)) {
-			std::cout << "error";
-			std::string errorString = "Parsing Error";
+			//std::cout << "error";
+			std::string errorString = "Error: Could not Parse";
 			emit sendError(errorString);
 		}
 		else {
 			try {
 				Expression expression = interp.evaluate();
 				std::string command = expression.getProp("\"object-name\"").head().asSymbol();
-				if (command == "make-point") {
-					for (auto it = expression.tailConstBegin(); it != expression.tailConstEnd(); it++) {
-						int count = 0;
-						Expression tempVal;
-						tempVal.append(*it);
-						if (count == 0) {
-							x1 = tempVal.head().asNumber();
-						}
-						if (count == 1) {
-							x2 = tempVal.head().asNumber();
-						}
-						count++;
+				//double thickness = expression.getProp("\thickness\"").head().asNumber();
+				if (command == "\"point\"") {
+					double x1 = expression.getProp("\"object-name\"").tailVal()[0].head().asNumber();
+					double y1 = expression.getProp("\"object-name\"").tailVal()[1].head().asNumber();
+					double size = expression.getProp("\"size\"").head().asNumber();
+					if (size != 0) {
+						emit sendPoint(x1, y1, size);
 					}
-					emit sendPoint(x1, x2, 0, 0);
+					emit sendPoint(x1, y1, 0);
 				}
-				else if (command == "make-line") {
+				else if (command == "\"line\"") {
 					//
 				}
-				else if (command == "make-text") {
-					Expression tempVal;
-					for (auto it = expression.tailConstBegin(); it != expression.tailConstEnd(); it++) {
-						Expression tempVal;
-						tempVal.append(*it);
+				else if (command == "\"text\"") {
+					int textScale = 1;
+					double rotation = 0;
+					double x = 0;
+					double y = 0;
+					if (expression.tailVal().size() == 0) {
+						emit sendText(expression.head().asSymbol(), x, y, textScale, rotation);
 					}
-					emit sendText(tempVal.head().asSymbol());
+					if (expression.getProp("\"position\"").getProp("\"object-name\"").head().isSymbol()) {
+						/*double x = expression.getProp("\"position\"").tailVal()[0].head().asNumber();
+						double y = expression.getProp("\"position\"").tailVal()[1].head().asNumber();*/
+					}
+					if (expression.getProp("\"text-scale\"").head().isNumber()) {
+						textScale = expression.getProp("\"text-scale\"").head().asNumber();
+					}
+					if (expression.getProp("\"text-rotation\"").head().isNumber()) {
+						rotation = expression.getProp("\"text-rotation\"").head().asNumber();
+						rotation = (rotation * (PI / 180));
+					}
+					ss << expression;
+					expressionString = ss.str();
+					if (command == "\"text\"") {
+						std::string makeTextString;
+						for (size_t i = 0; i < expressionString.length(); i++) {
+							if ((expressionString[i] != '"') && (expressionString[i] != '(') && (expressionString[i] != ')')) {
+								makeTextString.push_back(expressionString[i]);
+							}
+						}
+						expressionString = makeTextString;
+					}
+					emit sendText(expressionString,x,y,textScale,rotation);
 				}
-				std::string expressionString;
-				std::stringstream ss;
-				ss << expression.head().asNumber();
-				expressionString = ss.str();
-				emit sendExpression(expressionString);
+				else {
+					//
+				}
 			}
 			catch (const SemanticError & ex) {
 				std::cerr << ex.what() << std::endl;

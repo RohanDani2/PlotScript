@@ -42,6 +42,9 @@ Atom & Expression::head() {
 	return m_head;
 }
 
+std::vector<Expression> Expression::tailVal() const noexcept {
+	return m_tail;
+}
 
 const Atom & Expression::head() const {
 	return m_head;

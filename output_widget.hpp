@@ -17,11 +17,12 @@ class OutputWidget : public QWidget {
 public:
 	OutputWidget(QWidget * parent = nullptr);
 public slots:
+	void displayErase();
 	void displayExpression(std::string expressionString);
 	void displayError(std::string errorString);
-	void displayText(std::string textString);
-	void displayPoint(double x1, double x2, double width, double height);
-	void displayLine(double x1, double x2, double y1, double y2);
+	void displayText(std::string textString, double x, double y, int textScale, double rotation);
+	void displayPoint(double x1, double y1, double size);
+	void displayLine(double x1, double x2, double y1, double y2,double thickness);
 private:
 	QGraphicsView *view;
 	QGraphicsScene *scene;

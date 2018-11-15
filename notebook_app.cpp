@@ -4,6 +4,7 @@
 NotebookApp::NotebookApp(QWidget * parent) : QWidget(parent) {
 	InputWidget *input = new InputWidget;
 	OutputWidget *output = new OutputWidget;
+	QObject::connect(input, &InputWidget::sendErase, output, &OutputWidget::displayErase);
 	QObject::connect(input, &InputWidget::sendExpression, output, &OutputWidget::displayExpression);
 	QObject::connect(input, &InputWidget::sendError, output, &OutputWidget::displayError);
 	QObject::connect(input, &InputWidget::sendText, output, &OutputWidget::displayText);

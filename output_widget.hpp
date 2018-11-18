@@ -18,7 +18,6 @@ public:
 	OutputWidget(QWidget * parent = nullptr);
 public slots:
 	void displayErase();
-	void displayExpression(std::string expressionString);
 	void displayError(std::string errorString);
 	void displayText(std::string textString, double x, double y, int textScale, double rotation);
 	void displayPoint(double x1, double y1, double size);

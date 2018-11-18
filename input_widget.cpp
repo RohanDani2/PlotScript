@@ -33,9 +33,7 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 	if ((event->matches(QKeySequence::InsertLineSeparator))) {
 		emit sendErase();
 		std::istringstream iss(QPlainTextEdit::toPlainText().toStdString());
-		//std::cout << "keypressShiftEnter";
 		if (!interp.parseStream(iss)) {
-			//std::cout << "error";
 			std::string errorString = "Error: Could not Parse";
 			emit sendError(errorString);
 		}
@@ -43,30 +41,26 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 			try {
 				Expression expression = interp.evaluate();
 				std::string command = expression.getProp("\"object-name\"").head().asSymbol();
-				//double thickness = expression.getProp("\thickness\"").head().asNumber();
 				if (command == "\"point\"") {
-					double x1 = expression.getProp("\"object-name\"").tailVal()[0].head().asNumber();
-					double y1 = expression.getProp("\"object-name\"").tailVal()[1].head().asNumber();
-					double size = expression.getProp("\"size\"").head().asNumber();
-					if (size != 0) {
-						emit sendPoint(x1, y1, size);
+					double size = 0;
+					double x1 = expression.tailVal()[0].head().asNumber();
+					double y1 = expression.tailVal()[1].head().asNumber();
+					if (expression.getProp("\"size\"").head().isNumber()) {
+						size = expression.getProp("\"size\"").head().asNumber();
 					}
-					emit sendPoint(x1, y1, 0);
+					emit sendPoint(x1, y1, size);
 				}
 				else if (command == "\"line\"") {
-					//
+					double thickness = expression.getProp("\thickness\"").head().asNumber();
 				}
 				else if (command == "\"text\"") {
 					int textScale = 1;
 					double rotation = 0;
 					double x = 0;
 					double y = 0;
-					if (expression.tailVal().size() == 0) {
-						emit sendText(expression.head().asSymbol(), x, y, textScale, rotation);
-					}
 					if (expression.getProp("\"position\"").getProp("\"object-name\"").head().isSymbol()) {
-						/*double x = expression.getProp("\"position\"").tailVal()[0].head().asNumber();
-						double y = expression.getProp("\"position\"").tailVal()[1].head().asNumber();*/
+						x = expression.getProp("\"position\"").tailVal()[0].head().asNumber();
+						y = expression.getProp("\"position\"").tailVal()[1].head().asNumber();
 					}
 					if (expression.getProp("\"text-scale\"").head().isNumber()) {
 						textScale = expression.getProp("\"text-scale\"").head().asNumber();
@@ -86,10 +80,12 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 						}
 						expressionString = makeTextString;
 					}
-					emit sendText(expressionString,x,y,textScale,rotation);
+					emit sendText(expressionString, x, y, textScale, rotation);
 				}
 				else {
-					//
+					ss << expression;
+					expressionString = ss.str();
+					emit sendText(expressionString, 0, 0, 1, 0);
 				}
 			}
 			catch (const SemanticError & ex) {
@@ -97,7 +93,6 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 			}
 			
 		}
-
 	}
 	else {
 		QPlainTextEdit::keyPressEvent(event);

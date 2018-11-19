@@ -26,9 +26,6 @@ InputWidget::InputWidget(QWidget * parent) : QPlainTextEdit(parent) {
 }
 
 void InputWidget::keyPressEvent(QKeyEvent *event){
-	std::string textString;
-	std::string expressionString;
-	std::stringstream ss;
 	const double PI = std::atan2(0, -1);
 	if ((event->matches(QKeySequence::InsertLineSeparator))) {
 		emit sendErase();
@@ -38,20 +35,35 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 			emit sendError(errorString);
 		}
 		else {
+			std::string textString;
+			std::string expressionString;
+			std::stringstream ss;
+			double x1 = 0;
+			double y1 = 0;
+			double x2 = 0;
+			double y2 = 0;
 			try {
 				Expression expression = interp.evaluate();
 				std::string command = expression.getProp("\"object-name\"").head().asSymbol();
 				if (command == "\"point\"") {
 					double size = 0;
-					double x1 = expression.tailVal()[0].head().asNumber();
-					double y1 = expression.tailVal()[1].head().asNumber();
+					x1 = expression.tailVal()[0].head().asNumber();
+					y1 = expression.tailVal()[1].head().asNumber();
 					if (expression.getProp("\"size\"").head().isNumber()) {
 						size = expression.getProp("\"size\"").head().asNumber();
 					}
 					emit sendPoint(x1, y1, size);
 				}
 				else if (command == "\"line\"") {
-					double thickness = expression.getProp("\thickness\"").head().asNumber();
+					double thickness = 1;
+					if (true) {
+						thickness = expression.getProp("\thickness\"").head().asNumber();
+					}
+					x1 = expression.tailVal()[0].head().asNumber();
+					y1 = expression.tailVal()[1].head().asNumber();
+					x2 = expression.tailVal()[1].tailVal()[0].head().asNumber();
+					y2 = expression.tailVal()[1].tailVal()[1].head().asNumber();
+					emit sendLine(x1, x2, y1, y2, thickness);
 				}
 				else if (command == "\"text\"") {
 					int textScale = 1;
@@ -89,7 +101,9 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 				}
 			}
 			catch (const SemanticError & ex) {
-				std::cerr << ex.what() << std::endl;
+				std::string errorString = "Error: Error During Evaluation Unknown Symbol";
+				emit sendError(errorString);
+				
 			}
 			
 		}

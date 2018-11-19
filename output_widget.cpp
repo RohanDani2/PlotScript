@@ -48,13 +48,11 @@ void OutputWidget::displayPoint(double x1, double y1, double size) {
 	scene->addEllipse(x1, y1, size,size,pen,QBrush(QColor("000000")));
 }
 
-void OutputWidget::displayLine(double x1, double x2, double y1, double y2,double thickness)
-{
-	x1++;
-	x2++;
-	y1++;
-	y2++;
-	thickness++;
+void OutputWidget::displayLine(double x1, double x2, double y1, double y2,double thickness) {
+	QPen pen;
+	pen.setWidth(thickness);
+	pen.setColor("000000");
+	scene->addLine(x1, y1, x2, y2, pen);
 }
 
 

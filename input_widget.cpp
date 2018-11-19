@@ -16,12 +16,7 @@ InputWidget::InputWidget(QWidget * parent) : QPlainTextEdit(parent) {
 		emit sendError(errorString);
 	}
 	else {
-		try {
-			Expression exp = interp.evaluate();
-		}
-		catch (const SemanticError & ex) {
-			std::cerr << ex.what() << std::endl;
-		}
+		Expression exp = interp.evaluate();
 	}
 }
 
@@ -37,6 +32,7 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 		else {
 			std::string textString;
 			std::string expressionString;
+			std::string errorString;
 			std::stringstream ss;
 			double x1 = 0;
 			double y1 = 0;
@@ -51,13 +47,21 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 					y1 = expression.tailVal()[1].head().asNumber();
 					if (expression.getProp("\"size\"").head().isNumber()) {
 						size = expression.getProp("\"size\"").head().asNumber();
+						if (size < 0) {
+							errorString = "Error: Size is not a positive Number";
+							emit sendError(errorString);
+						}
 					}
 					emit sendPoint(x1, y1, size);
 				}
 				else if (command == "\"line\"") {
 					double thickness = 1;
-					if (true) {
+					if (expression.getProp("\"thickness\"").head().isNumber()) {
 						thickness = expression.getProp("\thickness\"").head().asNumber();
+						if (thickness < 0) {
+							errorString = "Error: Thickness is not a positive Number";
+							emit sendError(errorString);
+						}
 					}
 					x1 = expression.tailVal()[0].head().asNumber();
 					y1 = expression.tailVal()[1].head().asNumber();
@@ -70,16 +74,22 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 					double rotation = 0;
 					double x = 0;
 					double y = 0;
-					if (expression.getProp("\"position\"").getProp("\"object-name\"").head().isSymbol()) {
-						x = expression.getProp("\"position\"").tailVal()[0].head().asNumber();
-						y = expression.getProp("\"position\"").tailVal()[1].head().asNumber();
+					if (expression.getProp("\"position\"").getProp("\"object-name\"").head().asSymbol() != "\"point\"") {
+						errorString = "Error: Position Not a Point";
+						emit sendError(errorString);
 					}
-					if (expression.getProp("\"text-scale\"").head().isNumber()) {
-						textScale = expression.getProp("\"text-scale\"").head().asNumber();
-					}
-					if (expression.getProp("\"text-rotation\"").head().isNumber()) {
-						rotation = expression.getProp("\"text-rotation\"").head().asNumber();
-						rotation = (rotation * (PI / 180));
+					else {
+						if (expression.getProp("\"position\"").getProp("\"object-name\"").head().isSymbol()) {
+							x = expression.getProp("\"position\"").tailVal()[0].head().asNumber();
+							y = expression.getProp("\"position\"").tailVal()[1].head().asNumber();
+						}
+						if (expression.getProp("\"text-scale\"").head().isNumber()) {
+							textScale = expression.getProp("\"text-scale\"").head().asNumber();
+						}
+						if (expression.getProp("\"text-rotation\"").head().isNumber()) {
+							rotation = expression.getProp("\"text-rotation\"").head().asNumber();
+							rotation = (rotation * (PI / 180));
+						}
 					}
 					ss << expression;
 					expressionString = ss.str();
@@ -101,7 +111,8 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 				}
 			}
 			catch (const SemanticError & ex) {
-				std::string errorString = "Error: Error During Evaluation Unknown Symbol";
+				ex.what();
+				errorString = "Error: During Evaluation Unknown Symbol";
 				emit sendError(errorString);
 				
 			}

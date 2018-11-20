@@ -44,7 +44,7 @@ void OutputWidget::displayText(std::string textString, double x, double y, int t
 
 void OutputWidget::displayPoint(double x1, double y1, double size) {
 	QPen pen;
-	scene->addEllipse(x1, y1, size,size,pen,QBrush(QColor("000000")));
+	scene->addEllipse(x1, y1, size, size, pen, QBrush(QColor("000000")));
 }
 
 void OutputWidget::displayLine(double x1, double x2, double y1, double y2,double thickness) {

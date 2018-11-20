@@ -47,49 +47,47 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 					y1 = expression.tailVal()[1].head().asNumber();
 					if (expression.getProp("\"size\"").head().isNumber()) {
 						size = expression.getProp("\"size\"").head().asNumber();
-						if (size < 0) {
-							errorString = "Error: Size is not a positive Number";
-							emit sendError(errorString);
-						}
 					}
-					emit sendPoint(x1, y1, size);
+					if (size < 0) {
+						errorString = "Error: Size is not a positive Number";
+						emit sendError(errorString);
+					}
+					else {
+						emit sendPoint(x1, y1, size);
+					}
 				}
 				else if (command == "\"line\"") {
 					double thickness = 1;
 					if (expression.getProp("\"thickness\"").head().isNumber()) {
 						thickness = expression.getProp("\thickness\"").head().asNumber();
-						if (thickness < 0) {
-							errorString = "Error: Thickness is not a positive Number";
-							emit sendError(errorString);
-						}
 					}
 					x1 = expression.tailVal()[0].head().asNumber();
 					y1 = expression.tailVal()[1].head().asNumber();
 					x2 = expression.tailVal()[1].tailVal()[0].head().asNumber();
 					y2 = expression.tailVal()[1].tailVal()[1].head().asNumber();
-					emit sendLine(x1, x2, y1, y2, thickness);
+					if (thickness < 0) {
+						errorString = "Error: Thickness is not a positive Number";
+						emit sendError(errorString);
+					}
+					else {
+						emit sendLine(x1, x2, y1, y2, thickness);
+					}
 				}
 				else if (command == "\"text\"") {
 					int textScale = 1;
 					double rotation = 0;
 					double x = 0;
 					double y = 0;
-					if (expression.getProp("\"position\"").getProp("\"object-name\"").head().asSymbol() != "\"point\"") {
-						errorString = "Error: Position Not a Point";
-						emit sendError(errorString);
+					if (expression.getProp("\"position\"").getProp("\"object-name\"").head().isSymbol()) {
+						x = expression.getProp("\"position\"").tailVal()[0].head().asNumber();
+						y = expression.getProp("\"position\"").tailVal()[1].head().asNumber();
 					}
-					else {
-						if (expression.getProp("\"position\"").getProp("\"object-name\"").head().isSymbol()) {
-							x = expression.getProp("\"position\"").tailVal()[0].head().asNumber();
-							y = expression.getProp("\"position\"").tailVal()[1].head().asNumber();
-						}
-						if (expression.getProp("\"text-scale\"").head().isNumber()) {
-							textScale = expression.getProp("\"text-scale\"").head().asNumber();
-						}
-						if (expression.getProp("\"text-rotation\"").head().isNumber()) {
-							rotation = expression.getProp("\"text-rotation\"").head().asNumber();
-							rotation = (rotation * (PI / 180));
-						}
+					if (expression.getProp("\"text-scale\"").head().isNumber()) {
+						textScale = expression.getProp("\"text-scale\"").head().asNumber();
+					}
+					if (expression.getProp("\"text-rotation\"").head().isNumber()) {
+						rotation = expression.getProp("\"text-rotation\"").head().asNumber();
+						rotation = (rotation * (PI / 180));
 					}
 					ss << expression;
 					expressionString = ss.str();
@@ -102,7 +100,13 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 						}
 						expressionString = makeTextString;
 					}
-					emit sendText(expressionString, x, y, textScale, rotation);
+					if (expression.getProp("\"position\"").getProp("\"object-name\"").head().asSymbol() != "\"point\"") {
+						errorString = "Error: Position Not a Point";
+						emit sendError(errorString);
+					}
+					else {
+						emit sendText(expressionString, x, y, textScale, rotation);
+					}
 				}
 				else {
 					ss << expression;

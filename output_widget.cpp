@@ -37,16 +37,14 @@ void OutputWidget::displayText(std::string textString, double x, double y, int t
 	QGraphicsTextItem *text = new QGraphicsTextItem(qstr);
 	QFont font = QFont("Courier", 1);
 	text->setPos(x, y);
-	text->setTextWidth(text->boundingRect().width());
 	text->setScale(textScale);
 	text->setRotation(rotation);
 	scene->addItem(text);
-
 }
 
 void OutputWidget::displayPoint(double x1, double y1, double size) {
 	QPen pen;
-	scene->addEllipse((x1-size)/2, (y1-size)/2, size,size,pen,QBrush(QColor("000000")));
+	scene->addEllipse(x1, y1, size,size,pen,QBrush(QColor("000000")));
 }
 
 void OutputWidget::displayLine(double x1, double x2, double y1, double y2,double thickness) {

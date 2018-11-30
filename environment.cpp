@@ -252,6 +252,9 @@ Expression sine(const std::vector<Expression> & args) { //sine
 			sineComplex = sin(args[0].head().asComplex()); //check sine for complex
 			return Expression(sineComplex);
 		}
+		else {
+			throw SemanticError("Error: in call to tangent: not a number.");
+		}
 	}
 	else {
 		throw SemanticError("Error: in call to sine: invalid number of arguments.");
@@ -271,6 +274,9 @@ Expression cosine(const std::vector<Expression> & args) { //cosine
 				cosineComplex = cos(a.head().asComplex()); //calculates cosine complex val
 				return Expression(cosineComplex);
 			}
+			else {
+				throw SemanticError("Error: in call to tangent: not a number.");
+			}
 		}
 	}
 	else {
@@ -280,7 +286,7 @@ Expression cosine(const std::vector<Expression> & args) { //cosine
 }
 
 Expression tangent(const std::vector<Expression> & args) { //tan
-	double result = 0.0;
+	long double result = 0.0;
 	std::complex<double> tangentComplex(0, 0);
 	if (nargs_equal(args, 1)) {
 		if (args[0].isHeadNumber()) {
@@ -289,6 +295,9 @@ Expression tangent(const std::vector<Expression> & args) { //tan
 		else if (args[0].isHeadComplex()) {
 			tangentComplex = tan(args[0].head().asComplex()); //tangent as complex val
 			return Expression(tangentComplex);
+		}
+		else {
+			throw SemanticError("Error: in call to tangent: not a number.");
 		}
 	}
 	else {

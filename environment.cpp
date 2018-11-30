@@ -496,32 +496,35 @@ Expression join(const std::vector<Expression> & args) { //join
 }
 
 Expression range(const std::vector<Expression> & args) { //range
-	double sumVal = 0;
-	auto secondVal = args[1];
-	auto incrementer = args[2];
-
 	Atom head("list");
 	Expression list(head);
-	
-	list.append(args[0].head().asNumber());
+	if (nargs_equal(args, 3)) {
+		double sumVal = 0;
+		auto secondVal = args[1];
+		auto incrementer = args[2];
 
-	sumVal = args[0].head().asNumber() + args[2].head().asNumber();
+		list.append(args[0].head().asNumber());
 
-	if (args[2].head().asNumber() < 0) {
-		throw SemanticError("Error: negative or zero increment in range.");
-	}
-	if (args[0].isHeadNumber() && args[1].isHeadNumber() && args[2].isHeadNumber()) {
-		if (args[0].head().asNumber() > args[1].head().asNumber()) {
-			throw SemanticError("Error: begin greater than end in range.");
+		sumVal = args[0].head().asNumber() + args[2].head().asNumber();
+		if (args[2].head().asNumber() < 0) {
+			throw SemanticError("Error: negative or zero increment in range.");
 		}
-		while (sumVal <= args[1].head().asNumber()) { //for decimals
-			list.append(sumVal);
-			sumVal = sumVal + args[2].head().asNumber();
-		}
+		if (args[0].isHeadNumber() && args[1].isHeadNumber() && args[2].isHeadNumber()) {
+			if (args[0].head().asNumber() > args[1].head().asNumber()) {
+				throw SemanticError("Error: begin greater than end in range.");
+			}
+			while (sumVal <= args[1].head().asNumber()) { //for decimals
+				list.append(sumVal);
+				sumVal = sumVal + args[2].head().asNumber();
+			}
 
+		}
+		else {
+			throw SemanticError("Error: not a number.");
+		}
 	}
 	else {
-		throw SemanticError("Error: not a number.");
+		throw SemanticError("Error: invalid number of arguments in range");
 	}
 	return Expression(list);
 }

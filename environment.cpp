@@ -466,6 +466,9 @@ Expression appendVal(const std::vector<Expression> & args) { //append
 	if (args[0].isHeadSymbol() && args[0].head().asSymbol() == "list") {
 		result.append(args[1]);
 	}
+	else {
+		throw SemanticError("Error: argument to length is not a list.");
+	}
 	return Expression(result);
 }
 

@@ -31,8 +31,8 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 		}
 		else {
 			std::string textString;
-			std::string expressionString;
 			std::string errorString;
+			std::string expressionString;
 			std::stringstream ss;
 			double x1 = 0;
 			double y1 = 0;

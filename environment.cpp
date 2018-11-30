@@ -520,6 +520,9 @@ Expression range(const std::vector<Expression> & args) { //range
 		}
 
 	}
+	else {
+		throw SemanticError("Error: not a number.");
+	}
 	return Expression(list);
 }
 

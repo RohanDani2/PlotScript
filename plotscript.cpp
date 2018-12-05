@@ -98,6 +98,14 @@ void threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruc
 	if (!interp.parseStream(ifs)) {
 		error("Invalid Program. Could not parse.");
 	}
+	else {
+		try {
+			Expression exp = interp.evaluate();
+		}
+		catch (const SemanticError & ex) {
+			std::cerr << ex.what() << std::endl;
+		}
+	}
 	while (true) {
 		std::string expressionString;
 		if (inputQueue->try_pop(expressionString)) {
@@ -127,20 +135,6 @@ void threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruc
 // A REPL is a repeated read-eval-print loop
 void repl() {
 	Interpreter interp;
-
-	std::ifstream ifs(STARTUP_FILE);
-
-	if (!interp.parseStream(ifs)) {
-		error("Invalid Program. Could not parse.");
-	}
-	else {
-		try {
-			Expression exp = interp.evaluate();
-		}
-		catch (const SemanticError & ex) {
-			std::cerr << ex.what() << std::endl;
-		}
-	}
 
 	MessageQueue<std::string> inputQueue;
 	MessageQueue<queueStruct> outputQueue;

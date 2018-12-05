@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <thread>
+#include <atomic> 
 #include <startup_config.hpp>
 
 #include "interpreter.hpp"
@@ -16,6 +17,7 @@ struct queueStruct {
 };
 
 queueStruct output;
+bool stopQueue = false;
 
 void prompt(){
   std::cout << "\nplotscript> ";
@@ -106,7 +108,7 @@ void threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruc
 			std::cerr << ex.what() << std::endl;
 		}
 	}
-	while (true) {
+	while (stopQueue == false) {
 		std::string expressionString;
 		if (inputQueue->try_pop(expressionString)) {
 			std::istringstream expression(expressionString);
@@ -135,30 +137,51 @@ void threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruc
 // A REPL is a repeated read-eval-print loop
 void repl() {
 	Interpreter interp;
-
 	MessageQueue<std::string> inputQueue;
 	MessageQueue<queueStruct> outputQueue;
-	std::thread secondThread(&threadWorker, &inputQueue, &outputQueue);
 
+	std::thread secondThread(&threadWorker, &inputQueue, &outputQueue);
 	while (!std::cin.eof()) {
 		prompt();
 		std::string line = readline();
 
 		if (line.empty()) continue;
 
+		if (line == "%start") {
+
+		}
+		else if (line == "%stop") {
+			stopQueue = true;
+			if (secondThread.joinable()) {
+				secondThread.join();
+			}
+			continue;
+		}
+		else if (line == "%reset") {
+
+		}
+
 		std::istringstream expression(line);
 
-		inputQueue.push(line);
-		outputQueue.wait_and_pop(output);
+		if (stopQueue == false) {
+			inputQueue.push(line);
+			outputQueue.wait_and_pop(output);
 
-		if (output.error == true) {
-			std::cout << output.errorString;
+			if (output.error == true) {
+				std::cout << output.errorString;
+			}
+			else {
+				std::cout << output.expression;
+			}
 		}
 		else {
-			std::cout << output.expression;
+			std::cout << "Error: interpreter kernel not running";
 		}
+
 	}
-	secondThread.join();
+	if (secondThread.joinable()) {
+		secondThread.join();
+	}
 }
 
 int main(int argc, char *argv[])

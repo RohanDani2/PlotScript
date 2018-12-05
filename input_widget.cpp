@@ -77,7 +77,8 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 						emit sendPoint(x1, y1, size);
 					}
 				}
-				else if (expression.head().asSymbol() == "list" && expression.tailVal()[0].getProp("\"object-name\"").head().asSymbol() == "\"point\"") {
+				else if (expression.head().asSymbol() == "list" && expression.tailVal()[0].getProp("\"object-name\"").head().asSymbol() == "\"point\"" 
+					&& expression.getProp("\"object-name\"").head().asSymbol() != "\"line\"") {
 					int count = 0;
 					for (auto it = expression.tailConstBegin(); it != expression.tailConstEnd(); it++) {
 						x1 = expression.tailVal()[count].tailVal()[0].head().asNumber();
@@ -94,6 +95,7 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 					}
 				}
 				else if (command == "\"line\"") {
+
 					if (expression.getProp("\"thickness\"").head().isNumber()) {
 						thickness = expression.getProp("\thickness\"").head().asNumber();
 					}

@@ -44,7 +44,6 @@ private:
 
 };
 
-#include "multiThread.tpp"
 #endif
 
 

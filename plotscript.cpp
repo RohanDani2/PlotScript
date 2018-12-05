@@ -97,21 +97,21 @@ void threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruc
 		std::string expressionString;
 		if (inputQueue->try_pop(expressionString)) {
 			std::istringstream expression(expressionString);
-			if (!interp.parseStream(expression)) {
-				output.error = true;
+			if (expressionString != "" && !interp.parseStream(expression)) {
 				output.errorString = "Error: Could not Parse";
+				output.error = true;
 				outputQueue->push(output);
 			}
 			else {
 				try {
 					Expression exp = interp.evaluate();
 					output.expression = exp;
-					outputQueue->push(output);
 					output.error = false;
+					outputQueue->push(output);
 				}
 				catch (const SemanticError & ex) {
-					output.error = true;
 					output.errorString = ex.what();
+					output.error = true;
 					outputQueue->push(output);
 				}
 			}
@@ -142,7 +142,6 @@ void repl() {
 	std::thread secondThread(&threadWorker, &inputQueue, &outputQueue);
 
 	while (!std::cin.eof()) {
-
 		prompt();
 		std::string line = readline();
 

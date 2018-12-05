@@ -108,10 +108,17 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 						emit sendText(expressionString, x, y, textScale, rotation);
 					}
 				}
+				else if (expression.head().asSymbol() == "lambda") {
+					emit sendErase();
+				}
 				else {
 					ss << expression;
 					expressionString = ss.str();
 					emit sendText(expressionString, 0, 0, 1, 0);
+					/*std::size_t found = iss.str().find("define");
+					if (found != std::string::npos) {
+						emit sendErase();
+					}*/
 				}
 			}
 			catch (const SemanticError & ex) {

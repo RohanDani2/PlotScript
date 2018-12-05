@@ -11,7 +11,7 @@ OutputWidget::OutputWidget(QWidget * parent) : QWidget(parent) {
 	scene = new QGraphicsScene;
 	view = new QGraphicsView(scene);
 	auto layout = new QVBoxLayout;
-	startInterpKernel();
+	//startInterpKernel();
 	view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	view->verticalScrollBar()->hide();
 	view->verticalScrollBar()->resize(0, 0);

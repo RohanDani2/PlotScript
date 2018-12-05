@@ -20,6 +20,21 @@ InputWidget::InputWidget(QWidget * parent) : QPlainTextEdit(parent) {
 	}
 }
 
+void InputWidget::startKernel() {
+	std::cout << "in start kernel";
+}
+
+void InputWidget::stopKernel() {
+	std::cout << "in stop kernel";
+}
+void InputWidget::resetKernel() {
+	std::cout << "in reset kernel";
+}
+
+void InputWidget::interruptKernel() {
+	std::cout << "in interrupt kernel";
+}
+
 void InputWidget::keyPressEvent(QKeyEvent *event){
 	const double PI = std::atan2(0, -1);
 	if ((event->matches(QKeySequence::InsertLineSeparator))) {
@@ -40,8 +55,13 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 			double y2 = 0;
 			double size = 0;
 			double thickness = 1;
+			int textScale = 1;
+			double rotation = 0;
+			double x = 0;
+			double y = 0;
 			try {
 				Expression expression = interp.evaluate();
+
 				std::string command = expression.getProp("\"object-name\"").head().asSymbol();
 				if (command == "\"point\"") {
 					x1 = expression.tailVal()[0].head().asNumber();
@@ -90,10 +110,6 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 					}
 				}
 				else if (command == "\"text\"") {
-					int textScale = 1;
-					double rotation = 0;
-					double x = 0;
-					double y = 0;
 					if (expression.getProp("\"position\"").getProp("\"object-name\"").head().isSymbol()) {
 						x = expression.getProp("\"position\"").tailVal()[0].head().asNumber();
 						y = expression.getProp("\"position\"").tailVal()[1].head().asNumber();
@@ -123,6 +139,34 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 					else {
 						emit sendText(expressionString, x, y, textScale, rotation);
 					}
+				}
+				else if (expression.head().asSymbol() == "list" && expression.tailVal()[0].getProp("\"object-name\"").head().asSymbol() == "\"text\"") {
+					int textCount = 0;
+					for (auto it = expression.tailConstBegin(); it != expression.tailConstEnd(); it++) {
+						if (expression.tailVal()[textCount].getProp("\"position\"").head().isSymbol()) {
+							x = expression.tailVal()[textCount].getProp("\"position\"").tailVal()[0].head().asNumber();
+							y = expression.tailVal()[textCount].getProp("\"position\"").tailVal()[1].head().asNumber();
+						}
+						if (expression.tailVal()[textCount].getProp("\"text-scale\"").head().isNumber()) {
+							textScale = expression.getProp("\"text-scale\"").head().asNumber();
+						}
+						if (expression.tailVal()[textCount].getProp("\"text-rotation\"").head().isNumber()) {
+							rotation = expression.getProp("\"text-rotation\"").head().asNumber();
+							rotation = (rotation * (PI / 180));
+						}
+						std::stringstream ss;
+						ss << expression.tailVal()[textCount].head().asSymbol();
+						std::string expressionString = ss.str();
+						if (expression.tailVal()[textCount].getProp("\"position\"").getProp("\"object-name\"").head().asSymbol() != "\"point\"") {
+							errorString = "Error: Position Not a Point";
+							emit sendError(errorString);
+						}
+						else {
+							emit sendText(expressionString, x, y, textScale, rotation);
+						}
+						textCount++;
+					}
+
 				}
 				else if (expression.head().asSymbol() == "lambda") {
 					emit sendErase();

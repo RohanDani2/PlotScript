@@ -23,6 +23,7 @@ signals:
 	void sendText(std::string textString,double x,double y,int textScale,double rotation);
 	void sendPoint(double x1,double y1,double size);
 	void sendLine(double x1, double x2, double y1, double y2, double thickness);
+	void onStartKernel();
 private:
 	Interpreter interp;
 	std::ostringstream os;

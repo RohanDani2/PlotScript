@@ -10,11 +10,6 @@ NotebookApp::NotebookApp(QWidget * parent) : QWidget(parent) {
 	QPushButton *stop = new QPushButton("Stop Kernel");
 	QPushButton *reset = new QPushButton("Reset Kernel");
 	QPushButton *interrupt = new QPushButton("Interrupt");
-	QObject::connect(input, &InputWidget::sendErase, output, &OutputWidget::displayErase);
-	QObject::connect(input, &InputWidget::sendError, output, &OutputWidget::displayError);
-	QObject::connect(input, &InputWidget::sendText, output, &OutputWidget::displayText);
-	QObject::connect(input, &InputWidget::sendLine, output, &OutputWidget::displayLine);
-	QObject::connect(input, &InputWidget::sendPoint, output, &OutputWidget::displayPoint);
 	auto layout = new QGridLayout;
 	auto qhlayout = new QHBoxLayout;
 	input->setObjectName("input");
@@ -30,4 +25,9 @@ NotebookApp::NotebookApp(QWidget * parent) : QWidget(parent) {
 	qhlayout->addWidget(interrupt);
 	layout->addLayout(qhlayout,0,0);
 	setLayout(layout);
+	QObject::connect(input, &InputWidget::sendErase, output, &OutputWidget::displayErase);
+	QObject::connect(input, &InputWidget::sendError, output, &OutputWidget::displayError);
+	QObject::connect(input, &InputWidget::sendText, output, &OutputWidget::displayText);
+	QObject::connect(input, &InputWidget::sendLine, output, &OutputWidget::displayLine);
+	QObject::connect(input, &InputWidget::sendPoint, output, &OutputWidget::displayPoint);
 }

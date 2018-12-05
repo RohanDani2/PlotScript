@@ -38,11 +38,11 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 			double y1 = 0;
 			double x2 = 0;
 			double y2 = 0;
+			double size = 0;
 			try {
 				Expression expression = interp.evaluate();
 				std::string command = expression.getProp("\"object-name\"").head().asSymbol();
 				if (command == "\"point\"") {
-					double size = 0;
 					x1 = expression.tailVal()[0].head().asNumber();
 					y1 = expression.tailVal()[1].head().asNumber();
 					if (expression.getProp("\"size\"").head().isNumber()) {
@@ -53,6 +53,16 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 						emit sendError(errorString);
 					}
 					else {
+						emit sendPoint(x1, y1, size);
+					}
+				}
+				else if (expression.head().asSymbol() == "list" && expression.tailVal()[0].getProp("\"object-name\"").head().asSymbol() == "\"point\"") {
+					int count = 0;
+					for (auto it = expression.tailConstBegin(); it != expression.tailConstEnd(); it++) {
+						x1 = expression.tailVal()[count].tailVal()[0].head().asNumber();
+						y1 = expression.tailVal()[count].tailVal()[1].head().asNumber();
+						size = expression.tailVal()[count].getProp("\"size\"").head().asNumber();
+						count++;
 						emit sendPoint(x1, y1, size);
 					}
 				}

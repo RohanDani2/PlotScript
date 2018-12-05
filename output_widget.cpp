@@ -3,6 +3,7 @@
 #include <QVBoxLayout>
 #include <QLayout>
 #include <QScrollBar>
+#include <QPushButton>
 #include <iostream>
 
 
@@ -10,6 +11,7 @@ OutputWidget::OutputWidget(QWidget * parent) : QWidget(parent) {
 	scene = new QGraphicsScene;
 	view = new QGraphicsView(scene);
 	auto layout = new QVBoxLayout;
+	startInterpKernel();
 	view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	view->verticalScrollBar()->hide();
 	view->verticalScrollBar()->resize(0, 0);
@@ -52,6 +54,12 @@ void OutputWidget::displayLine(double x1, double x2, double y1, double y2,double
 	pen.setWidth(thickness);
 	pen.setColor("000000");
 	scene->addLine(x1, y1, x2, y2, pen);
+}
+
+void OutputWidget::startInterpKernel() {
+	QPushButton *startButton = new QPushButton();
+	startButton->setText("Start Kernel");
+	scene->addWidget(startButton);
 }
 
 

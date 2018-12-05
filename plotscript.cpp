@@ -2,10 +2,20 @@
 #include <sstream>
 #include <iostream>
 #include <fstream>
+#include <thread>
 #include <startup_config.hpp>
 
 #include "interpreter.hpp"
 #include "semantic_error.hpp"
+#include "multiThread.hpp"
+
+struct queueStruct {
+	bool error;
+	std::string errorString;
+	Expression expression;
+};
+
+queueStruct output;
 
 void prompt(){
   std::cout << "\nplotscript> ";
@@ -81,47 +91,76 @@ int eval_from_command(std::string argexp){
   return eval_from_stream(expression);
 }
 
+void threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruct> *outputQueue) {
+	Interpreter interp;
+	while (true) {
+		std::string expressionString;
+		if (inputQueue->try_pop(expressionString)) {
+			std::istringstream expression(expressionString);
+			if (!interp.parseStream(expression)) {
+				output.error = true;
+				output.errorString = "Error: Could not Parse";
+				outputQueue->push(output);
+			}
+			else {
+				try {
+					Expression exp = interp.evaluate();
+					output.expression = exp;
+					outputQueue->push(output);
+					output.error = false;
+				}
+				catch (const SemanticError & ex) {
+					output.error = true;
+					output.errorString = ex.what();
+					outputQueue->push(output);
+				}
+			}
+		}
+	}
+}
+
 // A REPL is a repeated read-eval-print loop
-void repl(){
-  Interpreter interp;
+void repl() {
+	Interpreter interp;
 
-  std::ifstream ifs(STARTUP_FILE);
+	std::ifstream ifs(STARTUP_FILE);
 
+	if (!interp.parseStream(ifs)) {
+		error("Invalid Program. Could not parse.");
+	}
+	else {
+		try {
+			Expression exp = interp.evaluate();
+		}
+		catch (const SemanticError & ex) {
+			std::cerr << ex.what() << std::endl;
+		}
+	}
 
-  if (!interp.parseStream(ifs)) {
-	  error("Invalid Program. Could not parse.");
-  }
-  else {
-	  try {
-		  Expression exp = interp.evaluate();
-	  }
-	  catch (const SemanticError & ex) {
-		  std::cerr << ex.what() << std::endl;
-	  }
-  }
-    
-  while(!std::cin.eof()){
-    
-    prompt();
-    std::string line = readline();
-    
-    if(line.empty()) continue;
+	MessageQueue<std::string> inputQueue;
+	MessageQueue<queueStruct> outputQueue;
+	std::thread secondThread(&threadWorker, &inputQueue, &outputQueue);
 
-    std::istringstream expression(line);
-    
-    if(!interp.parseStream(expression)){
-      error("Invalid Expression. Could not parse.");
-    }
-    else{
-      try{
-	Expression exp = interp.evaluate();
-	std::cout << exp << std::endl;
-      }
-      catch(const SemanticError & ex){
-	std::cerr << ex.what() << std::endl;
-      }
-    }
-  }
+	while (!std::cin.eof()) {
+
+		prompt();
+		std::string line = readline();
+
+		if (line.empty()) continue;
+
+		std::istringstream expression(line);
+
+		inputQueue.push(line);
+		outputQueue.wait_and_pop(output);
+
+		if (output.error == true) {
+			std::cout << output.errorString;
+		}
+		else {
+			std::cout << output.expression;
+		}
+	}
+	secondThread.join();
 }
 
 int main(int argc, char *argv[])

@@ -253,7 +253,7 @@ Expression sine(const std::vector<Expression> & args) { //sine
 			return Expression(sineComplex);
 		}
 		else {
-			throw SemanticError("Error: in call to tangent: not a number.");
+			throw SemanticError("Error: in call to sine: not a number or complex.");
 		}
 	}
 	else {
@@ -266,17 +266,15 @@ Expression cosine(const std::vector<Expression> & args) { //cosine
 	double result = 0.0;
 	std::complex<double> cosineComplex(0, 0);
 	if (nargs_equal(args, 1)) {
-		for (auto &a : args) {
-			if (a.isHeadNumber()) {
-				result = cos(a.head().asNumber()); //calculates cosine number value
-			}
-			else if (a.isHeadComplex()) {
-				cosineComplex = cos(a.head().asComplex()); //calculates cosine complex val
-				return Expression(cosineComplex);
-			}
-			else {
-				throw SemanticError("Error: in call to tangent: not a number.");
-			}
+		if (args[0].isHeadNumber()) {
+			result = cos(args[0].head().asNumber()); //calculates cosine number value
+		}
+		else if (args[0].isHeadComplex()) {
+			cosineComplex = cos(args[0].head().asComplex()); //calculates cosine complex val
+			return Expression(cosineComplex);
+		}
+		else {
+			throw SemanticError("Error: in call to cosine: not a number or complex.");
 		}
 	}
 	else {
@@ -697,8 +695,10 @@ void Environment::reset() {
 	//Procedure: range;
 	envmap.emplace("range", EnvResult(ProcedureType, range));
 
+	//Procedure: set-property;
 	envmap.emplace("set-property", EnvResult(ProcedureType, setProperty));
 
+	//Procedure: get-property;
 	envmap.emplace("get-property", EnvResult(ProcedureType, getProperty));
 }
 

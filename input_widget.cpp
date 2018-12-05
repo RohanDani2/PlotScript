@@ -109,6 +109,26 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 						emit sendLine(x1, x2, y1, y2, thickness);
 					}
 				}
+				else if (expression.head().asSymbol() == "list" && expression.tailVal()[0].getProp("\"object-name\"").head().asSymbol() == "\"line\"") {
+					int lineCount = 0;
+					for (auto it = expression.tailConstBegin(); it != expression.tailConstEnd(); it++) {
+						x1 = expression.tailVal()[lineCount].tailVal()[0].tailVal()[0].head().asNumber();
+						y1 = expression.tailVal()[lineCount].tailVal()[0].tailVal()[1].head().asNumber();
+						x2 = expression.tailVal()[lineCount].tailVal()[1].tailVal()[0].head().asNumber();
+						y2 = expression.tailVal()[lineCount].tailVal()[1].tailVal()[1].head().asNumber();
+						if (expression.tailVal()[lineCount].getProp("\"thickness\"").head().isNumber()) {
+							thickness = expression.tailVal()[lineCount].getProp("\thickness\"").head().asNumber();
+						}
+						if (thickness < 0) {
+							errorString = "Error: Thickness is not a positive Number";
+							emit sendError(errorString);
+						}
+						else {
+							emit sendLine(x1, x2, y1, y2, thickness);
+						}
+						lineCount++;
+					}
+				}
 				else if (command == "\"text\"") {
 					if (expression.getProp("\"position\"").getProp("\"object-name\"").head().isSymbol()) {
 						x = expression.getProp("\"position\"").tailVal()[0].head().asNumber();

@@ -177,14 +177,16 @@ int repl() {
 		if (stopQueue == true) {
 			std::cout << "Error: interpreter kernel not running";
 		}
-		inputQueue.push(line);
-		outputQueue.wait_and_pop(output);
-
-		if (output.error == true) {
-			std::cout << output.errorString;
-		}
 		else {
-			std::cout << output.expression;
+			inputQueue.push(line);
+			outputQueue.wait_and_pop(output);
+
+			if (output.error == true) {
+				std::cout << output.errorString;
+			}
+			else {
+				std::cout << output.expression;
+			}
 		}
 
 	}

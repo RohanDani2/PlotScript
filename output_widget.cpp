@@ -45,7 +45,7 @@ void OutputWidget::displayText(std::string textString, double x, double y, int t
 
 void OutputWidget::displayPoint(double x1, double y1, double size) {
 	QPen pen;
-	scene->addEllipse((x1 - size) / 2, (y1 - size) / 2, size, size, Qt::NoPen, QBrush(QColor("000000")));
+	scene->addEllipse(x1-(size/2), y1 - (size / 2), size, size, Qt::NoPen, QBrush(QColor("000000")));
 }
 
 void OutputWidget::displayLine(double x1, double x2, double y1, double y2,double thickness) {
@@ -55,10 +55,5 @@ void OutputWidget::displayLine(double x1, double x2, double y1, double y2,double
 	scene->addLine(x1, y1, x2, y2, pen);
 }
 
-void OutputWidget::startInterpKernel() {
-	QPushButton *startButton = new QPushButton();
-	startButton->setText("Start Kernel");
-	scene->addWidget(startButton);
-}
 
 

@@ -39,6 +39,7 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 			double x2 = 0;
 			double y2 = 0;
 			double size = 0;
+			double thickness = 1;
 			try {
 				Expression expression = interp.evaluate();
 				std::string command = expression.getProp("\"object-name\"").head().asSymbol();
@@ -63,11 +64,16 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 						y1 = expression.tailVal()[count].tailVal()[1].head().asNumber();
 						size = expression.tailVal()[count].getProp("\"size\"").head().asNumber();
 						count++;
-						emit sendPoint(x1, y1, size);
+						if (size < 0) {
+							errorString = "Error: Size is not a positive Number";
+							emit sendError(errorString);
+						}
+						else {
+							emit sendPoint(x1, y1, size);
+						}
 					}
 				}
 				else if (command == "\"line\"") {
-					double thickness = 1;
 					if (expression.getProp("\"thickness\"").head().isNumber()) {
 						thickness = expression.getProp("\thickness\"").head().asNumber();
 					}
@@ -125,10 +131,6 @@ void InputWidget::keyPressEvent(QKeyEvent *event){
 					ss << expression;
 					expressionString = ss.str();
 					emit sendText(expressionString, 0, 0, 1, 0);
-					/*std::size_t found = iss.str().find("define");
-					if (found != std::string::npos) {
-						emit sendErase();
-					}*/
 				}
 			}
 			catch (const SemanticError & ex) {

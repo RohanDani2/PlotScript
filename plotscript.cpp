@@ -135,7 +135,7 @@ void threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruc
 }
 
 // A REPL is a repeated read-eval-print loop
-void repl() {
+int repl() {
 	Interpreter interp;
 	MessageQueue<std::string> inputQueue;
 	MessageQueue<queueStruct> outputQueue;
@@ -148,7 +148,15 @@ void repl() {
 		if (line.empty()) continue;
 
 		if (line == "%start") {
-
+			if (stopQueue == false) {
+				continue;
+			}
+			else {
+				std::thread secondThread(&threadWorker, &inputQueue, &outputQueue);
+				secondThread.detach();
+				stopQueue = false;
+			}
+			continue;
 		}
 		else if (line == "%stop") {
 			stopQueue = true;
@@ -160,28 +168,31 @@ void repl() {
 		else if (line == "%reset") {
 
 		}
+		else if (line == "%exit") {
+			break;
+		}
 
 		std::istringstream expression(line);
 
-		if (stopQueue == false) {
-			inputQueue.push(line);
-			outputQueue.wait_and_pop(output);
+		if (stopQueue == true) {
+			std::cout << "Error: interpreter kernel not running";
+		}
+		inputQueue.push(line);
+		outputQueue.wait_and_pop(output);
 
-			if (output.error == true) {
-				std::cout << output.errorString;
-			}
-			else {
-				std::cout << output.expression;
-			}
+		if (output.error == true) {
+			std::cout << output.errorString;
 		}
 		else {
-			std::cout << "Error: interpreter kernel not running";
+			std::cout << output.expression;
 		}
 
 	}
 	if (secondThread.joinable()) {
+		stopQueue = true;
 		secondThread.join();
 	}
+	return EXIT_SUCCESS;
 }
 
 int main(int argc, char *argv[])
@@ -198,7 +209,7 @@ int main(int argc, char *argv[])
     }
   }
   else{
-    repl();
+    return repl();
   }
     
   return EXIT_SUCCESS;

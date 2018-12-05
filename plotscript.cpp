@@ -93,6 +93,11 @@ int eval_from_command(std::string argexp){
 
 void threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruct> *outputQueue) {
 	Interpreter interp;
+	std::ifstream ifs(STARTUP_FILE);
+
+	if (!interp.parseStream(ifs)) {
+		error("Invalid Program. Could not parse.");
+	}
 	while (true) {
 		std::string expressionString;
 		if (inputQueue->try_pop(expressionString)) {

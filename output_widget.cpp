@@ -8,33 +8,33 @@
 
 
 OutputWidget::OutputWidget(QWidget * parent) : QWidget(parent) {
-	scene = new QGraphicsScene;
+	scene = new QGraphicsScene;  //add the scene
 	view = new QGraphicsView(scene);
 	auto layout = new QVBoxLayout;
-	view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff); //turn off scroll bar 
 	view->verticalScrollBar()->hide();
 	view->verticalScrollBar()->resize(0, 0);
-	layout->addWidget(view);
+	layout->addWidget(view); //add the widget with the view 
 	setLayout(layout);
 }
 
 void OutputWidget::displayErase() {
-	scene->clear();
+	scene->clear(); //erase screen
 }
 
 void OutputWidget::displayError(std::string errorString) {
 	QGraphicsTextItem *text;
-	QFont font = QFont("Courier",1);
+	QFont font = QFont("Courier",1); //set the font 
 	QString qstr;
-	qstr = QString::fromStdString(errorString);
-	text = scene->addText(qstr);
-	text->setPos(0, 0);
+	qstr = QString::fromStdString(errorString); //convert to the qstring 
+	text = scene->addText(qstr) ;
+	text->setPos(0, 0); //set the position
 	
 }
 
 void OutputWidget::displayText(std::string textString, double x, double y, int textScale, double rotation) {
 	QString qstr;
-	qstr = QString::fromStdString(textString);
+	qstr = QString::fromStdString(textString); 
 	QGraphicsTextItem *text = new QGraphicsTextItem(qstr);
 	QFont font = QFont("Courier", 1);
 	text->setPos(x, y);

@@ -14,7 +14,7 @@ bool stopQueue = false;
 InputWidget::InputWidget(QWidget * parent) : QPlainTextEdit(parent) {
 	setReadOnly(false);
 	std::ifstream ifs;
-	ifs.open(STARTUP_FILE);
+	ifs.open(STARTUP_FILE); //opens up startup file for make functions
 	startThread();
 	if (!interp.parseStream(ifs)) {
 		std::string errorString = "Error: Could not Parse";
@@ -25,7 +25,7 @@ InputWidget::InputWidget(QWidget * parent) : QPlainTextEdit(parent) {
 	}
 }
 
-void InputWidget::startThread() {
+void InputWidget::startThread() { //creates the new thread
 	Interpreter *new_interp = new Interpreter;
 	secondThread = new std::thread(&InputWidget::threadWorker,this, &inputQueue, &outputQueue,new_interp);
 }
@@ -33,7 +33,7 @@ void InputWidget::startThread() {
 void InputWidget::threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruct> *outputQueue, Interpreter * interp) {
 	std::ifstream ifs(STARTUP_FILE);
 
-	if (!interp->parseStream(ifs)) {
+	if (!interp->parseStream(ifs)) { //sends error if can't parse 
 		std::string errorString = "Error: Could not Parse";
 		output.errorString = "Error: Could not Parse";
 		output.error = true;
@@ -48,7 +48,7 @@ void InputWidget::threadWorker(MessageQueue<std::string> *inputQueue, MessageQue
 		}
 	}
 	while (stopQueue == false) {
-		std::string expressionString;
+		std::string expressionString; //does when 2nd thread is running 
 		if (inputQueue->try_pop(expressionString)) {
 			std::istringstream expression(expressionString);
 			if (expressionString != "" && !interp->parseStream(expression)) {
@@ -92,7 +92,6 @@ void InputWidget::resetKernel() {
 }
 
 void InputWidget::interruptKernel() {
-	std::cout << "in interrupt kernel";
 }
 
 void InputWidget::keyPressEvent(QKeyEvent *event){

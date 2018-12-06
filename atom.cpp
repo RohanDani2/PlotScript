@@ -34,18 +34,18 @@ Atom::Atom(const Token & token) : Atom() {
 	}
 }
 
-Atom::Atom(const std::string & value) : Atom() {
+Atom::Atom(const std::string & value) : Atom() { //sets the symbol
 	setSymbol(value);
 }
 
 Atom::Atom(const Atom & x) : Atom() {
-	if (x.isNumber()) {
+	if (x.isNumber()) { //does it for numbers in atom 
 		setNumber(x.numberValue);
 	}
-	else if (x.isSymbol()) {
+	else if (x.isSymbol()) { //does it for symbols in atom 
 		setSymbol(x.stringValue);
 	}
-	else if (x.isComplex()) {
+	else if (x.isComplex()) { //does it for complex in atom 
 		setComplex(x.complexValue);
 	}
 }
@@ -77,7 +77,7 @@ Atom::~Atom() {
 	}
 }
 
-bool Atom::isNone() const noexcept {
+bool Atom::isNone() const noexcept {  //bools that checks if it is of type
 	return m_type == NoneKind;
 }
 
@@ -183,7 +183,7 @@ bool operator!=(const Atom & left, const Atom & right) noexcept {
 std::ostream & operator<<(std::ostream & out, const Atom & a) {
 
 	if (a.isNumber()) {
-		out << a.asNumber();
+		out << a.asNumber(); //outs the certain types
 	}
 	if (a.isSymbol()) {
 		out << a.asSymbol();

@@ -329,7 +329,7 @@ TEST_CASE("Test M1/M2 functions", "[interpreter]") {
 		REQUIRE(result == Expression(5));
 	}
 	{
-		std::string program = "(begin (define f(lambda (x) x)) (define a (list 5)) (map f a))";
+		std::string program = "(begin (define f (lambda (x) x)) (define a (list 5)) (map f a))";
 		Expression result = run(program);
 		REQUIRE(result.length() == 1);
 	}

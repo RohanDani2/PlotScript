@@ -228,10 +228,10 @@ int repl() {
 		else if (line == "%reset") {
 			Interpreter *new_interp = new Interpreter;
 
+			stopQueue = true;
 			if (secondThread.joinable()) {
 				secondThread.join();
 			}
-			secondThread.~thread();
 
 			std::thread secondThread(&threadWorker, &inputQueue, &outputQueue, new_interp);
 			stopQueue = false;

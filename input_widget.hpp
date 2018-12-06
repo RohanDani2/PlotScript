@@ -11,6 +11,8 @@
 #include <QLayout>
 #include <QString>
 #include <QInputDialog>
+#include <thread>
+
 
 struct queueStruct {
 	bool error;
@@ -23,6 +25,8 @@ class InputWidget : public QPlainTextEdit {
 public:
 	InputWidget(QWidget * parent = nullptr);
 	void keyPressEvent(QKeyEvent *event);
+	void threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruct> *outputQueue);
+	void startThread();
 signals:
 	void sendErase();
 	void sendExpression(std::string expressionString);
@@ -37,9 +41,9 @@ private slots:
 	void interruptKernel();
 private:
 	Interpreter interp;
+	std::thread *secondThread;
 	MessageQueue<std::string> inputQueue;
 	MessageQueue<queueStruct> outputQueue;
-	std::ostringstream os;
 };
 
 #endif // ! INPUT_WIDGET_H

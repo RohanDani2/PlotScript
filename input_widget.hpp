@@ -29,7 +29,6 @@ public:
 	void startThread();
 signals:
 	void sendErase();
-	void sendExpression(std::string expressionString);
 	void sendError(std::string errorString);
 	void sendText(std::string textString,double x,double y,int textScale,double rotation);
 	void sendPoint(double x1,double y1,double size);

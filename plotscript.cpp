@@ -153,16 +153,15 @@ int eval_from_command(std::string argexp){
   return eval_from_stream(expression);
 }
 
-void threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruct> *outputQueue) {
-	Interpreter interp;
+void threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruct> *outputQueue, Interpreter *interp) {
 	std::ifstream ifs(STARTUP_FILE);
 
-	if (!interp.parseStream(ifs)) {
+	if (!interp->parseStream(ifs)) {
 		error("Invalid Program. Could not parse.");
 	}
 	else {
 		try {
-			Expression exp = interp.evaluate();
+			Expression exp = interp->evaluate();
 		}
 		catch (const SemanticError & ex) {
 			std::cerr << ex.what() << std::endl;
@@ -172,14 +171,14 @@ void threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruc
 		std::string expressionString;
 		if (inputQueue->try_pop(expressionString)) {
 			std::istringstream expression(expressionString);
-			if (expressionString != "" && !interp.parseStream(expression)) {
+			if (expressionString != "" && !interp->parseStream(expression)) {
 				output.errorString = "Error: Could not Parse";
 				output.error = true;
 				outputQueue->push(output);
 			}
 			else {
 				try {
-					Expression exp = interp.evaluate();
+					Expression exp = interp->evaluate();
 					output.expression = exp;
 					output.error = false;
 					outputQueue->push(output);
@@ -200,7 +199,7 @@ int repl() {
 	MessageQueue<std::string> inputQueue;
 	MessageQueue<queueStruct> outputQueue;
 
-	std::thread secondThread(&threadWorker, &inputQueue, &outputQueue);
+	std::thread secondThread(&threadWorker, &inputQueue, &outputQueue, &interp);
 	while (!std::cin.eof()) {
 		prompt();
 		std::string line = readline();
@@ -208,12 +207,12 @@ int repl() {
 		if (line.empty()) continue;
 
 		if (line == "%start") {
-			//Interpreter *new_interp = new Interpreter;
+			Interpreter *new_interp = new Interpreter;
 			if (stopQueue == false) {
 				continue;
 			}
 			else {
-				std::thread secondThread(&threadWorker, &inputQueue, &outputQueue);
+				std::thread secondThread(&threadWorker, &inputQueue, &outputQueue, new_interp);
 				secondThread.detach();
 				stopQueue = false;
 			}
@@ -227,7 +226,7 @@ int repl() {
 			continue;
 		}
 		else if (line == "%reset") {
-			/*Interpreter *new_interp = new Interpreter;
+			Interpreter *new_interp = new Interpreter;
 			stopQueue = true;
 
 			if (secondThread.joinable()) {
@@ -235,7 +234,7 @@ int repl() {
 			}
 
 			std::thread secondThread(&threadWorker, &inputQueue, &outputQueue, new_interp);
-			secondThread.detach();*/
+			stopQueue = false;
 
 		}
 		else if (line == "%exit") {

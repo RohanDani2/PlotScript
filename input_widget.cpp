@@ -87,7 +87,8 @@ void InputWidget::stopKernel() {
 }
 
 void InputWidget::resetKernel() {
-	std::cout << "in reset kernel";
+	stopKernel();
+	startKernel();
 }
 
 void InputWidget::interruptKernel() {

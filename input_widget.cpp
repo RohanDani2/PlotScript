@@ -26,14 +26,14 @@ InputWidget::InputWidget(QWidget * parent) : QPlainTextEdit(parent) {
 }
 
 void InputWidget::startThread() {
-	secondThread = new std::thread(&InputWidget::threadWorker,this, &inputQueue, &outputQueue);
+	Interpreter *new_interp = new Interpreter;
+	secondThread = new std::thread(&InputWidget::threadWorker,this, &inputQueue, &outputQueue,new_interp);
 }
 
-void InputWidget::threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruct> *outputQueue) {
-	Interpreter interp;
+void InputWidget::threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruct> *outputQueue, Interpreter * interp) {
 	std::ifstream ifs(STARTUP_FILE);
 
-	if (!interp.parseStream(ifs)) {
+	if (!interp->parseStream(ifs)) {
 		std::string errorString = "Error: Could not Parse";
 		output.errorString = "Error: Could not Parse";
 		output.error = true;
@@ -41,7 +41,7 @@ void InputWidget::threadWorker(MessageQueue<std::string> *inputQueue, MessageQue
 	}
 	else {
 		try {
-			Expression exp = interp.evaluate();
+			Expression exp = interp->evaluate();
 		}
 		catch (const SemanticError & ex) {
 			std::cerr << ex.what() << std::endl;
@@ -51,14 +51,14 @@ void InputWidget::threadWorker(MessageQueue<std::string> *inputQueue, MessageQue
 		std::string expressionString;
 		if (inputQueue->try_pop(expressionString)) {
 			std::istringstream expression(expressionString);
-			if (expressionString != "" && !interp.parseStream(expression)) {
+			if (expressionString != "" && !interp->parseStream(expression)) {
 				output.errorString = "Error: Could not Parse";
 				output.error = true;
 				outputQueue->push(output);
 			}
 			else {
 				try {
-					Expression exp = interp.evaluate();
+					Expression exp = interp->evaluate();
 					output.expression = exp;
 					output.error = false;
 					outputQueue->push(output);

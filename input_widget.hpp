@@ -25,7 +25,7 @@ class InputWidget : public QPlainTextEdit {
 public:
 	InputWidget(QWidget * parent = nullptr);
 	void keyPressEvent(QKeyEvent *event);
-	void threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruct> *outputQueue);
+	void threadWorker(MessageQueue<std::string> *inputQueue, MessageQueue<queueStruct> *outputQueue, Interpreter * interp);
 	void startThread();
 signals:
 	void sendErase();

@@ -1,20 +1,6 @@
 Plot Script Overview
 ---------------------
 
-A C++ program is a collection of statements, many of which contains expressions -- sequence of characters that when evaluated give a value. For example in the following code, consisting of a single C++ statement,
-
-```
-double x = ((1.0 + 2.0)*3.0)/4.0;
-```
-
-the statement allocates a stack variable named ``x`` of type ``double`` and assigns its value to the result of the expression ``((1.0 + 2.0)*3.0)/4.0``. 
-
-The syntax of a programming language is the rules that govern when a string of characters represents a valid sequence in the language. Related, semantics is the meaning of the sequence computationally, i.e the result it produces. Some languages have a complicated syntax -- C++ notoriously so. Others are simple but no less powerful for expressing computations. 
-
-For example the syntax of most Lisp-family languages, like [scheme](http://www.schemers.org/), consist solely of expressions. This makes their syntax less complicated. Lisp uses prefix notation to represent an expression. Prefix notation puts the operator first. For example the prefix notation of the expression above is ``(/  (* (+ 1 2) 3) 4)``. In general the syntax is ``(PROC ARG1 ARG2 ... ARGN)``, where ``PROC`` is a _procedure_ with _arguments_ ``ARG1``, ``ARG2``, etc., and each argument can also be an expression. 
-
-Simple syntax makes languages much easier to learn, since there is less to remember, and easier to program in. This makes lisp/scheme syntax a good candidate for _scripting_ _languages_, programs written to extend the run-time capabilities of larger programs. Scripting languages are generally interpreted rather than compiled. An interpreter reads the source code and computes it's result and side effects, without converting (compiling) to machine code [1]. Interpreters then are programs that read programs and produce output. They can usually be invoked a few different ways, for example reading the program to be interpreted from a file or interactively with user input. The latter is called a Read-Eval-Print-Loop or REPL.
-
 Plot Script uses a prefix Lisp notation (also called [s-expressions](https://en.wikipedia.org/wiki/S-expression)). A plotscript program then is just one, possibly very complex, expression. For example the following program is roughly equivalent to the C++ one above.
 
 ```

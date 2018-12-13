@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - Coverage.combined.cleaned - /vagrant/token.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">vagrant</a> - token.hpp<span style="font-size: 80%;"> (source / <a href="token.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">Coverage.combined.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2018-12-06 02:30:57</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*! \file token.hpp</a>
+<span class="lineNum">       2 </span>            : Defines the Token and TokenSequence types, and associated functions.
+<span class="lineNum">       3 </span>            :  */
+<span class="lineNum">       4 </span>            : #ifndef TOKEN_HPP
+<span class="lineNum">       5 </span>            : #define TOKEN_HPP
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span>            : #include &lt;deque&gt;
+<span class="lineNum">       8 </span>            : #include &lt;istream&gt;
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : /*! \class Token
+<span class="lineNum">      11 </span>            :   \brief Value class representing a token.
+<span class="lineNum">      12 </span>            :   
+<a name="13"><span class="lineNum">      13 </span>            :   A token is a composition of a tag type and an optional string value.</a>
+<span class="lineNum">      14 </span>            : */
+<span class="lineNum">      15 </span><span class="lineCov">      45777 : class Token {</span>
+<span class="lineNum">      16 </span>            : public:
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            :   /*! \enum TokenType
+<span class="lineNum">      19 </span>            :     \brief a public enum defining the possible token types. 
+<span class="lineNum">      20 </span>            :    */
+<span class="lineNum">      21 </span>            :   enum TokenType { OPEN,  //&lt; open tag, aka '('
+<span class="lineNum">      22 </span>            :                    CLOSE, //&lt; close tag, aka ')'
+<span class="lineNum">      23 </span>            :                    STRING, 
+<span class="lineNum">      24 </span>            :                    QUOTE//&lt; string tag
+<span class="lineNum">      25 </span>            :   };
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span>            :   /// construct a token of type t (if string default to empty value)
+<span class="lineNum">      28 </span>            :   Token(TokenType t);
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span>            :   /// contruct a token of type String with value
+<span class="lineNum">      31 </span>            :   Token(const std::string &amp; str);
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span>            :   /// return the type of the token
+<span class="lineNum">      34 </span>            :   TokenType type() const;
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            :   /// return the token rendered as a string
+<span class="lineNum">      37 </span>            :   std::string asString() const;
+<span class="lineNum">      38 </span>            : 
+<span class="lineNum">      39 </span>            : private:
+<span class="lineNum">      40 </span>            :   TokenType m_type;
+<span class="lineNum">      41 </span>            :   std::string value;
+<span class="lineNum">      42 </span>            : };
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            : /*! \typedef TokenSequenceType
+<span class="lineNum">      45 </span>            : Define the token sequence using a std container. Any supporting 
+<span class="lineNum">      46 </span>            : sequential access should do.
+<span class="lineNum">      47 </span>            :  */
+<span class="lineNum">      48 </span>            : typedef std::deque&lt;Token&gt; TokenSequenceType;
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            : /*! \fn TokenSequenceType tokenize(std::istream &amp; seq)
+<span class="lineNum">      51 </span>            : \brief Split a stream into a sequnce of tokens
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            : \param seq the input character stream
+<span class="lineNum">      54 </span>            : \return The sequence of tokens
+<span class="lineNum">      55 </span>            :   
+<span class="lineNum">      56 </span>            : Split a stream into a sequnce of tokens where a token is one of
+<span class="lineNum">      57 </span>            : OPEN or CLOSE or any space-delimited string
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            : Ignores any whitespace and comments (from any &quot;;&quot; to end-of-line).
+<span class="lineNum">      60 </span>            : */
+<span class="lineNum">      61 </span>            : TokenSequenceType tokenize(std::istream &amp; seq);
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

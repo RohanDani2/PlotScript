@@ -1,0 +1,187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - Coverage.combined.cleaned - /vagrant/environment.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../index.html">top level</a> - <a href="index.html">vagrant</a> - environment.hpp<span style="font-size: 80%;"> (source / <a href="environment.hpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">Coverage.combined.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2018-12-06 02:30:57</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*! \file environment.hpp</a>
+<span class="lineNum">       2 </span>            : This file defines the module representing the environment.
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span>            : The environment is the collection of all previously defined procedures, e.g.
+<span class="lineNum">       5 </span>            : the built-in ones, and previously defined symbols. The environment is used
+<span class="lineNum">       6 </span>            : by the interpreter to store and lookup the value of symbols and procedures as
+<span class="lineNum">       7 </span>            : needed.
+<span class="lineNum">       8 </span>            :  */
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span>            : #ifndef ENVIRONMENT_HPP
+<span class="lineNum">      11 </span>            : #define ENVIRONMENT_HPP
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : // system includes
+<span class="lineNum">      14 </span>            : #include &lt;map&gt;
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : // module includes
+<span class="lineNum">      17 </span>            : #include &quot;atom.hpp&quot;
+<span class="lineNum">      18 </span>            : #include &quot;expression.hpp&quot;
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : /*! \typedef Procedure
+<span class="lineNum">      21 </span>            : \brief A Procedure is a C++ function pointer taking a vector of 
+<span class="lineNum">      22 </span>            :        Expressions as arguments and returning an Expression.
+<span class="lineNum">      23 </span>            : */
+<span class="lineNum">      24 </span>            : typedef Expression (*Procedure)(const std::vector&lt;Expression&gt; &amp; args);
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span>            : /*! \class Environment
+<span class="lineNum">      27 </span>            : \brief A class representing the interpreter environment.
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : An instance of Environment allows the interpreter to track previously defined
+<span class="lineNum">      30 </span>            : procedures and definitions, either built-in or defined during execution.
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : To lookup a symbol use one of the member functions is_exp or is_proc, or if you
+<span class="lineNum">      33 </span>            : do not care about
+<span class="lineNum">      34 </span>            : what the symbol maps to is_known. Depending on the value these member functions
+<span class="lineNum">      35 </span>            : return you can obtain
+<span class="lineNum">      36 </span>            : the mapped-to value using get_exp or get_proc.
+<span class="lineNum">      37 </span>            : 
+<a name="38"><span class="lineNum">      38 </span>            : To add an symbol to expression mapping use the add_exp member function.</a>
+<span class="lineNum">      39 </span>            :  */
+<span class="lineNum">      40 </span><span class="lineCov">       1265 : class Environment {</span>
+<span class="lineNum">      41 </span>            : public:
+<span class="lineNum">      42 </span>            :   /*! Construct the default environment with built-in procedures and
+<span class="lineNum">      43 </span>            :    * definitions. */
+<span class="lineNum">      44 </span>            :   Environment();
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            :   /*! Determine if a symbol is known to the environment.
+<span class="lineNum">      47 </span>            :     \param sym the sumbol to lookup
+<span class="lineNum">      48 </span>            :     \return true if the symbol has been defined in the environment
+<span class="lineNum">      49 </span>            :    */
+<span class="lineNum">      50 </span>            :   bool is_known(const Atom &amp;sym) const;
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            :   /*! Determine if a symbol has been defined as an expression.
+<span class="lineNum">      53 </span>            :     \param sym the sumbol to lookup
+<span class="lineNum">      54 </span>            :     \return true if the symbol has been defined in the environment as an
+<span class="lineNum">      55 </span>            :     expression
+<span class="lineNum">      56 </span>            :    */
+<span class="lineNum">      57 </span>            :   bool is_exp(const Atom &amp;sym) const;
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            :   /*! Get the Expression the argument symbol maps to.
+<span class="lineNum">      60 </span>            :     \param sym the symbol to lookup
+<span class="lineNum">      61 </span>            :     \return the expression the symbol maps to or an Expression of NoneType
+<span class="lineNum">      62 </span>            :   */
+<span class="lineNum">      63 </span>            :   Expression get_exp(const Atom &amp;sym) const;
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            :   /*! Add a mapping from sym argument to the exp argument within the environment.
+<span class="lineNum">      66 </span>            :     \param sym the symbol to add
+<span class="lineNum">      67 </span>            :     \param exp the expression the symbol should map to
+<span class="lineNum">      68 </span>            :    */
+<span class="lineNum">      69 </span>            :   void add_exp(const Atom &amp;sym, const Expression &amp;exp);
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            :   /*! Determine if a symbol has been defined as a procedure
+<span class="lineNum">      72 </span>            :     \param sym the symbol to lookup
+<span class="lineNum">      73 </span>            :     \return true if thr symbol maps to a procedure
+<span class="lineNum">      74 </span>            :    */
+<span class="lineNum">      75 </span>            :   bool is_proc(const Atom &amp;sym) const;
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :   /*! Get the Procedure the argument symbol maps to
+<span class="lineNum">      78 </span>            :     \param sym the symbol to lookup
+<span class="lineNum">      79 </span>            :     \return the procedure it maps to 
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            :     Note: return the default procedure if argument is not a symbol
+<span class="lineNum">      82 </span>            :           or does not map to a known procedure.
+<span class="lineNum">      83 </span>            :   */
+<span class="lineNum">      84 </span>            :   Procedure get_proc(const Atom &amp;sym) const;
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            :   /*! Reset the environment to its default state. */
+<span class="lineNum">      87 </span>            :   void reset();
+<span class="lineNum">      88 </span>            : 
+<span class="lineNum">      89 </span>            : private:
+<span class="lineNum">      90 </span>            :   
+<span class="lineNum">      91 </span>            :   // Environment is a mapping from symbols to expressions or procedures
+<a name="92"><span class="lineNum">      92 </span>            :   enum EnvResultType { ExpressionType, ProcedureType };</a>
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span><span class="lineCov">      95216 :   struct EnvResult {</span>
+<span class="lineNum">      95 </span>            :     EnvResultType type;
+<span class="lineNum">      96 </span>            :     Expression exp; // used when type is ExpressionType
+<span class="lineNum">      97 </span>            :     Procedure proc; // used when type is ProcedureType
+<span class="lineNum">      98 </span>            :         //List li;
+<span class="lineNum">      99 </span>            : 
+<a name="100"><span class="lineNum">     100 </span>            :     // constructors for use in container emplace</a>
+<a name="101"><span class="lineNum">     101 </span>            :     EnvResult(){};</a>
+<span class="lineNum">     102 </span><span class="lineCov">       3103 :     EnvResult(EnvResultType t, Expression e) : type(t), exp(e){};</span>
+<span class="lineNum">     103 </span><span class="lineCov">      23664 :     EnvResult(EnvResultType t, Procedure p) : type(t), proc(p){};</span>
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            :   };
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            :   // the environment map
+<span class="lineNum">     108 </span>            :   std::map&lt;std::string, EnvResult&gt; envmap;
+<span class="lineNum">     109 </span>            : };
+<span class="lineNum">     110 </span>            : 
+<span class="lineNum">     111 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.13</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
